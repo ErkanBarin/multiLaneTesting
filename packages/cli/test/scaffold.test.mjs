@@ -28,6 +28,12 @@ test('scaffolded web+http project passes mlt verify', () => {
   assert.ok(files.includes('.npmrc'));
   assert.ok(files.includes('Jenkinsfile'));
 
+  // Authoring packages ride along as consumer devDependencies so `mlt authoring install`
+  // resolves them after `npm ci` — the CLI itself does not bundle them.
+  const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+  assert.ok(pkg.devDependencies['@multilane/authoring-web']);
+  assert.ok(pkg.devDependencies['@multilane/authoring-http']);
+
   // The generated project must be green under the deterministic gates.
   const result = runVerify({ cwd: root });
   assert.equal(result.ok, true);

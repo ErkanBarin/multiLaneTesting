@@ -1,10 +1,6 @@
 ---
 name: technical-worker
 description: Reviews code, tests, automation, Playwright, API, WebSocket, and implementation details.
-model:
-  # coding tier, then fallback — configure concrete identifiers for your environment
-  - <mid-tier coding model available in your environment>
-  - <mid-tier coding model available in your environment (fallback)>
 tools: ["read", "search"]
 agents: []
 user-invocable: false
@@ -12,6 +8,10 @@ disable-model-invocation: true
 ---
 
 # technical-worker
+
+No `model` field is committed: the worker inherits the invoking session's model. If your
+environment supports per-agent model pinning, add a `model` field locally with an identifier
+your tooling recognizes (preference order: mid-tier coding model, then a stronger fallback).
 
 Perform one narrow technical task.
 

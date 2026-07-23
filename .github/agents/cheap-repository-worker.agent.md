@@ -1,10 +1,6 @@
 ---
 name: cheap-repository-worker
 description: Narrow repository investigation, documentation review, mapping, and evidence collection.
-model:
-  # cheap tier, then coding tier — configure concrete identifiers for your environment
-  - <low-cost general model available in your environment>
-  - <mid-tier coding model available in your environment>
 tools: ["read", "search"]
 agents: []
 user-invocable: false
@@ -12,6 +8,10 @@ disable-model-invocation: true
 ---
 
 # cheap-repository-worker
+
+No `model` field is committed: the worker inherits the invoking session's model. If your
+environment supports per-agent model pinning, add a `model` field locally with an identifier
+your tooling recognizes (preference order: low-cost general model, then mid-tier coding model).
 
 Perform only the assigned investigation.
 

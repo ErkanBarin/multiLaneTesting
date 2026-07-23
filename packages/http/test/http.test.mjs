@@ -99,6 +99,34 @@ test('getJson rejects after timeoutMs when the server never responds', async () 
   }
 });
 
+test('getJson enforces timeoutMs as an absolute deadline even when bytes keep trickling', async () => {
+  const { createServer } = await import('node:http');
+  const server = createServer((req, res) => {
+    res.writeHead(200, { 'content-type': 'text/plain' });
+    const drip = setInterval(() => res.write('x'), 30);
+    res.on('close', () => clearInterval(drip));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const { port } = server.address();
+  try {
+    const started = Date.now();
+    await assert.rejects(
+      getJson(`http://127.0.0.1:${port}/drip`, { timeoutMs: 150 }),
+      /timed out after 150 ms/,
+    );
+    assert.ok(Date.now() - started < 2000, 'rejected near the deadline, not after the drip ended');
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test('getJson rejects nonsensical timeoutMs and maxBodyBytes values up front', () => {
+  for (const bad of [0, -1, 1.5, NaN, Infinity]) {
+    assert.throws(() => getJson('http://127.0.0.1/x', { timeoutMs: bad }), /Invalid timeoutMs/);
+    assert.throws(() => getJson('http://127.0.0.1/x', { maxBodyBytes: bad }), /Invalid maxBodyBytes/);
+  }
+});
+
 test('getJson rejects when the response body exceeds maxBodyBytes', async () => {
   const emulator = await startHttpEmulator({
     '/big': { status: 200, headers: { 'content-type': 'text/plain' }, body: 'x'.repeat(5000) },

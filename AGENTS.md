@@ -124,8 +124,10 @@ Use this routing precedence for every delegated task:
 5. Evidence-based escalation to a stronger model.
 
 Generic workers are fallbacks only. They must never replace, retune, rename, weaken, or override a
-matching specialist path or an explicit model requirement. Invocation-time model selection takes
-priority over worker defaults; defaults are preferences, not hard runtime pins.
+matching specialist path or an explicit model requirement. The committed worker files carry no
+`model` pin — they inherit the invoking session's model unless a concrete identifier is configured
+locally. Invocation-time model selection takes priority over worker defaults; the capability tiers
+below are preferences, not hard runtime pins.
 
 | Routine unmatched task | Worker | Preferred capability tier, in order |
 |---|---|---|

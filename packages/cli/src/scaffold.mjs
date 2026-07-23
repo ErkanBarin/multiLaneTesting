@@ -9,6 +9,8 @@ import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { AUTHORING_LANE_PACKAGES } from './authoring/registry.mjs';
+
 export const SUPPORTED_LANES = ['web', 'http', 'stomp', 'screen'];
 // Read version from this package's manifest so `npm version` keeps scaffolds in sync.
 const { version: ENGINE_VERSION } = JSON.parse(
@@ -96,6 +98,11 @@ function renderPackageJson(name, lanes) {
   if (lanes.includes('screen')) {
     devDependencies['@multilane/screen'] = ENGINE_VERSION;
     scripts['test:screen'] = nodeTestScript('screen');
+  }
+  // Authoring packages are consumer devDependencies (not CLI runtime deps): `mlt authoring
+  // install` resolves them from the consumer's node_modules after `npm ci`.
+  for (const lane of lanes) {
+    if (AUTHORING_LANE_PACKAGES[lane]) devDependencies[AUTHORING_LANE_PACKAGES[lane]] = ENGINE_VERSION;
   }
 
   return `${JSON.stringify(

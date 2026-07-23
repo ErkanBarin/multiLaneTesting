@@ -23,33 +23,24 @@ export async function subscribeOnce(url, destination, { timeoutMs = 5000, header
       webSocketFactory: () => new WS(url),
       reconnectDelay: 0,
     });
-
-    const timer = setTimeout(() => {
-      deactivate(client);
-      reject(new Error(`subscribeOnce timed out after ${timeoutMs}ms on ${destination}`));
-    }, timeoutMs);
+    const settle = makeSettler(client, resolve, reject);
+    settle.timer = setTimeout(
+      () => settle.reject(new Error(`subscribeOnce timed out after ${timeoutMs}ms on ${destination}`)),
+      timeoutMs,
+    );
 
     client.onConnect = () => {
       client.subscribe(
         destination,
-        (message) => {
-          clearTimeout(timer);
-          deactivate(client);
-          resolve({ headers: message.headers, body: message.body });
-        },
+        (message) => settle.resolve({ headers: message.headers, body: message.body }),
         headers,
       );
     };
-    client.onStompError = (frame) => {
-      clearTimeout(timer);
-      deactivate(client);
-      reject(new Error(frame?.headers?.message ?? 'STOMP error'));
-    };
-    client.onWebSocketError = (event) => {
-      clearTimeout(timer);
-      deactivate(client);
-      reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
-    };
+    client.onStompError = (frame) => settle.reject(new Error(frame?.headers?.message ?? 'STOMP error'));
+    client.onWebSocketError = (event) =>
+      settle.reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
+    client.onWebSocketClose = (event) =>
+      settle.reject(new Error(`WebSocket closed before the STOMP session completed (code ${event?.code ?? 'unknown'}).`));
 
     client.activate();
   });
@@ -81,28 +72,41 @@ export async function send(url, destination, body, { inject = false, approvedHos
       webSocketFactory: () => new WS(url),
       reconnectDelay: 0,
     });
-    const timer = setTimeout(() => {
-      deactivate(client);
-      reject(new Error(`send timed out after ${timeoutMs}ms connecting to ${destination}`));
-    }, timeoutMs);
+    const settle = makeSettler(client, resolve, reject);
+    settle.timer = setTimeout(
+      () => settle.reject(new Error(`send timed out after ${timeoutMs}ms connecting to ${destination}`)),
+      timeoutMs,
+    );
     client.onConnect = () => {
-      clearTimeout(timer);
       client.publish({ destination, body, headers });
-      deactivate(client);
-      resolve();
+      settle.resolve();
     };
-    client.onStompError = (frame) => {
-      clearTimeout(timer);
-      deactivate(client);
-      reject(new Error(frame?.headers?.message ?? 'STOMP error'));
-    };
-    client.onWebSocketError = (event) => {
-      clearTimeout(timer);
-      deactivate(client);
-      reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
-    };
+    client.onStompError = (frame) => settle.reject(new Error(frame?.headers?.message ?? 'STOMP error'));
+    client.onWebSocketError = (event) =>
+      settle.reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
+    client.onWebSocketClose = (event) =>
+      settle.reject(new Error(`WebSocket closed before the STOMP session completed (code ${event?.code ?? 'unknown'}).`));
     client.activate();
   });
+}
+
+// One-shot settlement: whichever lifecycle callback fires first wins; every later callback
+// (including the close event emitted by our own teardown) is a guarded no-op.
+function makeSettler(client, resolve, reject) {
+  const settle = {
+    done: false,
+    timer: undefined,
+    resolve: (value) => complete(resolve, value),
+    reject: (err) => complete(reject, err),
+  };
+  function complete(fn, value) {
+    if (settle.done) return;
+    settle.done = true;
+    clearTimeout(settle.timer);
+    deactivate(client);
+    fn(value);
+  }
+  return settle;
 }
 
 function deactivate(client) {

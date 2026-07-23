@@ -16,7 +16,7 @@ state of each part:
 | Component | Maturity | Notes |
 |---|---|---|
 | `@multilane/core` (config, gates, verify) | Working | Unit-tested; `mlt verify` runs the deterministic gates |
-| `@multilane/cli` (`mlt new`, `mlt verify`, authoring) | Working | Scaffolds lane projects; unit-tested |
+| `@multilane/cli` (`mlt new`, `mlt verify`, authoring) | Working | Scaffolds lane projects; unit-tested; `mlt new` exits nonzero if the authoring packages are not resolvable |
 | `@multilane/http` (passive API contract) | Working | Read-only GETs, shape checks, timeouts, body caps |
 | `@multilane/stomp` (WS contract) | Working | Passive SUBSCRIBE; active SEND double-gated (opt-in + allowlist) |
 | `@multilane/screen` (frozen-locator runtime) | Working | Loads/validates frozen locators; PROD-partition refusal |
@@ -31,17 +31,21 @@ Packages are **not published to any registry**. Consume them via `npm pack` tarb
 
 ## Quickstart
 
-Requires Node >= 20.
+Requires Node >= 20 and npm 10.
 
 ```bash
 git clone https://github.com/ErkanBarin/multiLaneTesting.git
 cd multiLaneTesting
 npm ci
 npm run validate     # no-runtime-AI gate + robot-contract gate + typecheck + lint + unit tests
-npm run dogfood      # packs all 10 packages, installs them offline into an example consumer, runs smoke tests
+npm run dogfood      # packs all 10 packages, installs them offline into example consumers, runs smoke tests
 ```
 
 Everything above runs offline after `npm ci` — no target system, no credentials, no registry access.
+
+> **Lockfile caveat:** `package-lock.json` was generated with npm 10 behind a restricted proxy.
+> npm 11 (bundled with Node 24) may reject it during `npm ci`. If it does, regenerate the lockfile
+> on an unrestricted network (`npm install --package-lock-only`) and review the diff.
 
 ## Architecture in one minute
 
@@ -81,12 +85,17 @@ Public API surface: [`docs/API.md`](docs/API.md).
 
 ## Using the engine in a test project
 
-Your system-under-test never lives in this repo — you scaffold a small consumer project:
+Your system-under-test never lives in this repo — you scaffold a small consumer project. The
+packages are **not published**, so run the CLI from a clone of this repo:
 
 ```bash
-npx @multilane/cli new my-system --lanes web,http   # lanes: web, http, stomp, screen
-cd my-system
+node packages/cli/bin/mlt.mjs new ../my-system --lanes web,http   # lanes: web, http, stomp, screen
+cd ../my-system
 ```
+
+The generated `package.json` depends on `@multilane/*` packages that no registry serves yet —
+install them from `npm pack` tarballs with `overrides`, exactly as
+[`scripts/dogfood.mjs`](scripts/dogfood.mjs) does, until a publishing decision is made.
 
 The generated project ships a config skeleton, a frozen-`locators/` dir, one example spec per lane,
 a registry-agnostic `.npmrc` template, and an optional thin `Jenkinsfile`. Lanes are independently
@@ -112,26 +121,30 @@ npm run dogfood
 packs all 10 workspaces with `npm pack`, rewrites an example consumer
 ([`examples/consumer-smoke/`](examples/consumer-smoke/)) to install from those tarballs (with
 `overrides` so nested workspace deps stay local), installs with npm's `--offline` flag, then runs
-`mlt verify` plus a smoke suite across every lane. This proves the *packaged* engine works with
-zero registry access.
+`mlt verify` plus an installation/export smoke across every package. It also runs a minimal
+consumer (CLI + core only) and asserts `mlt new` exits nonzero when authoring packages are
+unresolvable. This proves the *packaged* engine installs and exports correctly with zero registry
+access — it is a package-surface check, not functional lane coverage.
 
 ## Security model
 
-- **No AI at runtime** — `npm run check:no-runtime-ai` scans runtime sources for model/API usage and
-  fails the build on a match.
+- **No AI at runtime** — `npm run check:no-runtime-ai` scans runtime sources for model/API usage
+  and fails the build on a match — or if it scans zero files.
 - **No host literals or secrets in the repo** — targets are env-var references; `.env` is gitignored.
 - **Read-only by default** — the HTTP lane only GETs; the STOMP lane only subscribes. Active SEND
   requires an explicit inject flag **and** an approved-hosts allowlist match.
 - **Operational-partition refusal** — the screen lane throws if `SCREEN_RPS_PARTITION` resolves to
   `PROD`, both at runtime and in the CI gate.
 - **Pinned supply chain** — committed lockfile, exact dependency versions, SHA-pinned GitHub
-  Actions, Dependabot enabled, no postinstall scripts.
+  Actions, Dependabot enabled. The project's own packages define no lifecycle scripts (locked
+  third-party dependencies may carry their own install scripts, e.g. esbuild).
 
 Threat model and reporting process: [`SECURITY.md`](SECURITY.md).
 
 ## CI
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push/PR: `npm ci`, the full
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on pushes to `main` and on every pull
+request: `npm ci`, the full
 `validate` suite (gates, typecheck, lint, unit tests), a pack dry-run, the offline dogfood, and a
 Python driver install/import smoke. No publishing, no releases.
 

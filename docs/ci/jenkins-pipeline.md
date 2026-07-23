@@ -33,5 +33,6 @@ build fails — this is the mechanism that keeps per-run AI cost at zero.
 > This file documents the intended **test/replay** pipeline (screen + lanes), which is conceptual
 > until the framework has real specs and a CI display host. A publish pipeline can be attached in
 > your CI; this repo ships only templates (`ci/`). Provision Node however your CI does (container
-> image, tool installer, or nvm). For publishing guidance, see
-> [`AGENTS.md` → "Publishing workflow"](../../AGENTS.md#publishing-workflow).
+> image, tool installer, or nvm). The `@multilane/*` packages are not published to any registry —
+> consume them via `npm pack` tarballs (see the repo README → Dogfooding) until the maintainers
+> make an explicit publication decision.

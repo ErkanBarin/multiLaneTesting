@@ -10,8 +10,8 @@
 // not a default a consumer could accidentally bypass by skipping `mlt verify`. See
 // @multilane/core's `assertTestPartition` / `runScreenPartitionGate` for the CI-level mirror of
 // this same guard.
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, realpathSync } from 'node:fs';
+import { join, sep } from 'node:path';
 import { loadConfig, assertTestPartition } from '@multilane/core';
 
 /**
@@ -35,8 +35,14 @@ export function loadFrozenLocator(
       throw new Error(`Invalid locator ${name} "${value}": must match ${SAFE_SEGMENT} (single path segment).`);
     }
   }
-  const path = join(cwd, locatorsDir, area, `${key}.json`);
-  return JSON.parse(readFileSync(path, 'utf8'));
+  // Containment beyond the lexical segment check: resolve symlinks and refuse any locator that
+  // does not live under the (realpathed) locator root — a symlinked area/key cannot escape it.
+  const root = realpathSync(join(cwd, locatorsDir));
+  const real = realpathSync(join(root, area, `${key}.json`));
+  if (!real.startsWith(root + sep)) {
+    throw new Error(`Refusing to load locator ${area}/${key}: it resolves outside ${locatorsDir}/.`);
+  }
+  return JSON.parse(readFileSync(real, 'utf8'));
 }
 
 /**

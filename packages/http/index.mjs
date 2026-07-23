@@ -20,21 +20,35 @@ export function assertApprovedHost(url, approvedHosts = []) {
 
 /**
  * Passive GET returning parsed JSON (or raw text) plus status and headers.
- * Bounded by default: a hung server rejects after `timeoutMs`, an oversized
- * response rejects once `maxBodyBytes` is exceeded.
+ * Bounded by default: `timeoutMs` is an ABSOLUTE deadline for the whole request+response
+ * (a slow-drip peer cannot keep it alive), and an oversized response rejects once
+ * `maxBodyBytes` is exceeded.
  * @param {string} url
  * @param {{ headers?: Record<string, string>, approvedHosts?: string[], timeoutMs?: number, maxBodyBytes?: number }} [options]
  * @returns {Promise<{ status: number, headers: object, body: unknown }>}
  */
 export function getJson(url, { headers = {}, approvedHosts = [], timeoutMs = 30_000, maxBodyBytes = 10_000_000 } = {}) {
   assertApprovedHost(url, approvedHosts);
+  for (const [name, value] of [['timeoutMs', timeoutMs], ['maxBodyBytes', maxBodyBytes]]) {
+    if (!Number.isInteger(value) || value <= 0) {
+      throw new Error(`Invalid ${name}: ${value} (expected a positive integer).`);
+    }
+  }
   const client = url.startsWith('https:') ? https : http;
   return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (err, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(deadline);
+      if (err) reject(err);
+      else resolve(value);
+    };
     const req = client.get(url, { headers }, (res) => {
       let data = '';
       let received = 0;
       res.setEncoding('utf8');
-      res.on('error', reject);
+      res.on('error', (err) => finish(err));
       res.on('data', (chunk) => {
         received += Buffer.byteLength(chunk);
         if (received > maxBodyBytes) {
@@ -50,14 +64,15 @@ export function getJson(url, { headers = {}, approvedHosts = [], timeoutMs = 30_
         } catch {
           body = data; // non-JSON payload — return raw text
         }
-        resolve({ status: res.statusCode, headers: res.headers, body });
+        finish(null, { status: res.statusCode, headers: res.headers, body });
       });
     });
-    req.setTimeout(timeoutMs, () => {
+    // Absolute deadline, not a socket-inactivity timeout: fires timeoutMs after the request
+    // starts regardless of traffic, destroying the request (and any in-flight response).
+    const deadline = setTimeout(() => {
       req.destroy(new Error(`Request timed out after ${timeoutMs} ms.`));
-    });
-    req.on('error', reject);
-    req.end();
+    }, timeoutMs);
+    req.on('error', (err) => finish(err));
   });
 }
 

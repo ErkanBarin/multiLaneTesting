@@ -70,7 +70,9 @@ export function runNoRuntimeAiGate({
 
   for (const d of runtimeDirs) walk(join(cwd, d));
 
-  return { ok: violations.length === 0, scanned, violations };
+  // A zero-file scan is a FAILURE, not a pass: it means the gate checked nothing, so it cannot
+  // claim enforcement. Point runtimeDirs (multilane.config.json) at the real runtime code.
+  return { ok: violations.length === 0 && scanned > 0, scanned, violations };
 }
 
 /**
@@ -78,16 +80,19 @@ export function runNoRuntimeAiGate({
  * @returns {boolean}
  */
 export function reportNoRuntimeAi(result) {
+  if (result.scanned === 0) {
+    console.error(
+      '✖ no-runtime-ai guard FAILED — 0 runtime files scanned, so nothing was enforced. ' +
+        'Configure runtimeDirs in multilane.config.json to cover your runtime code.',
+    );
+    return false;
+  }
   if (!result.ok) {
     console.error('✖ no-runtime-ai guard FAILED — model usage reachable from a runtime path:');
     for (const v of result.violations) console.error(`  ${v.path}  (matched /${v.pattern}/)`);
     console.error('\nMove this code under authoring/ or remove the model dependency from the run path.');
     return false;
   }
-  if (result.scanned === 0) {
-    console.warn('⚠ no-runtime-ai guard: PASS is vacuous — 0 runtime files scanned (no runtime code exists yet).');
-  } else {
-    console.log(`✓ no-runtime-ai guard passed — ${result.scanned} runtime file(s) scanned, no model usage reachable.`);
-  }
+  console.log(`✓ no-runtime-ai guard passed — ${result.scanned} runtime file(s) scanned, no model usage reachable.`);
   return true;
 }
