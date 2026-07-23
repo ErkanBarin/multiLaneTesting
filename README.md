@@ -43,6 +43,7 @@ See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the driver tiers, oracles, and dete
 | Path | What it is |
 |---|---|
 | [`BOOTSTRAP_PROMPT.md`](BOOTSTRAP_PROMPT.md) | The master prompt you hand to an AI agent to build the repo |
+| Ponytail + Graphify | External authoring tools installed by `BOOTSTRAP_PROMPT.md`; they simplify implementation and answer architecture questions |
 | [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) | Full phased plan (Phase 0 → 4) with deliverables and acceptance gates |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Driver tiers, three oracles, deterministic replay, building-blocks table, risks |
 | [`AGENTS.md`](AGENTS.md) | Cross-agent entrypoint (auto-attached by VS Code, Copilot CLI, Cursor, Codex, etc.) |
@@ -91,7 +92,8 @@ Node (`mdtNode`), the `NODE_VERSION` / `NPM_RELEASE_REPOSITORY` settings, and tr
 2. `npm install`
 3. `cp .env.example .env` — fill in the values for your target system.
 4. `cp CLAUDE.md.example CLAUDE.md` — fill in your system's local operational truth (Claude only).
-5. Open the repo in your AI agent and say: *"Follow `BOOTSTRAP_PROMPT.md`. Implement Phase 0 only
+5. Open the repo in your AI agent and say: *"Follow `BOOTSTRAP_PROMPT.md`. Install Ponytail and
+  Graphify, then implement Phase 0 only
    for `<your system name>` and stop for my sign-off."*
 
 > **This kit ships both ways** — it ships the *plan, conventions, and AI customization* for building
