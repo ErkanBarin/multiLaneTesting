@@ -1,0 +1,63 @@
+{
+  "lane": "web",
+  "version": "0.1.0",
+  "runtimePackage": "@multilane/web",
+  "authoringPackage": "@multilane/authoring-web",
+  "compatibility": {
+    "minRuntimeVersion": "0.1.0",
+    "maxRuntimeVersion": "0.x"
+  },
+  "requiredTools": ["read", "search", "edit"],
+  "optionalMcpServers": ["playwright"],
+  "envPrerequisites": ["MULTILANE_WEB_BASE_URL"],
+  "skills": [
+    {
+      "id": "web-test-authoring",
+      "kind": "skill",
+      "title": "Web test authoring",
+      "description": "Author deterministic Playwright specs against the selector-factory pattern: web-first assertions, test.step() naming user intent, no sleeps, no mocking.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/web-test-authoring/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/web-test-authoring/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/web-test-authoring.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "ui-explorer",
+      "kind": "agent",
+      "title": "UI explorer",
+      "description": "Explore a running web target with the Playwright MCP browser tools to discover stable selectors and propose selector-factory entries. Authoring-only.",
+      "portable": "portable-after-mcp-config",
+      "always": false,
+      "configureId": "web-explorer",
+      "requires": {
+        "mcpServers": ["playwright"]
+      },
+      "source": "assets/agents/ui-explorer/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/ui-explorer.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/ui-explorer-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/ui-explorer.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ]
+}

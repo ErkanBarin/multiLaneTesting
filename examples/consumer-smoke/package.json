@@ -1,0 +1,20 @@
+{
+  "name": "multilane-smoke-consumer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Dogfood consumer: installs the PACKAGED @multilane engine from tarballs and runs a smoke suite.",
+  "scripts": {
+    "verify": "mlt verify",
+    "test:smoke": "node --test tests/http/*.test.mjs tests/screen/*.test.mjs"
+  },
+  "devDependencies": {
+    "@multilane/cli": "0.1.0",
+    "@multilane/core": "0.1.0",
+    "@multilane/http": "0.1.0",
+    "@multilane/screen": "0.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

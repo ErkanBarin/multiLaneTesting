@@ -1,0 +1,5 @@
+{
+  "lanes": ["http", "screen"],
+  "specDir": "tests",
+  "robotTags": []
+}

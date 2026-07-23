@@ -1,0 +1,25 @@
+{
+  "name": "@multilane/core",
+  "version": "0.1.0",
+  "description": "Deterministic multi-lane testing engine core: config loader and CI gates (no runtime AI).",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "src/**/*.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

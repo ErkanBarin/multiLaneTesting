@@ -1,0 +1,36 @@
+{
+  "name": "@multilane/stomp",
+  "version": "0.1.0",
+  "description": "STOMP/WebSocket contract lane for multilanetesting. Passive SUBSCRIBE by default; supervised active SEND behind opt-in.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "@stomp/stompjs": "^7.0.0",
+    "ws": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@stomp/stompjs": {
+      "optional": true
+    },
+    "ws": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

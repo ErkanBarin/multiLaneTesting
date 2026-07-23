@@ -1,0 +1,28 @@
+{
+  "name": "@multilane/authoring-stomp",
+  "version": "0.1.0",
+  "description": "STOMP/WS-lane authoring assets (skills, agents, prompts) for the multilanetesting engine. Development-time content only — never a runtime dependency of @multilane/stomp.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    },
+    "./lane.manifest.json": "./lane.manifest.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "lane.manifest.json",
+    "assets/**",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

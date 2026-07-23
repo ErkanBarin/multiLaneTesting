@@ -1,0 +1,32 @@
+{
+  "name": "@multilane/web",
+  "version": "0.1.0",
+  "description": "Web/DOM lane helpers for multilanetesting: selector factories over Playwright.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "peerDependenciesMeta": {
+    "@playwright/test": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

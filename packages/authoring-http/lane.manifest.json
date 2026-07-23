@@ -1,0 +1,63 @@
+{
+  "lane": "http",
+  "version": "0.1.0",
+  "runtimePackage": "@multilane/http",
+  "authoringPackage": "@multilane/authoring-http",
+  "compatibility": {
+    "minRuntimeVersion": "0.1.0",
+    "maxRuntimeVersion": "0.x"
+  },
+  "requiredTools": ["read", "search", "edit"],
+  "optionalMcpServers": [],
+  "envPrerequisites": ["MULTILANE_TARGET_HOST", "MULTILANE_APPROVED_HOSTS"],
+  "skills": [
+    {
+      "id": "http-test-authoring",
+      "kind": "skill",
+      "title": "HTTP contract test authoring",
+      "description": "Author passive HTTP/JSON contract checks: shape/status assertions, host allowlisting, retry/evidence conventions, no state mutation.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/http-test-authoring/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/http-test-authoring/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/http-test-authoring.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "api-explorer",
+      "kind": "agent",
+      "title": "API explorer",
+      "description": "Explore a passive HTTP/JSON target (or a local emulator) to propose shape/status assertions and troubleshoot auth/retry failures. Authoring-only.",
+      "portable": "portable-after-env-config",
+      "always": false,
+      "configureId": "http-explorer",
+      "requires": {
+        "env": ["MULTILANE_TARGET_HOST", "MULTILANE_APPROVED_HOSTS"]
+      },
+      "source": "assets/agents/api-explorer/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/api-explorer.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/api-explorer-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/api-explorer.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+# CLAUDE.md — local operational truth for `multilanetesting`
+#
+# This file is gitignored. Copy it to CLAUDE.md and fill in the values for your
+# specific system under test. Never commit real hosts, partitions, or secrets.
+#
+# Instructions:
+#   cp CLAUDE.md.example CLAUDE.md
+#   # fill in the sections that apply to your target system
+#   # leave sections blank or remove them if that surface does not exist
+
+## System under test
+
+<!-- Replace with your system name and a one-line description -->
+System: <system name>
+Description: <what it does>
+
+## Surfaces and lanes
+
+<!-- Tick the lanes that apply. This comes from your Phase 0 surface inventory memo. -->
+- [ ] Web / DOM — URL: `<MULTILANE_WEB_BASE_URL>`
+- [ ] API contract — host: `<MULTILANE_TARGET_HOST>`
+- [ ] WS contract — endpoint: `<MULTILANE_WS_URL>`
+- [ ] Screen driver — VNC/RDP host: `<SCREEN_TARGET_HOST>`, partition: `<SCREEN_RPS_PARTITION>`
+
+## Known blockers
+
+<!-- Anything confirmed unobservable or blocked. Mirror into docs/memory/blocker-index.md. -->
+- None yet
+
+## Test partitions (screen-driver lane)
+
+<!-- Which partitions are available and safe to use? -->
+- `TEST_A` — available: yes/no
+- `TEST_B` — available: yes/no
+- `TEST_C` — available: yes/no
+- `PROD` — **NEVER target this**
+
+## ART / RPS harness (screen-driver lane)
+
+<!-- If the target has an existing functional-test harness, record it here. -->
+ART path: <path to HCI/ods_art or equivalent>
+Cluster YAML dir: <path to TestFrame/Clusters/<CLUSTER>/>
+Known clusters: <list>
+
+## Commands
+
+<!-- Override any root-level commands for this system if needed. -->
+<!-- Usually the defaults in package.json are sufficient. -->
+
+## Downstream consumer estate (if any)
+
+<!-- Local-only pointer to the estate repo that consumes this engine for real systems, if you have
+     one checked out alongside this repo. Never commit a real path/host here — this file is
+     gitignored precisely so this section can hold that detail locally. -->
+Estate repo path: <local path, if any>
+Systems onboarded there: <names, if decided>
+
+## Notes
+
+<!-- Any other operational detail that should not go to remote:
+     - infra URLs
+     - known quirks of this system's object/state channel
+     - VNC/RDP connection details
+     - credential locations (not the credentials themselves)
+-->

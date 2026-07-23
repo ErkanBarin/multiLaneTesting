@@ -1,0 +1,24 @@
+{
+  "name": "@multilane/http",
+  "version": "0.1.0",
+  "description": "Passive HTTP/JSON contract lane for multilanetesting. Shape/status checks only — no state mutation, no external deps.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

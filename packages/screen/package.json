@@ -1,0 +1,27 @@
+{
+  "name": "@multilane/screen",
+  "version": "0.1.0",
+  "description": "Screen-driver lane for multilanetesting: deterministic frozen-locator loading and validation. No runtime AI.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "README.md"
+  ],
+  "dependencies": {
+    "@multilane/core": "0.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
