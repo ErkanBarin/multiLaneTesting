@@ -62,15 +62,15 @@ test('robot-contract gate rejects an unlisted spec tag and accepts a wired one',
   const root = tmpProject();
   mkdirSync(join(root, 'tests'), { recursive: true });
   mkdirSync(join(root, 'docs', 'ci'), { recursive: true });
-  writeFileSync(join(root, 'tests', 'a.spec.ts'), "test('does a thing @milAreasCrud', () => {});\n");
+  writeFileSync(join(root, 'tests', 'a.spec.ts'), "test('does a thing @samplePanelCrud', () => {});\n");
 
   const unlisted = runRobotContractGate({ cwd: root, tags: [] });
   assert.equal(unlisted.ok, false);
 
-  writeFileSync(join(root, 'docs', 'ci', 'robot-orchestration.md'), 'Supported: @milAreasCrud\n');
-  const wired = runRobotContractGate({ cwd: root, tags: ['@milAreasCrud'] });
+  writeFileSync(join(root, 'docs', 'ci', 'robot-orchestration.md'), 'Supported: @samplePanelCrud\n');
+  const wired = runRobotContractGate({ cwd: root, tags: ['@samplePanelCrud'] });
   assert.equal(wired.ok, true);
-  assert.deepEqual(wired.specTags, ['@milAreasCrud']);
+  assert.deepEqual(wired.specTags, ['@samplePanelCrud']);
 });
 
 test('loadProjectConfig falls back to defaults when no file is present', () => {

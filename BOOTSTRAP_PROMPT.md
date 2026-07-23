@@ -16,18 +16,18 @@ anything over VNC/RDP) via a deterministic screen driver, plus web/DOM (Playwrig
 and WebSocket contract lanes. This repository already contains a complete starter kit. Your job is to build the
 framework **according to the plan**, not to redesign it.
 
-### Tool setup
+### Tool setup (optional authoring aids)
 
-Before reading or changing the repository, enable the following authoring tools when the host supports
-them. They are development tools only; neither may be reachable from a test run.
+The following tools can speed up authoring work when the host supports them. They are development
+tools only; neither may be reachable from a test run.
 
-1. Install the Ponytail plugin. In GitHub Copilot CLI run:
+1. **Ponytail** (optional) — keeps implementations minimal (YAGNI ladder). Install in GitHub Copilot CLI:
   ```bash
   copilot plugin install DietrichGebert/ponytail
   ```
-  Then work in Ponytail's default `full` mode: use its YAGNI ladder and choose the smallest safe
-  implementation.
-2. Install Graphify with the preferred Python tool available on this machine:
+  If available, work in Ponytail's default `full` mode and choose the smallest safe implementation.
+2. **Graphify** (optional) — turns the codebase into a queryable knowledge graph. Install with the
+  preferred Python tool available on this machine:
   ```bash
   uv tool install graphifyy
   ```
@@ -57,8 +57,7 @@ them. They are development tools only; neither may be reachable from a test run.
 - **Functional truth is the gate.** Assert pass/fail from the app's object/state channel. Golden-image
   and OCR are corroborating oracles, not substitutes.
 - **No host literals in committed files.** Reference targets by env-var name (`SCREEN_TARGET_HOST`,
-  `SCREEN_RPS_PARTITION`, …). The only place real values live is `.env` (gitignored). Mirror the
-  `a DOM-focused test suite` hygiene rule.
+  `SCREEN_RPS_PARTITION`, …). The only place real values live is `.env` (gitignored).
 - **No secrets to any model.** Never send credentials, PATs, `.env`, or operational data to a
   vision/computer-use API. Run authoring against an isolated VM.
 - **Prefer Tier 1.** Resolve locators via the object socket or control tree first; image templates

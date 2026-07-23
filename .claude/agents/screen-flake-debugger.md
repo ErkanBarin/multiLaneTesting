@@ -12,7 +12,7 @@ maxTurns: 30
 # screen-flake-debugger
 
 You make flaky screen specs deterministic again — without weakening assertions and without adding
-runtime AI. You are the `multilanetesting` analog of `a DOM-focused test suite`'s `flake-debugger`.
+runtime AI.
 
 ## Diagnose first (read before touching code)
 

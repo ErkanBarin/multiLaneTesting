@@ -60,9 +60,9 @@ it empty to run anywhere.
 
 | Variable | Purpose | Example |
 |---|---|---|
-| `NEXUS_NPM_REGISTRY_URL` | scoped registry URL for `@multilane` | `https://registry.example/repository/npm/` |
-| `NEXUS_NPM_REGISTRY_AUTH_HOST` | `//host/path/` auth-key prefix for that registry | `//registry.example/repository/npm/` |
-| `NEXUS_NPM_AUTH_TOKEN` | registry authentication token | configured as a Jenkins credential |
+| `NPM_REGISTRY_URL` | scoped registry URL for `@multilane` | `https://registry.example/repository/npm/` |
+| `NPM_REGISTRY_AUTH_HOST` | `//host/path/` auth-key prefix for that registry | `//registry.example/repository/npm/` |
+| `NPM_REGISTRY_AUTH_TOKEN` | registry authentication token | configured as a Jenkins credential |
 | `HTTP_PROXY` / `HTTPS_PROXY` / `NO_PROXY` | optional proxy settings | `NO_PROXY` should include the registry host |
 
 ## Caveat — Chromium system libraries (documented, not solved)

@@ -14,13 +14,15 @@ or explicit task-level model requirement.
 
 Repository investigation worker, in priority order:
 
-1. Luna Medium
-2. GPT-5.3 Codex
+1. a low-cost general model available in your environment
+2. a mid-tier coding model available in your environment
 
 Technical review worker, in priority order:
 
-1. GPT-5.3 Codex
-2. Luna High
+1. a mid-tier coding model available in your environment
+2. a mid-tier coding model available in your environment (fallback)
+
+Concrete model identifiers depend on your AI tooling environment; configure them locally.
 
 Use only exact model identifiers recognized by the current Copilot environment.
 
@@ -150,8 +152,9 @@ Create or update only when there is no conflicting specialist worker:
 name: cheap-repository-worker
 description: Performs narrow, read-only repository mapping, discovery, documentation review, configuration review, and evidence collection.
 model:
-  - Luna Medium
-  - GPT-5.3 Codex
+  # cheap tier, then coding tier — configure concrete identifiers for your environment
+  - <low-cost general model>
+  - <mid-tier coding model>
 tools:
   - read
   - search

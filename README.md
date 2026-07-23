@@ -1,208 +1,174 @@
 # multilanetesting
 
-A standalone, deterministic **multi-lane testing framework** for all multi-surface verification surfaces:
+A deterministic **multi-lane testing framework** for systems that expose more than one testable
+surface — browser DOM, HTTP APIs, STOMP/WebSocket streams, and screen-only UIs (VNC/RDP,
+framebuffer, COTS applications with no DOM).
 
-- **Screen driver (core new lane)** — screen-only HMI, desktop application, and COTS targets over VNC/RDP. AI discovers
-  and *freezes* locators at authoring time; runs replay them deterministically with no model.
-- **Web / DOM** — Playwright + selector factories for any target that exposes a real DOM.
-- **API contract** — passive HTTP/JSON shape checks (opt-in, `MULTILANE_API_CONTRACT=1`).
-- **WebSocket contract** — passive STOMP subscribe + supervised active SEND (opt-in).
+**Core principle: AI may assist at authoring time; test execution is always deterministic.**
+AI can help discover screen locators or draft specs, but every artifact that runs in CI is frozen,
+reviewed, and replayed with no model in the loop — enforced by an automated gate, not convention.
 
-This repository is the *seed*. You point an AI coding agent at
-[`BOOTSTRAP_PROMPT.md`](BOOTSTRAP_PROMPT.md), and the agent implements the framework
-phase-by-phase against [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md), reusing the
-templates already provided here (agents, skills, prompts, memory system, RAG, CI, dependencies).
+## Status and maturity
 
-It mirrors the proven `a DOM-focused test suite` customization + memory + orchestration model and extends it with
-a deterministic screen-driver lane — the **only** fundamentally new addition. Everything else
-(Playwright, API contract, WS contract, Robot orchestration, memory, CI) is the same stack.
+This is a **reference implementation under active development**, not a finished product. Honest
+state of each part:
 
----
+| Component | Maturity | Notes |
+|---|---|---|
+| `@multilane/core` (config, gates, verify) | Working | Unit-tested; `mlt verify` runs the deterministic gates |
+| `@multilane/cli` (`mlt new`, `mlt verify`, authoring) | Working | Scaffolds lane projects; unit-tested |
+| `@multilane/http` (passive API contract) | Working | Read-only GETs, shape checks, timeouts, body caps |
+| `@multilane/stomp` (WS contract) | Working | Passive SUBSCRIBE; active SEND double-gated (opt-in + allowlist) |
+| `@multilane/screen` (frozen-locator runtime) | Working | Loads/validates frozen locators; PROD-partition refusal |
+| `@multilane/web`, `@multilane/playwright-config` | Working | Selector factories + shared Playwright preset |
+| `@multilane/authoring-*` (3 packages) | Working | Authoring-time manifests/assets only; never imported at runtime |
+| Python screen driver (`pyproject.toml`) | **Stub** | Skeleton package; no actuation implemented, no tests yet |
+| Robot orchestration (`orchestration/`) | **Template** | Documents an intended pattern; no runnable suites here |
+| Jenkins shared library (`ci/`) | **Optional template** | Example integration; not required and not exercised by this repo's CI |
 
-## Why this exists
+Packages are **not published to any registry**. Consume them via `npm pack` tarballs (see
+[Dogfooding](#dogfooding-the-packaged-engine)) until a publishing decision is made.
 
-`a DOM-focused test suite` tests an Angular app through the **DOM** with Playwright. That works because the web application
-HMI exposes a queryable DOM. Many multi-surface verification targets do **not**: the screen-only HMI renders through a
-C++ HMI, desktop application and COTS products render to a framebuffer behind VNC/RDP. There is no DOM to
-query, so Playwright's selector engine has nothing to bind to.
+## Quickstart
 
-`multilanetesting` solves this with a **deterministic, AI-at-authoring** screen-driver lane, while
-also carrying the familiar lanes we already use in `a DOM-focused test suite`:
+Requires Node >= 20.
 
-- **AI is used at authoring time** to discover controls on screen-only targets and *freeze* a stable locator.
-- **AI is never used at runtime.** Frozen locators replay deterministically — near-zero AI cost,
-  fully reproducible, CI-safe.
-- DOM/REST/STOMP surfaces continue to use the same Playwright / API-contract / WS-contract lanes.
+```bash
+git clone https://github.com/ErkanBarin/multiLaneTesting.git
+cd multiLaneTesting
+npm ci
+npm run validate     # no-runtime-AI gate + robot-contract gate + typecheck + lint + unit tests
+npm run dogfood      # packs all 10 packages, installs them offline into an example consumer, runs smoke tests
+```
 
-See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the driver tiers, oracles, and deterministic-world model.
+Everything above runs offline after `npm ci` — no target system, no credentials, no registry access.
 
----
+## Architecture in one minute
 
-## What's in the box
+Four independent lanes; build only the ones your target exposes:
 
-| Path | What it is |
+| Lane | Surface | How it verifies |
+|---|---|---|
+| **Web / DOM** | Browser UI | Playwright + declarative selector factories |
+| **API contract** | REST/HTTP | Passive GET + status/shape/header assertions (opt-in) |
+| **WS contract** | STOMP/WebSocket | Passive SUBSCRIBE; active SEND requires opt-in **and** host allowlist |
+| **Screen driver** | No-DOM UIs (VNC/RDP, C++ HMI, COTS) | Frozen Tier-1/2 locators replayed deterministically |
+
+The screen lane is the novel part. AI-assisted discovery (object introspection, local CV, offline
+OCR) happens at **authoring time** and produces a frozen locator JSON under `locators/<area>/<key>.json`,
+reviewed like code. At runtime the driver only loads and replays frozen locators — and refuses to
+run if the target partition resolves to `PROD`.
+
+Details: [`ARCHITECTURE.md`](ARCHITECTURE.md) (tiers, oracles, deterministic-world model) and
+[`docs/test-strategy.md`](docs/test-strategy.md).
+
+## Packages
+
+All engine code lives in npm workspaces under [`packages/`](packages/):
+
+| Package | Purpose |
 |---|---|
-| [`BOOTSTRAP_PROMPT.md`](BOOTSTRAP_PROMPT.md) | The master prompt you hand to an AI agent to build the repo |
-| Ponytail + Graphify | External authoring tools installed by `BOOTSTRAP_PROMPT.md`; they simplify implementation and answer architecture questions |
-| [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) | Full phased plan (Phase 0 → 4) with deliverables and acceptance gates |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Driver tiers, three oracles, deterministic replay, building-blocks table, risks |
-| [`AGENTS.md`](AGENTS.md) | Cross-agent entrypoint (auto-attached by VS Code, Copilot CLI, Cursor, Codex, etc.) |
-| [`CUSTOMIZATION_MAP.md`](CUSTOMIZATION_MAP.md) | Claude ↔ Copilot mirror table and the wrap pattern |
-| [`CLAUDE.md.example`](CLAUDE.md.example) | Template for your local `CLAUDE.md` (gitignored — holds env-specific operational truth) |
-| [`docs/onboarding.md`](docs/onboarding.md) | Step-by-step onboarding: clone → env → Phase 0 → first test |
-| `.github/copilot-instructions.md` | GitHub Copilot adapter (short pointer to `AGENTS.md`) |
-| `.github/instructions/*.instructions.md` | Path-scoped lane rules (screen / web / api / ws) |
-| `.github/agents/*.agent.md` | Copilot custom agents (orchestrator + hidden workers) |
-| `.github/prompts/*.prompt.md` | Copilot slash-command wrappers |
-| `.claude/agents/*.md` | Claude specialist agents (source of truth) |
-| `.claude/skills/*/SKILL.md` | Claude reusable workflows (source of truth) |
-| `docs/memory/*` | Curated, compact repo memory (the same system `a DOM-focused test suite` uses) |
-| `docs/ci/*` | Robot orchestration + Jenkins pipeline templates |
-| `docs/rag/graphify-notes.md` | Knowledge-graph (Graphify) wiring notes |
-| `package.json`, `pyproject.toml` | JS-lane and Python screen-driver-lane dependency manifests |
-| `.mcp.json`, `.vscode/mcp.json` | MCP server wiring (Playwright + screen-driver MCP) |
-| `Jenkinsfile`, `.env.example`, `.gitignore` | CI entrypoint, environment template, ignore rules |
+| `@multilane/core` | Env-driven config, deterministic gates (no-runtime-AI, robot-contract, partition), `verify` |
+| `@multilane/cli` | `mlt new` (scaffold a consumer project), `mlt verify`, `mlt authoring` |
+| `@multilane/web` | Selector-factory helpers for the Playwright lane |
+| `@multilane/http` | Passive HTTP/JSON contract checks (built-in `node:http(s)` only) |
+| `@multilane/stomp` | STOMP-over-WS subscribe + gated send (`@stomp/stompjs`/`ws` as optional peers) |
+| `@multilane/screen` | Frozen-locator loading + validation (runtime surface of the screen lane) |
+| `@multilane/playwright-config` | Shared Playwright preset (env-driven baseURL, JUnit/HTML evidence) |
+| `@multilane/authoring-web` / `-http` / `-stomp` | Authoring-time lane manifests + skill/agent assets |
 
----
+Public API surface: [`docs/API.md`](docs/API.md).
 
-## Publishing `@multilane/*` packages to Nexus
+## Using the engine in a test project
 
-This repo is the **engine source.** All 10 `@multilane/*` packages (`core`, `cli`, `web`, `http`,
-`stomp`, `screen`, `playwright-config`, `authoring-web`, `authoring-http`, `authoring-stomp`)
-publish to the corporate Nexus registry when you push to `main` — **live and verified**:
-
-1. **Make your changes** — update code, fix bugs, add features.
-2. **Bump versions** — `npm version patch -w @multilane/<pkg>` for each package that changed.
-3. **Push to main** — Git host webhook triggers the Jenkins pipeline automatically.
-4. **Pipeline runs** — checkout → install → validate (lint/tests/guards) → publish (all 10 in order).
-   Every npm step runs inside the MDT `node<ver>-chrome` container via the shared library's `mdtNode`
-   step — the agents have no Node/npm/nvm of their own.
-5. **Verify** — packages appear in Nexus at new versions. Downstream consumers can install.
-
-**See [`AGENTS.md` → "Publishing workflow"](AGENTS.md#publishing-workflow)** for how CI provisions
-Node (`mdtNode`), the `NODE_VERSION` / `NPM_RELEASE_REPOSITORY` settings, and troubleshooting.
-
----
-
-## How to use it
-
-**→ Read [`docs/onboarding.md`](docs/onboarding.md) for the full step-by-step.** Short version:
-
-1. `git clone https://github.com/ErkanBarin/multiLaneTesting.git && cd multiLaneTesting`
-2. `npm install`
-3. `cp .env.example .env` — fill in the values for your target system.
-4. `cp CLAUDE.md.example CLAUDE.md` — fill in your system's local operational truth (Claude only).
-5. Open the repo in your AI agent and say: *"Follow `BOOTSTRAP_PROMPT.md`. Install Ponytail and
-  Graphify, then implement Phase 0 only
-   for `<your system name>` and stop for my sign-off."*
-
-> **This kit ships both ways** — it ships the *plan, conventions, and AI customization* for building
-> a system's tests, **and** the reusable engine as versioned `@multilane/*` packages your test
-> projects consume from Nexus (see below).
-
----
-
-## Using multilanetesting in your system tests
-
-The engine ships as versioned `@multilane/*` packages from the internal Nexus registry. Your
-per-system test project **consumes** the engine — it never vendors framework source. Full public
-surface: [`docs/API.md`](docs/API.md).
-
-### 1. Scaffold a project
+Your system-under-test never lives in this repo — you scaffold a small consumer project:
 
 ```bash
 npx @multilane/cli new my-system --lanes web,http   # lanes: web, http, stomp, screen
 cd my-system
 ```
 
-The generated project has a config skeleton, a frozen-`locators/` dir, one example spec per selected
-lane, a proxy/Nexus-aware `.npmrc`, and a thin `Jenkinsfile`. Lanes are **independently optional** —
-an `http`-only project never pulls Playwright or the STOMP stack.
+The generated project ships a config skeleton, a frozen-`locators/` dir, one example spec per lane,
+a registry-agnostic `.npmrc` template, and an optional thin `Jenkinsfile`. Lanes are independently
+optional — an `http`-only project pulls no Playwright or STOMP dependencies.
 
-### 2. Install from Nexus (behind the proxy)
-
-```bash
-cp .npmrc.sample .npmrc     # scope @multilane -> Nexus via env vars; no secret committed
-npm ci
-npx playwright install chromium   # web lane only
-```
-
-### 3. Extend the config preset
+Target values always come from the environment (`MULTILANE_WEB_BASE_URL`, `MULTILANE_TARGET_HOST`,
+`SCREEN_RPS_PARTITION`, …). **No host literals in committed files.**
 
 ```ts
-// playwright.config.ts
+// playwright.config.ts — extend the shared preset
 import { definePlaywrightConfig } from '@multilane/playwright-config';
 export default definePlaywrightConfig({ testDir: './tests/web' });
 ```
 
-Target values come from the environment (`MULTILANE_WEB_BASE_URL`, `MULTILANE_TARGET_HOST`, …) — no
-host literals in committed files.
+In the consumer project, `mlt verify` runs the same deterministic gates this repo runs on itself.
 
-### 4. Freeze locators (AI allowed here)
-
-Locator discovery/freezing is an **authoring-time** activity (local CV + offline OCR, human-reviewed).
-Frozen locators live under `locators/<area>/<key>.json` and replay deterministically — **no AI at
-runtime**.
-
-### 5. Run deterministically
+## Dogfooding the packaged engine
 
 ```bash
-npm run verify        # mlt verify — the deterministic gates (no-runtime-ai + robot-contract)
-npm run test:http     # run a lane
+npm run dogfood
 ```
 
-### 6. Wire up Jenkins (no Docker)
+packs all 10 workspaces with `npm pack`, rewrites an example consumer
+([`examples/consumer-smoke/`](examples/consumer-smoke/)) to install from those tarballs (with
+`overrides` so nested workspace deps stay local), installs with npm's `--offline` flag, then runs
+`mlt verify` plus a smoke suite across every lane. This proves the *packaged* engine works with
+zero registry access.
 
-Register the `multilane-jenkins` Shared Library (see
-[`ci/jenkins-shared-library/`](ci/jenkins-shared-library/README.md)) and keep the `Jenkinsfile` thin:
+## Security model
 
-```groovy
-@Library('multilane-jenkins') _
-runLaneTests(lanes: 'web,http', targetUrl: params.TARGET_URL, nodeVersion: '22.11.0')
-```
+- **No AI at runtime** — `npm run check:no-runtime-ai` scans runtime sources for model/API usage and
+  fails the build on a match.
+- **No host literals or secrets in the repo** — targets are env-var references; `.env` is gitignored.
+- **Read-only by default** — the HTTP lane only GETs; the STOMP lane only subscribes. Active SEND
+  requires an explicit inject flag **and** an approved-hosts allowlist match.
+- **Operational-partition refusal** — the screen lane throws if `SCREEN_RPS_PARTITION` resolves to
+  `PROD`, both at runtime and in the CI gate.
+- **Pinned supply chain** — committed lockfile, exact dependency versions, SHA-pinned GitHub
+  Actions, Dependabot enabled, no postinstall scripts.
 
-The pipeline provisions Node, writes the Nexus `.npmrc`, `npm ci`, installs Chromium through the
-proxy (web lane), runs `mlt verify` + the requested lanes, and archives JUnit + traces.
+Threat model and reporting process: [`SECURITY.md`](SECURITY.md).
 
-> **Dogfood it:** `npm run dogfood` packs the engine, installs it from tarballs into an example
-> consumer, and runs a smoke suite — proving the *packaged* engine works end-to-end, offline.
+## CI
 
-### Real-world consumers — the estate pattern
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push/PR: `npm ci`, the full
+`validate` suite (gates, typecheck, lint, unit tests), a pack dry-run, the offline dogfood, and a
+Python driver install/import smoke. No publishing, no releases.
 
-A system under test never lives in this repo. The proven shape is a separate, small **estate repo**
-owned by whoever runs the tests (e.g. `<your-org>/muac-test-estate`): an npm workspace root with one
-self-contained `systems/<name>/` project per system, each scaffolded with `mlt new` and consuming
-`@multilane/*` from Nexus like any other npm dependency. That pattern has been stood up and verified
-offline end-to-end — per-system `mlt verify` gates pass, cwd-scoped config gives provable
-cross-system isolation (confirmed via `strace`), and lane-minimalism holds (an `http`-only system
-pulls no Playwright/STOMP deps). One Jenkins job per system, no Docker, wired through the same
-`runLaneTests` Shared Library contract (see `ci/jenkins-shared-library/`), wrapped in a thin
-monorepo-scoping step on the estate side.
+Jenkins users: [`ci/jenkins-shared-library/`](ci/jenkins-shared-library/) is an **optional**
+integration template with a `runLaneTests` step — replaceable by any CI system that can run npm.
 
-**One link that pattern cannot prove offline:** whether `npm install` actually resolves the seven
-`@multilane/*` packages from Nexus through a corporate proxy on a real agent — no fully offline
-sandbox can reach a real registry to test this. Treat that install as its own isolated smoke test
-(no lanes, no `mlt verify` — just the install plus a report of what resolved) on a real Jenkins agent
-*before* trusting a full per-system job.
+## AI-assisted authoring (optional)
 
----
+The repo carries an agent/skill layer for AI-assisted test *authoring* — Claude Code skills and
+agents under [`.claude/`](.claude/), Copilot mirrors under [`.github/`](.github/), MCP wiring for
+Playwright and an authoring-only screen-introspection server, and a curated memory system under
+[`docs/memory/`](docs/memory/). Entry point for any agent: [`AGENTS.md`](AGENTS.md).
 
-## Guardrails baked in (same as `a DOM-focused test suite`)
+None of this is required to run tests, and none of it can reach a test run — the no-runtime-AI gate
+is the enforcement, not the documentation.
 
-- **No host literals in committed files** — reference targets by env-var name
-  (`SCREEN_TARGET_HOST`, `SCREEN_RPS_PARTITION`, …). Single source of truth is `.env` (gitignored).
-- **No secrets to any model** — never send credentials, PATs, or `.env` to a vision/computer-use API.
-- **Deterministic at runtime** — locator discovery (local CV + offline OCR) is authoring-only; CI replays frozen locators.
-- **Replay only into test partitions** — never `PROD`. See `ARCHITECTURE.md`.
-- **Curated memory, not transcripts** — store verified, reusable facts only; see `docs/memory/README.md`.
+## Repository layout
 
----
+| Path | What it is |
+|---|---|
+| `packages/*` | The 10 `@multilane/*` engine packages (npm workspaces) |
+| `examples/consumer-smoke/` | Dogfood consumer installing the packaged engine from tarballs |
+| `scripts/` | Gate runners + the dogfood harness |
+| `docs/` | Architecture, API, strategy, coverage, traceability, curated memory |
+| `orchestration/` | Robot Framework orchestration pattern (template) |
+| `ci/` | Optional Jenkins shared-library template |
+| `.claude/`, `.github/` | Authoring-time agent/skill layer (Claude source of truth, Copilot mirror) |
+| `pyproject.toml`, `src/` | Python screen-driver package (stub) |
+| `ARCHITECTURE.md`, `IMPLEMENTATION_PLAN.md`, `BOOTSTRAP_PROMPT.md` | Design + build-out docs |
 
-## Relationship to `a DOM-focused test suite`
+## Contributing
 
-`a DOM-focused test suite` tests the web application Angular frontend and stays on Playwright. `multilanetesting` is a
-*sibling* framework intended for **other multi-surface systems** (and can cover their DOM/REST/WS surfaces
-too). Both share the same agent workflow (`*-explorer → *-test-designer → repo-keeper`), the same
-memory model, the same Robot-Framework orchestration pattern, and the same PR-hygiene discipline.
-If you already know `a DOM-focused test suite`, you already know how to operate `multilanetesting` — the only
-new thing to learn is the screen-driver lane for no-DOM targets.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). Before opening a PR run `npm run validate`. Community
+standards: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md); questions: [`SUPPORT.md`](SUPPORT.md).
+
+## License
+
+**No license has been selected yet** — the packages are marked `UNLICENSED` and all rights are
+reserved until the maintainers make an explicit licensing decision. Until then you may read and
+evaluate the code, but redistribution or production use is not granted.

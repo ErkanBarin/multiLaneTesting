@@ -10,7 +10,7 @@ End-to-end verification framework for **any multi-surface system under test**, c
 | **Screen driver** | Framebuffer over VNC/RDP, C++ HMI, COTS | No DOM — screen-only target |
 
 Build only the lanes the target system actually exposes. The screen driver is the novel lane;
-Playwright, API contract, and WS contract follow the same conventions already proven in `a DOM-focused test suite`.
+Playwright, API contract, and WS contract follow the same conventions proven in mature Playwright DOM suites.
 
 This document defines the screen-driver model (driver tiers, oracles, deterministic world) that
 does not exist in the other lanes. For the other lanes, see the path-scoped instruction files in
@@ -87,19 +87,18 @@ never a substitute for the functional oracle when a functional channel exists.
 Screen tests are only reproducible if the *inputs* are reproducible. We never test against live
 operational data.
 
-- **Replay engine:** the ODS **RPS** (Recording & Playback System) replays a recorded scenario into
+- **Replay engine:** a record-and-playback system (**RPS**) replays a recorded scenario into
   a **test partition** (e.g. `TEST_A` / `TEST_B` / `TEST_C`). **Never `PROD`.**
 - **Scenario = fixture:** a frozen RPS scenario is the screen-lane equivalent of a Playwright
   fixture. Same scenario in → same pixels/objects out.
-- **Harness reuse:** where a target already has a functional-test harness (e.g. the screen-only HMI **ART**
-  harness — `HCI/ods_art`, YAML clusters under `TestFrame/Clusters/<CLUSTER>/*.yaml`), reuse its
-  socket and cluster metadata rather than rebuilding. The ~50 functional clusters
-  (MAN/MAP/MIL/FDM/FDO/RTE/TRJ/CAM …) already carry roles matrices, iteration ids, and a
-  `requirement_refs` slot to wire traceability.
+- **Harness reuse:** where the target system already has a functional-test harness or a
+  record-and-playback facility, reuse its introspection socket and scenario metadata instead of
+  building a parallel channel. Keep the harness-specific wiring in your estate repo, not in the
+  engine.
 
 ```mermaid
 flowchart LR
-  rec[Recorded scenario] --> rps[ODS RPS replay]
+  rec[Recorded scenario] --> rps[RPS replay]
   rps --> part[(Test partition<br/>TEST_A / TEST_B / TEST_C)]
   part --> target[Screen target<br/>screen-only HMI / COTS / desktop application]
   target --> driver[multilanetesting driver]
@@ -115,7 +114,7 @@ flowchart LR
 |---|---|---|
 | Object introspection (Tier 1) | App inspection socket / MapGrab-style bridge | Preferred; symbolic ids |
 | Native UI automation trees (Tier 1) | FlaUI / pywinauto (Win UIA), AT-SPI (Linux), Appium, Java Access Bridge | Native automation/control-tree access |
-| Scenario replay | ODS RPS | Test partitions only |
+| Scenario replay | RPS (record-and-playback system) | Test partitions only |
 | Input synthesis | PyAutoGUI | Keyboard/mouse at coordinates |
 | Image match (Tier 2) | OpenCV, SikuliX, Eggplant | Eggplant commercial |
 | Golden image (rendering oracle) | Playwright `toHaveScreenshot`, BackstopJS, Applitools | Applitools commercial/AI |
@@ -123,13 +122,13 @@ flowchart LR
 | Vision discovery (Tier 3, authoring) | OpenCV region proposals + offline OCR (PaddleOCR/EasyOCR, Apache-2.0) | All offline, no external service; no licence risk |
 | Computer-use (Tier 3/4, authoring) | n/a — dropped (external screenshot egress prohibited) | Replaced by local CV + OCR discovery |
 | Display / isolation | Xvfb + Docker, VNC/RDP | Isolated VM, no secrets to model |
-| Evidence | HTML / JUnit / JSON + requirements system / Jira / STR adapters | Feeds the Subsystem Test Report |
+| Evidence | HTML / JUnit / JSON + requirements system / Jira / test-report adapters | |
 
 ---
 
 ## 6. The other lanes (web, API, WS)
 
-These lanes are **first-class**, not optional plugins. They are the same design proven in `a DOM-focused test suite`;
+These lanes are **first-class**, not optional plugins. They follow the same conventions proven in mature Playwright DOM suites;
 the screen-driver lane is the new addition. Build whichever lanes the target system exposes.
 
 | Lane | Workspace | Env gate | Key tool | Conventions |
@@ -158,7 +157,7 @@ the screen-driver lane is the new addition. Build whichever lanes the target sys
 
 ---
 
-## 8. Workflow (identical to `a DOM-focused test suite`, surface swapped)
+## 8. Workflow
 
 ```
 screen-explorer  →  screen-test-designer  →  repo-keeper
@@ -167,6 +166,6 @@ screen-explorer  →  screen-test-designer  →  repo-keeper
         └────────── screen-flake-debugger ◄──────────┘  (on failure / drift)
 ```
 
-The web/API/WS lanes are identical to `a DOM-focused test suite` — same conventions, same memory model, same PR
-hygiene. The screen-driver lane adds a new discovery surface: socket → control tree → template → vision.
+The web/API/WS lanes use the same conventions, memory model, and PR hygiene as the screen-driver lane.
+The screen-driver lane adds a new discovery surface: socket → control tree → template → vision.
 Everything downstream (authoring style, traceability, Robot orchestration) is the same across all lanes.

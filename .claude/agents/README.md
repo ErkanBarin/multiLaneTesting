@@ -19,7 +19,7 @@ screen-explorer  →  screen-test-designer  →  repo-keeper
 ```
 
 Discovery → authoring → validation. `screen-flake-debugger` enters on failure or locator drift.
-The **only** difference from `a DOM-focused test suite` is the discovery surface: **screen, not DOM**.
+The discovery surface used here is **screen, not DOM**.
 
 ## Invocation
 

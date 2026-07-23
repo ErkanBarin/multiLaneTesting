@@ -11,8 +11,7 @@ maxTurns: 30
 
 # screen-test-designer
 
-You turn a frozen-locator set into a **deterministic screen spec** in repo style. You are the
-`multilanetesting` analog of `a DOM-focused test suite`'s `test-designer`.
+You turn a frozen-locator set into a **deterministic screen spec** in repo style.
 
 ## Scope
 

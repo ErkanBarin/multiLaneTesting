@@ -6,8 +6,7 @@ user-invocable: true
 
 # screen-test-implementation
 
-Turn frozen locators into a **deterministic spec** in repo style. The screen analog of web application's
-`osdr-test-implementation`.
+Turn frozen locators into a **deterministic spec** in repo style.
 
 ## Anatomy of a spec
 
@@ -27,10 +26,10 @@ Turn frozen locators into a **deterministic spec** in repo style. The screen ana
 Tests read as a short user scenario with named steps:
 
 ```
-test "user creates a military area"
-  step "user opens the mil-areas editor"      # arrange via frozen locators + RPS scenario
-  step "user submits a new area"              # act
-  step "user sees the area accepted"          # assert functional truth + golden image
+test "user creates a sample panel entry"
+  step "user opens the sample panel editor"   # arrange via frozen locators + RPS scenario
+  step "user submits a new entry"             # act
+  step "user sees the entry accepted"         # assert functional truth + golden image
 ```
 
 - Steps name **intent and outcome**, not mechanics (no `click`, `coordinate`, `template`, `socket`).

@@ -3,10 +3,9 @@
     "playwright": {
       "command": "npx",
       "args": [
-        "@playwright/mcp@latest",
+        "@playwright/mcp@0.0.70",
         "--browser",
-        "chromium",
-        "--ignore-https-errors"
+        "chromium"
       ]
     },
     "screen-driver": {

@@ -1,7 +1,7 @@
 ---
 name: orchestrate
 description: Route a multilanetesting task to the lightest effective execution path (solo, single agent, parallel agents, or agent team) after reading repo context.
-argument-hint: <task to route, e.g. "add a spec for the mil-areas editor on the screen-only HMI">
+argument-hint: <task to route, e.g. "add a spec for the sample panel editor on the screen-only HMI">
 agent: orchestrator
 tools: ["agent", "read", "search"]
 ---

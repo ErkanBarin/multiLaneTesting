@@ -52,7 +52,7 @@ local/offline; model weights are pre-provisioned, never committed. _Verified 202
 
 **OmniParser v2 was dropped.** Its `icon_detect` weights are **AGPL-3.0** (inherited from YOLO) and its
 repo code is CC-BY-4.0; the paired computer-use loop also egresses screenshots to external LLM APIs.
-Both are incompatible with an air-gapped ATC environment even at authoring time. The replacement
+Both are incompatible with an air-gapped environment even at authoring time. The replacement
 OpenCV + OCR discovery path is fully Apache-2.0/BSD-3-Clause and offline, preserving the unchanged
 **"AI at authoring, never at runtime"** principle.
 

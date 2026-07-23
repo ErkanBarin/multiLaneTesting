@@ -1,7 +1,7 @@
 # Robot orchestration — `multilanetesting`
 
 Optional **tier-1 wrapper** that runs the framework's lanes through Robot Framework and produces one
-unified report. Adapted from the web application `a DOM-focused test suite-robot` pattern. The framework itself does not depend on
+unified report. Adapted from a sibling Robot orchestration repo pattern. The framework itself does not depend on
 Robot — this is an orchestration layer on top.
 
 ## Two-repo shape
@@ -20,8 +20,8 @@ the framework internals.
 | Level | Example |
 |---|---|
 | Lane | `./bin/run.sh suites/lanes.robot` |
-| Area | `./bin/run.sh suites/areas.robot --test "Mil Areas"` |
-| Tag | `./bin/run.sh suites/tags.robot --variable SCREEN_TAG:@milAreasCrud` |
+| Area | `./bin/run.sh suites/areas.robot --test "Sample Panel"` |
+| Tag | `./bin/run.sh suites/tags.robot --variable SCREEN_TAG:@samplePanelCrud` |
 
 ## Flow
 

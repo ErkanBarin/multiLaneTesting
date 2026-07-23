@@ -1,14 +1,13 @@
 # Route map — `multilanetesting`
 
-Screens/targets under test, their **functional channel**, and status. The screen analog of web application's
-route-map (screens replace URLs). Replace example rows with verified entries.
+Screens/targets under test, their **functional channel**, and status. Replace example rows with verified entries.
 
 ## Targets
 
 | Target | Surface | Functional channel | Test partition | Status | Last verified |
 |---|---|---|---|---|---|
-| <!-- example --> screen-only HMI — mil-areas editor | VNC | Tier-1 object socket (`cwp.milareas.*`) | `TEST_A` | `not-started` | — |
-| <!-- example --> desktop application — regulation list | RDP | Tier-1 native UI automation (UIA) | `TEST_B` | `not-started` | — |
+| <!-- example --> screen-only HMI — sample panel editor | VNC | Tier-1 object socket (`app.samplePanel.*`) | `TEST_A` | `not-started` | — |
+| <!-- example --> desktop application — data list | RDP | Tier-1 native UI automation (UIA) | `TEST_B` | `not-started` | — |
 | <!-- example --> COTS viewer — document pane | VNC | Tier-2 template (DPI/theme-stamped) | `TEST_C` | `not-started` | — |
 | <!-- example --> Web console (if any DOM) | Browser | Playwright DOM (web lane) | n/a | `not-started` | — |
 

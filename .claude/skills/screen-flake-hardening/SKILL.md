@@ -6,7 +6,7 @@ user-invocable: true
 
 # screen-flake-hardening
 
-Make a flaky screen spec deterministic again. The screen analog of web application's `osdr-flake-hardening`.
+Make a flaky screen spec deterministic again.
 
 ## Diagnose before editing
 

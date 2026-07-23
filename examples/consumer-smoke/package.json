@@ -6,13 +6,19 @@
   "description": "Dogfood consumer: installs the PACKAGED @multilane engine from tarballs and runs a smoke suite.",
   "scripts": {
     "verify": "mlt verify",
-    "test:smoke": "node --test tests/http/*.test.mjs tests/screen/*.test.mjs"
+    "test:smoke": "node --test tests/**/*.test.mjs"
   },
   "devDependencies": {
+    "@multilane/authoring-http": "0.1.0",
+    "@multilane/authoring-stomp": "0.1.0",
+    "@multilane/authoring-web": "0.1.0",
     "@multilane/cli": "0.1.0",
     "@multilane/core": "0.1.0",
     "@multilane/http": "0.1.0",
-    "@multilane/screen": "0.1.0"
+    "@multilane/playwright-config": "0.1.0",
+    "@multilane/screen": "0.1.0",
+    "@multilane/stomp": "0.1.0",
+    "@multilane/web": "0.1.0"
   },
   "engines": {
     "node": ">=20"

@@ -33,5 +33,14 @@
   },
   "publishConfig": {
     "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/ErkanBarin/multiLaneTesting#readme",
+  "bugs": {
+    "url": "https://github.com/ErkanBarin/multiLaneTesting/issues"
   }
 }

@@ -143,8 +143,8 @@ npm pack --dry-run -w @multilane/cli
 ```
 
 The package dry runs are the tarball-content proof. Fixture tests prove consumer-side Node
-resolution and deterministic materialization, but they do not prove a live Nexus publication or
-install through a real agent proxy; validate that path in your deployment environment.
+resolution and deterministic materialization, but they do not prove a live publication to your npm
+registry or install through a real agent proxy; validate that path in your deployment environment.
 
 ## 10. Open decisions
 

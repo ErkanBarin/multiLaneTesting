@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 // dogfood.mjs — prove the PACKAGED engine works.
 //
-// Packs @multilane/{core,cli,http,screen} with `npm pack`, installs those tarballs into a temp copy
-// of examples/consumer-smoke (no source imports, no registry), then runs `mlt verify` + the smoke
-// suite. Fully offline and deterministic — nothing here pulls from Nexus or npmjs.
+// Packs every @multilane/* workspace with `npm pack`, installs those tarballs into a temp copy of
+// examples/consumer-smoke (no source imports, no registry), then runs `mlt verify` + the smoke
+// suite. `overrides` repoints nested @multilane/* dependencies (e.g. screen -> core) at the same
+// tarballs, so the install is hermetic and runs with npm's --offline flag — nothing here pulls
+// from any registry.
 import { execSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PACKAGES = ['core', 'cli', 'http', 'screen'];
+const PACKAGES = readdirSync(join(repo, 'packages'));
 
 const staging = mkdtempSync(join(tmpdir(), 'mlt-dogfood-'));
 const tarDir = join(staging, 'tarballs');
@@ -44,12 +46,17 @@ try {
   for (const dep of Object.keys(pkg.devDependencies ?? {})) {
     if (tarballs[dep]) pkg.devDependencies[dep] = `file:${tarballs[dep]}`;
   }
+  // Overrides make nested @multilane/* dependencies resolve to the tarballs too, keeping the
+  // install hermetic (no packument fetch for workspace-internal deps).
+  pkg.overrides = Object.fromEntries(
+    Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
+  );
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 
   // 3) Install the packaged engine (offline) and run gates + smoke.
-  run('npm install --no-audit --no-fund --prefer-offline', consumer);
+  run('npm install --no-audit --no-fund --offline', consumer);
   run('npx --no-install mlt verify', consumer);
-  run('node --test tests/http/*.test.mjs tests/screen/*.test.mjs', consumer);
+  run('node --test "tests/**/*.test.mjs"', consumer);
 
   console.log('\n✓ dogfood: packaged engine installed from tarballs; gates + smoke suite passed.');
 } finally {

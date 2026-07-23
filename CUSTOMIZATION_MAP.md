@@ -1,7 +1,7 @@
 # Customization Map — `multilanetesting`
 
 How the Claude-side source of truth mirrors to the Copilot-side wrapper layer, and which files are
-asymmetric by design. Same model as `a DOM-focused test suite`.
+asymmetric by design.
 
 ## Wrap pattern
 

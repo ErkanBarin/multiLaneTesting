@@ -96,3 +96,36 @@ test('two independent subscribers on different destinations each get only their 
     await emulator.close();
   }
 });
+
+test('send rejects after timeoutMs when the broker accepts WS but never completes STOMP connect', async () => {
+  const { WebSocketServer } = await import('ws');
+  const wss = new WebSocketServer({ port: 0, host: '127.0.0.1' });
+  await new Promise((resolve) => wss.on('listening', resolve));
+  const { port } = wss.address();
+  const url = `ws://127.0.0.1:${port}`;
+  try {
+    await assert.rejects(
+      send(url, '/topic/demo', 'hello', {
+        inject: true,
+        approvedHosts: [`127.0.0.1:${port}`],
+        timeoutMs: 300,
+      }),
+      /timed out after 300ms/,
+    );
+  } finally {
+    await new Promise((resolve) => wss.close(resolve));
+  }
+});
+
+test('subscribeOnce rejects with a clear error when the WebSocket connection fails', async () => {
+  const net = await import('node:net');
+  const probe = net.createServer();
+  await new Promise((resolve) => probe.listen(0, '127.0.0.1', resolve));
+  const { port } = probe.address();
+  await new Promise((resolve) => probe.close(resolve));
+
+  await assert.rejects(
+    subscribeOnce(`ws://127.0.0.1:${port}`, '/topic/unreachable', { timeoutMs: 3000 }),
+    /WebSocket error/,
+  );
+});

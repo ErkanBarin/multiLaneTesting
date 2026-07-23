@@ -6,8 +6,7 @@ user-invocable: true
 
 # screen-exploration
 
-Discover **how to locate controls** on a screen target and **freeze** them for the author. The
-screen analog of web application's `osdr-ui-exploration` — same goal, different surface.
+Discover **how to locate controls** on a screen target and **freeze** them for the author.
 
 ## Procedure
 
@@ -29,11 +28,11 @@ screen analog of web application's `osdr-ui-exploration` — same goal, differen
 
 | Field | Example |
 |---|---|
-| `area` | `mil-areas` |
+| `area` | `sample-panel` |
 | `name` | `createButton` |
 | `tier` | `1` (object socket) / `2` (template) |
-| `resolver` | object id `cwp.milareas.create` / template `create.png` @1920×1080 @100% dark |
-| `requirement_ref` | `OSD_SDR_038` |
+| `resolver` | object id `app.samplePanel.create` / template `create.png` @1920×1080 @100% dark |
+| `requirement_ref` | `REQ_001` |
 | `verified` | `YYYY-MM-DD`, resolved 2× identical |
 
 ## Guardrails

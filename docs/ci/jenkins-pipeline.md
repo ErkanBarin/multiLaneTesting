@@ -31,6 +31,7 @@ A CI check asserts **zero** vision/computer-use API calls during a run. If the c
 build fails — this is the mechanism that keeps per-run AI cost at zero.
 
 > This file documents the intended **test/replay** pipeline (screen + lanes), which is conceptual
-> until the framework has real specs and a CI display host. It is **separate** from the committed
-> root `Jenkinsfile`, which is the **live, working publish pipeline** (`@multilane/*` → Nexus via the
-> `mdtNode` container step). For publishing, see [`AGENTS.md` → "Publishing workflow"](../../AGENTS.md#publishing-workflow).
+> until the framework has real specs and a CI display host. A publish pipeline can be attached in
+> your CI; this repo ships only templates (`ci/`). Provision Node however your CI does (container
+> image, tool installer, or nvm). For publishing guidance, see
+> [`AGENTS.md` → "Publishing workflow"](../../AGENTS.md#publishing-workflow).

@@ -54,11 +54,11 @@ Used when the target is a black box with no introspection socket (e.g. a COTS to
 |------|-------------|------|
 | 1 | Take a screenshot of the screen target | pyautogui |
 | 2 | Local CV + OCR analyses the screenshot and returns a list of detected elements — each with a bounding box, an OCR text label, and a confidence score | OpenCV region proposals + offline OCR (PaddleOCR/EasyOCR, all Apache-2.0, run locally) |
-| 3 | Copilot reads that list (a JSON of boxes + labels) and matches them to what you described — e.g. "the FL field on the BAW123 label" | GitHub Copilot (VS Code) |
+| 3 | Copilot reads that list (a JSON of boxes + labels) and matches them to what you described — e.g. "the status field showing READY" | GitHub Copilot (VS Code) |
 | 4 | Human reviews the match → **Tier-2 locator** frozen (image template crop + DPI/theme stamp) | you |
 
 **How Copilot does the identification in step 3:**
-The local CV + OCR pass gives Copilot a list like `[{"label": "FL350", "box": [410,305,490,325]}, ...]`. The human describes the target control in plain language in the chat. Copilot cross-references the label text, position, and context to pick the right box. There is no guessing at runtime — this match happens once, a human confirms it, and then it is frozen.
+The local CV + OCR pass gives Copilot a list like `[{"label": "READY", "box": [410,305,490,325]}, ...]`. The human describes the target control in plain language in the chat. Copilot cross-references the label text, position, and context to pick the right box. There is no guessing at runtime — this match happens once, a human confirms it, and then it is frozen.
 
 **AI is only here, in this phase, while a human is watching.**
 
@@ -89,40 +89,40 @@ RPS records the operator's clicks and keystrokes and plays them back. The screen
 
 ## A concrete example
 
-**Scenario:** "User opens a flight label and sees the flight level."
+**Scenario:** "User opens the status panel and sees the current status field."
 
-**Phase 1 — Path A (screen-only HMI has an object socket):**
-1. Human says to Copilot: "I need a locator for the flight-level field on label BAW123."
-2. Copilot calls the screen-driver MCP: `queryObject("BAW123.flightLevel")`
-3. MCP returns: `{id: "lbl_BAW123_fl", type: "readout", value: "FL350"}`
-4. Human approves → committed as `locators/cwp/flight-label-fl-field.json`:
+**Phase 1 — Path A (desktop app has an object socket):**
+1. Human says to Copilot: "I need a locator for the status field that shows READY."
+2. Copilot calls the screen-driver MCP: `queryObject("app.statusField")`
+3. MCP returns: `{id: "app.statusField", type: "readout", value: "READY"}`
+4. Human approves → committed as `locators/app/status-field.json`:
    ```json
    {
      "tier": 1,
-     "objectId": "lbl_BAW123_fl",
-     "requirement_ref": "screen-only HMI-LABEL-01"
+     "objectId": "app.statusField",
+     "requirement_ref": "REQ_001"
    }
    ```
 
 **Phase 1 — Path B (COTS target, no object API):**
 1. pyautogui takes a screenshot.
-2. Local OpenCV + OCR returns: `[{"label": "FL350", "box": [410,305,490,325]}, ...]`
-3. Human says to Copilot: "that's the FL field on BAW123" — Copilot picks the matching box.
-4. Human approves → committed as `locators/cwp/flight-label-fl-field.json`:
+2. Local OpenCV + OCR returns: `[{"label": "READY", "box": [410,305,490,325]}, ...]`
+3. Human says to Copilot: "that's the status field showing READY" — Copilot picks the matching box.
+4. Human approves → committed as `locators/app/status-field.json`:
    ```json
    {
      "tier": 2,
-     "template": "assets/fl-field-FL350.png",
+     "template": "assets/status-field-READY.png",
      "dpi": 96,
      "theme": "dark",
-     "requirement_ref": "screen-only HMI-LABEL-01"
+     "requirement_ref": "REQ_001"
    }
    ```
 
 **Phase 2 (every CI run — same for both paths):**
-1. RPS replays the scenario (opens the sector, selects the flight).
+1. RPS replays the scenario (recorded via a record-and-playback system, 'RPS') that opens the panel.
 2. Driver reads the value: Tier-1 → via object socket directly; Tier-2 → OpenCV finds the template then reads via object channel.
-3. Assert: value == "FL350" (functional gate).
+3. Assert: value == "READY" (functional gate).
 4. Golden-image oracle corroborates the visual rendering.
 5. Jenkins reports pass.
 

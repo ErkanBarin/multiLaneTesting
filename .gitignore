@@ -16,8 +16,9 @@ __pycache__/
 *.py[cod]
 .venv/
 *.egg-info/
+build/
 
-# --- Local file: tarballs consumed by the estate until Nexus publish (rebuild: npm pack in each package) ---
+# --- Local file: tarballs (rebuild: npm pack in each package) ---
 tarballs/
 
 # --- Test output / evidence ---
@@ -43,17 +44,7 @@ Thumbs.db
 **/.nfs*
 
 # --- Local reference docs not for version control ---
-docs/reference/domain reference Overview_2021_FEP.pdf
+docs/reference/*.pdf
 
-# --- Engine's own lockfile: intentionally NOT committed (verified 2026-07-07, not inherited from
-# generic policy). This org's only path to npm is the internal Nexus mirror; confirmed empirically
-# that Nexus rewrites every dependency's lockfile `resolved` tarball URL to embed its own hostname
-# (there is no direct route to the public registry to avoid it). Committing the lockfile as-is would
-# put an internal host literal in every entry, failing the same host-literal bar enforced elsewhere
-# in this repo. Reproducibility is instead achieved by exact-pinning root devDependencies (see
-# package.json — no `^` ranges) plus `npm install` (not `npm ci`) in the engine's own Jenkinsfile.
-# Consumer projects are unaffected: they commit their own lockfile and use `npm ci` normally, since
-# their per-system CI environment is expected to resolve that host once, in their own repo.
-# workspace files embed local paths, so those stay ignored too.
-package-lock.json
+# --- Workspace files embed local paths ---
 *.code-workspace

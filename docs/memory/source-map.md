@@ -1,7 +1,7 @@
 # Source map — `multilanetesting`
 
 Where each *kind* of truth lives, so agents write findings to the right place and readers know where to
-look. The screen analog of web application's source-map.
+look.
 
 | Kind of truth | Lives in | Notes |
 |---|---|---|

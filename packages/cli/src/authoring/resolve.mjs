@@ -5,7 +5,7 @@
 // the authoring packages are workspace siblings — used when `mlt` scaffolds+installs in one step
 // (`mlt create-system`) before anything is published, and by fixture tests that symlink a
 // consumer's `node_modules/@multilane/authoring-<lane>` to the real package directory (proving the
-// standard resolution path without requiring live Nexus access).
+// standard resolution path without requiring live registry access).
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve as pathResolve } from 'node:path';

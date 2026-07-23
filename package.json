@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:unit": "node --test packages/core/test/*.test.mjs packages/cli/test/*.test.mjs packages/http/test/*.test.mjs packages/stomp/test/*.test.mjs",
+    "test:unit": "node --test packages/core/test/*.test.mjs packages/cli/test/*.test.mjs packages/http/test/*.test.mjs packages/stomp/test/*.test.mjs packages/screen/test/*.test.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "check:no-runtime-ai": "node scripts/check-no-runtime-ai.mjs",
@@ -31,5 +31,13 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git"
+  },
+  "homepage": "https://github.com/ErkanBarin/multiLaneTesting#readme",
+  "bugs": {
+    "url": "https://github.com/ErkanBarin/multiLaneTesting/issues"
   }
 }
