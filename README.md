@@ -16,7 +16,7 @@ state of each part:
 | Component | Maturity | Notes |
 |---|---|---|
 | `@multilane/core` (config, gates, verify) | Working | Unit-tested; `mlt verify` runs the deterministic gates |
-| `@multilane/cli` (`mlt new`, `mlt verify`, authoring) | Working | Scaffolds lane projects; unit-tested; `mlt new` exits nonzero if the authoring packages are not resolvable |
+| `@multilane/cli` (`mlt new`, `mlt verify`, authoring) | Working | Scaffolds lane projects; unit-tested; `mlt create-system` exits nonzero if the authoring packages are not resolvable |
 | `@multilane/http` (passive API contract) | Working | Read-only GETs, shape checks, timeouts, body caps |
 | `@multilane/stomp` (WS contract) | Working | Passive SUBSCRIBE; active SEND double-gated (opt-in + allowlist) |
 | `@multilane/screen` (frozen-locator runtime) | Working | Loads/validates frozen locators; PROD-partition refusal |
@@ -89,13 +89,16 @@ Your system-under-test never lives in this repo — you scaffold a small consume
 packages are **not published**, so run the CLI from a clone of this repo:
 
 ```bash
-node packages/cli/bin/mlt.mjs new ../my-system --lanes web,http   # lanes: web, http, stomp, screen
-cd ../my-system
+cd ..                                # scaffold next to your clone; names are lowercase [a-z0-9-]
+node multiLaneTesting/packages/cli/bin/mlt.mjs new my-system --lanes web,http
+cd my-system                         # lanes: web, http, stomp, screen
 ```
 
 The generated `package.json` depends on `@multilane/*` packages that no registry serves yet —
 install them from `npm pack` tarballs with `overrides`, exactly as
-[`scripts/dogfood.mjs`](scripts/dogfood.mjs) does, until a publishing decision is made.
+[`scripts/dogfood.mjs`](scripts/dogfood.mjs) does, until a publishing decision is made. The first
+`npm install` creates the consumer's `package-lock.json`; commit it so its CI can run `npm ci`.
+The dogfood harness exercises this exact flow (scaffold → tarball install → `mlt verify`) offline.
 
 The generated project ships a config skeleton, a frozen-`locators/` dir, one example spec per lane,
 a registry-agnostic `.npmrc` template, and an optional thin `Jenkinsfile`. Lanes are independently
@@ -122,8 +125,9 @@ packs all 10 workspaces with `npm pack`, rewrites an example consumer
 ([`examples/consumer-smoke/`](examples/consumer-smoke/)) to install from those tarballs (with
 `overrides` so nested workspace deps stay local), installs with npm's `--offline` flag, then runs
 `mlt verify` plus an installation/export smoke across every package. It also runs a minimal
-consumer (CLI + core only) and asserts `mlt new` exits nonzero when authoring packages are
-unresolvable. This proves the *packaged* engine installs and exports correctly with zero registry
+consumer (CLI + core only) and asserts `mlt create-system` exits nonzero when authoring packages
+are unresolvable, and a scaffolded consumer (`mlt create-system` with the `http` lane) whose
+generated project installs the tarballs offline, gains a `package-lock.json`, and passes `mlt verify`. This proves the *packaged* engine installs and exports correctly with zero registry
 access — it is a package-surface check, not functional lane coverage.
 
 ## Security model
