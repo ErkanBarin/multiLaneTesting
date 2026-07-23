@@ -303,9 +303,12 @@ project **consumes** them and never vendors framework source.
 
 \`\`\`bash
 # Registry + proxy come from the environment (see .npmrc). Then:
-npm ci
+npm install      # first install — creates package-lock.json; commit it so CI can run npm ci
 ${lanes.includes('web') ? 'npx playwright install chromium\n' : ''}npm run verify   # runs the deterministic gates (mlt verify)
 \`\`\`
+
+If your registry does not serve \`@multilane/*\` yet, install them from \`npm pack\` tarballs
+with \`overrides\` (see the engine repo README → Dogfooding).
 
 ## Run lanes
 

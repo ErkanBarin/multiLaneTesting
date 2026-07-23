@@ -29,7 +29,8 @@
     "ws": "8.21.0"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "npm": "^10"
   },
   "packageManager": "npm@10.9.0",
   "repository": {

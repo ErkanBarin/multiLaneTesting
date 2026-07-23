@@ -88,7 +88,8 @@ switch (command) {
       const { root, files } = scaffoldProject({ name, lanes, cwd: process.cwd(), force: !!flags.force });
       console.log(`✓ Scaffolded ${name} at ${root}`);
       for (const f of files) console.log(`  + ${f}`);
-      console.log('\nNext: cd', name, '&& npm ci && npm run verify');
+      console.log('\nNext: cd', name, '&& npm install && npm run verify');
+      console.log('(npm install creates package-lock.json — commit it so CI can run `npm ci`.)');
     } catch (err) {
       fail(`✖ ${err.message}`);
     }
@@ -115,7 +116,8 @@ switch (command) {
           );
         }
       }
-      console.log('Next: cd', name, '&& npm ci && npm run verify');
+      console.log('Next: cd', name, '&& npm install && npm run verify');
+      console.log('(npm install creates package-lock.json — commit it so CI can run `npm ci`.)');
     } catch (err) {
       fail(`✖ ${err.message}`);
     }

@@ -23,12 +23,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - MCP tool versions pinned for reproducibility.
 - HTTP and STOMP lane helpers: request timeouts and response size caps added.
 - Internal terminology generalized; no internal host names or project-specific
-  identifiers remain in committed files. Registry configuration migration:
-  previously `NEXUS_`-prefixed environment variables are now `NPM_REGISTRY_`-prefixed
-  (`NPM_REGISTRY_URL`, `NPM_REGISTRY_AUTH_HOST`, `NPM_REGISTRY_AUTH_TOKEN`).
-- `mlt new` scaffolds now declare the selected lanes' `@multilane/authoring-*`
-  packages as devDependencies, so `mlt authoring install` resolves them from the
-  consumer's own `node_modules`.
+  identifiers remain in committed files. Registry configuration migration: the
+  registry environment variables consumed by the Jenkins shared library and the
+  generated `.npmrc` were renamed to `NPM_REGISTRY_URL`, `NPM_REGISTRY_AUTH_HOST`,
+  and `NPM_REGISTRY_AUTH_TOKEN`; operators of pre-rename CI jobs must update
+  their job environment to the new names.
+- `mlt new`/`mlt create-system` scaffolds now declare the selected lanes'
+  `@multilane/authoring-*` packages as devDependencies, so `mlt authoring
+  install` resolves them from the consumer's own `node_modules`.
+- Scaffolding now prints `npm install` (which creates the consumer's
+  `package-lock.json`) as the next step instead of `npm ci`, which cannot run
+  before a lockfile exists; the generated README says the same and tells users
+  to commit the lockfile.
+- Consumer quickstart documented as a runnable flow: project names are
+  lowercase `[a-z0-9-]` and the scaffold lands under the current directory, so
+  the README now runs `mlt new` from the clone's parent directory.
+- Package READMEs and `docs/API.md` now state that the `@multilane/*` packages
+  are unpublished and must be consumed via `npm pack` tarballs until a
+  publishing decision is made.
+- `engines.npm` declared as `^10` alongside `packageManager` — the committed
+  lockfile is npm-10-generated and npm 11 may reject it.
+- The dogfood harness gained a scaffolded-consumer probe: `mlt create-system`
+  with the `http` lane from packed tarballs, offline install of the generated
+  project, assertion that a `package-lock.json` is created, and a passing
+  `mlt verify` — the documented consumer flow, end to end.
 - Copilot worker agents (`cheap-repository-worker`, `technical-worker`) no longer
   commit a `model` field; they inherit the invoking session's model. Pin a model
   locally if your environment supports it.
@@ -47,9 +65,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the full timeout.
 - `@multilane/screen` locator loading resolves real paths and refuses any
   locator that escapes `locators/` via symlink.
-- `mlt new` now exits nonzero when the post-scaffold authoring install fails
-  (the scaffold on disk is left intact); previously it reported the failure but
-  exited 0. The dogfood harness includes a minimal-consumer probe asserting this.
+- `mlt create-system` now exits nonzero when the post-scaffold authoring
+  install fails (the scaffold on disk is left intact); previously it reported
+  the failure but exited 0. The dogfood harness includes a minimal-consumer
+  probe asserting this. Plain `mlt new` does not attempt authoring installation.
 - The no-runtime-AI gate fails when it scans zero runtime files — a vacuous scan
   is no longer a pass. The engine repo now commits a `multilane.config.json`
   scanning `packages/` and `scripts/` (authoring packages and the gate's own

@@ -5,11 +5,15 @@ consumer project honest. No runtime AI, no host literals, no build step.
 
 ## Install
 
+The `@multilane/*` packages are **not published to any registry yet** — install them from
+`npm pack` tarballs with `overrides` (see the repo README → Dogfooding) until a publishing
+decision is made. Once published, this becomes:
+
 ```bash
 npm install --save-dev @multilane/core
 ```
 
-(Installs from your configured npm registry — see the root `.npmrc.sample`.)
+(Registry and proxy configuration come from the environment — see the root `.npmrc.sample`.)
 
 ## Public API
 

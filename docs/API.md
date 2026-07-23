@@ -1,6 +1,8 @@
 # docs/API.md — the multilanetesting public API
 
-The engine ships as versioned `@multilane/*` packages from your private npm registry. This page is
+The engine ships as versioned `@multilane/*` packages. They are **not published to any registry
+yet** — consume them via `npm pack` tarballs with `overrides` (repo README → Dogfooding) until a
+publishing decision is made. This page is
 the contract: **what a consumer may import** and **what is private**. Anything not listed here is an
 internal implementation detail and may change without a semver-major bump.
 
@@ -13,7 +15,7 @@ root, it is private.
 | Package | Import when you… | Heavy deps |
 |---|---|---|
 | `@multilane/core` | need config resolution or the gates programmatically | none |
-| `@multilane/cli` | want the `mlt` binary (`verify`, `new`) | none |
+| `@multilane/cli` | want the `mlt` binary (`verify`, `new`, `create-system`, `authoring`) | none |
 | `@multilane/playwright-config` | run the web/DOM lane | `@playwright/test` (peer, optional) |
 | `@multilane/web` | write web/DOM specs (selector factories) | `@playwright/test` (peer, optional) |
 | `@multilane/http` | write passive HTTP contract checks | none |
@@ -50,8 +52,10 @@ import {
 Primary interface is the `mlt` binary:
 
 ```
-mlt verify                        # run the deterministic gates in the current project
-mlt new <name> --lanes web,http   # scaffold a consumer project (lanes: web, http, stomp, screen)
+mlt verify                                  # run the deterministic gates in the current project
+mlt new <name> --lanes web,http             # scaffold a consumer project (lanes: web, http, stomp, screen)
+mlt create-system <name> --lanes web,http   # scaffold AND install authoring assets; exits nonzero if
+                                            # an authoring package is unresolvable
 ```
 
 Programmatic (for tooling/tests):

@@ -7,7 +7,7 @@
 // tarballs, so the install is hermetic and runs with npm's --offline flag — nothing here pulls
 // from any registry.
 import { execSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync, readdirSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync, readdirSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,9 +19,9 @@ const staging = mkdtempSync(join(tmpdir(), 'mlt-dogfood-'));
 const tarDir = join(staging, 'tarballs');
 mkdirSync(tarDir, { recursive: true });
 
-function run(cmd, cwd) {
+function run(cmd, cwd, env) {
   console.log(`$ ${cmd}`);
-  execSync(cmd, { cwd, stdio: 'inherit' });
+  execSync(cmd, { cwd, stdio: 'inherit', env: env ? { ...process.env, ...env } : process.env });
 }
 
 try {
@@ -94,6 +94,56 @@ try {
     throw new Error('create-system must exit nonzero when @multilane/authoring-web is unresolvable.');
   }
   console.log('✓ minimal-entry consumer: create-system exits nonzero when the authoring package is missing.');
+
+  // 5) Scaffolded consumer: the documented `mlt create-system` flow end to end, offline. The
+  //    generated .npmrc expands ${NPM_REGISTRY_*} env vars; loopback placeholders satisfy npm's
+  //    config parser while --offline + file: tarballs prove nothing reaches any registry.
+  const scaffoldEnv = {
+    NPM_REGISTRY_URL: 'http://127.0.0.1:9/',
+    NPM_REGISTRY_AUTH_HOST: '//127.0.0.1:9/',
+    NPM_REGISTRY_AUTH_TOKEN: 'offline-unused',
+  };
+  const scaffoldHome = join(staging, 'scaffold-home');
+  mkdirSync(scaffoldHome, { recursive: true });
+  writeFileSync(
+    join(scaffoldHome, 'package.json'),
+    `${JSON.stringify(
+      {
+        name: 'scaffold-home',
+        private: true,
+        version: '0.0.0',
+        type: 'module',
+        devDependencies: {
+          '@multilane/cli': `file:${tarballs['@multilane/cli']}`,
+          '@multilane/core': `file:${tarballs['@multilane/core']}`,
+          '@multilane/authoring-http': `file:${tarballs['@multilane/authoring-http']}`,
+        },
+        overrides: Object.fromEntries(
+          Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
+        ),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  run('npm install --no-audit --no-fund --offline', scaffoldHome);
+  run('npx --no-install mlt create-system my-system --lanes http', scaffoldHome);
+  const project = join(scaffoldHome, 'my-system');
+  const projPkgPath = join(project, 'package.json');
+  const projPkg = JSON.parse(readFileSync(projPkgPath, 'utf8'));
+  for (const dep of Object.keys(projPkg.devDependencies ?? {})) {
+    if (tarballs[dep]) projPkg.devDependencies[dep] = `file:${tarballs[dep]}`;
+  }
+  projPkg.overrides = Object.fromEntries(
+    Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
+  );
+  writeFileSync(projPkgPath, `${JSON.stringify(projPkg, null, 2)}\n`);
+  run('npm install --no-audit --no-fund --offline', project, scaffoldEnv);
+  if (!existsSync(join(project, 'package-lock.json'))) {
+    throw new Error('scaffolded consumer: npm install must create package-lock.json.');
+  }
+  run('npx --no-install mlt verify', project, scaffoldEnv);
+  console.log('✓ scaffolded consumer: create-system → tarball install → lockfile created → verify passed.');
 
   console.log('\n✓ dogfood: packaged engine installed from tarballs; gates + smoke suite passed.');
 } finally {
