@@ -58,6 +58,43 @@ try {
   run('npx --no-install mlt verify', consumer);
   run('node --test "tests/**/*.test.mjs"', consumer);
 
+  // 4) Minimal-entry consumer: install ONLY the documented entry packages (cli + core). When a
+  //    lane's authoring package is unresolvable, `mlt create-system` must exit nonzero — a partial
+  //    setup reported as success is the failure mode this guards against.
+  const minimal = join(staging, 'minimal');
+  mkdirSync(minimal, { recursive: true });
+  writeFileSync(
+    join(minimal, 'package.json'),
+    `${JSON.stringify(
+      {
+        name: 'minimal-entry',
+        private: true,
+        version: '0.0.0',
+        type: 'module',
+        devDependencies: {
+          '@multilane/cli': `file:${tarballs['@multilane/cli']}`,
+          '@multilane/core': `file:${tarballs['@multilane/core']}`,
+        },
+        overrides: Object.fromEntries(
+          Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
+        ),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  run('npm install --no-audit --no-fund --offline', minimal);
+  let createSystemFailed = false;
+  try {
+    execSync('npx --no-install mlt create-system demo --lanes web', { cwd: minimal, stdio: 'pipe' });
+  } catch {
+    createSystemFailed = true;
+  }
+  if (!createSystemFailed) {
+    throw new Error('create-system must exit nonzero when @multilane/authoring-web is unresolvable.');
+  }
+  console.log('✓ minimal-entry consumer: create-system exits nonzero when the authoring package is missing.');
+
   console.log('\n✓ dogfood: packaged engine installed from tarballs; gates + smoke suite passed.');
 } finally {
   rmSync(staging, { recursive: true, force: true });

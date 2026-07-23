@@ -32,20 +32,22 @@ experimental status of this project, response times are best-effort.
 
 ## Threat Model and Runtime Trust Boundary
 
-### Determinism and offline runtime
+### Determinism and model-offline runtime
 
-Test runtime is deterministic and offline-capable. No AI or model network calls
-occur at runtime; this is enforced by the `npm run check:no-runtime-ai` policy
-gate. AI tooling (MCP servers, agent configuration files) is confined to
-authoring time and must never receive credentials, secrets, or the content of
-`.env` files.
+Test runtime is deterministic and **model-offline**: no AI or model/API network
+calls occur at runtime. Target-system network access is lane-dependent (the
+HTTP/STOMP/web lanes talk to the system under test). The `npm run
+check:no-runtime-ai` policy gate scans the runtime package sources and fails on
+any model/API usage — or if it scans zero files. AI tooling (MCP servers, agent
+configuration files) is confined to authoring time and must never receive
+credentials, secrets, or the content of `.env` files.
 
 ### Trust boundary
 
 | Input | Trust level |
 |---|---|
-| Test code and frozen locator files | Trusted — they execute with the developer's privileges |
-| Target-system responses | Untrusted — bounded and validated by lane helpers |
+| Test code and frozen locator files | Trusted — they execute with the developer's privileges; the loader still resolves real paths and refuses locators that escape `locators/` via symlink |
+| Target-system responses | Untrusted — bounds are per-lane: HTTP responses are size-capped with an absolute request deadline; STOMP frames are governed by `@stomp/stompjs`/`ws` defaults; web responses are handled by Playwright |
 | npm supply chain | Trusted via committed lockfile (`package-lock.json`) |
 | CI secrets | Must be injected via CI credential stores; never committed |
 

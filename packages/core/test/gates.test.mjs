@@ -1,8 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   loadConfig,
@@ -58,6 +59,44 @@ test('no-runtime-ai gate passes clean runtime code', () => {
   assert.equal(res.scanned, 1);
 });
 
+test('no-runtime-ai gate fails instead of passing vacuously when it scans zero files', () => {
+  const res = runNoRuntimeAiGate({ cwd: tmpProject() });
+  assert.equal(res.scanned, 0);
+  assert.equal(res.ok, false);
+});
+
+// Mutation test for this repo's own gate wiring: prove that a forbidden import dropped into any
+// runtime workspace is caught by the runtimeDirs/authoringDirs committed in multilane.config.json.
+test('repo gate config catches a forbidden import in every runtime workspace', () => {
+  const repoConfig = JSON.parse(
+    readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../../../multilane.config.json'), 'utf8'),
+  );
+  const runtimeWorkspaces = ['core/src', 'http', 'stomp', 'screen', 'web', 'playwright-config', 'cli/src'];
+  for (const workspace of runtimeWorkspaces) {
+    const root = tmpProject();
+    mkdirSync(join(root, 'packages', workspace), { recursive: true });
+    writeFileSync(join(root, 'packages', workspace, 'evil.mjs'), "import openai from 'openai';\n");
+    const res = runNoRuntimeAiGate({
+      cwd: root,
+      runtimeDirs: repoConfig.runtimeDirs,
+      authoringDirs: repoConfig.authoringDirs,
+    });
+    assert.equal(res.ok, false, `forbidden import in packages/${workspace} must fail the gate`);
+    assert.ok(res.violations.some((v) => v.path.includes('evil.mjs')));
+  }
+  // …and the same import inside an exempt authoring package stays exempt (but the scan still fails
+  // vacuously because no runtime file exists in this fixture).
+  const root = tmpProject();
+  mkdirSync(join(root, 'packages', 'authoring-web'), { recursive: true });
+  writeFileSync(join(root, 'packages', 'authoring-web', 'assist.mjs'), "import openai from 'openai';\n");
+  const res = runNoRuntimeAiGate({
+    cwd: root,
+    runtimeDirs: repoConfig.runtimeDirs,
+    authoringDirs: repoConfig.authoringDirs,
+  });
+  assert.equal(res.violations.length, 0);
+});
+
 test('robot-contract gate rejects an unlisted spec tag and accepts a wired one', () => {
   const root = tmpProject();
   mkdirSync(join(root, 'tests'), { recursive: true });
@@ -80,11 +119,14 @@ test('loadProjectConfig falls back to defaults when no file is present', () => {
   assert.equal(project.specDir, 'tests');
 });
 
-test('runVerify is green for an empty project', () => {
+test('runVerify fails an empty project — a zero-file AI scan is not enforcement', () => {
   const root = tmpProject();
   const res = runVerify({ cwd: root });
-  assert.equal(res.ok, true);
+  assert.equal(res.ok, false);
   assert.equal(res.gates.length, 3);
+  const aiGate = res.gates.find((g) => g.name === 'no-runtime-ai');
+  assert.equal(aiGate.ok, false);
+  assert.match(aiGate.detail, /0 runtime files scanned/);
 });
 
 test('screen-partition guard is a no-op when the screen lane is not active', () => {

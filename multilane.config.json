@@ -1,0 +1,13 @@
+{
+  "$comment": "Engine-repo gate settings: the no-runtime-AI gate scans the runtime packages themselves. Exempt: authoring packages/dirs, test dirs (gate tests use forbidden strings as fixtures), and the file that defines the forbidden patterns.",
+  "runtimeDirs": ["packages", "scripts"],
+  "authoringDirs": [
+    "authoring",
+    "drivers/mcp",
+    "test",
+    "packages/authoring-web",
+    "packages/authoring-http",
+    "packages/authoring-stomp",
+    "packages/core/src/gates/no-runtime-ai.mjs"
+  ]
+}

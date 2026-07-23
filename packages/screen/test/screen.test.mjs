@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { loadFrozenLocator, assertFrozen } from '@multilane/screen';
@@ -47,6 +47,23 @@ test('loadFrozenLocator rejects path traversal and non-segment inputs', () => {
   }
   assert.throws(() => loadFrozenLocator(null, 'key', { env: TEST_ENV }), /Invalid locator area/);
   assert.throws(() => loadFrozenLocator('area', 42, { env: TEST_ENV }), /Invalid locator key/);
+});
+
+test('loadFrozenLocator refuses a symlinked area that escapes the locator root', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'screen-test-'));
+  const outside = mkdtempSync(join(tmpdir(), 'screen-outside-'));
+  try {
+    writeFileSync(join(outside, 'stolen.json'), JSON.stringify({ tier: 1 }));
+    mkdirSync(join(cwd, 'locators'), { recursive: true });
+    symlinkSync(outside, join(cwd, 'locators', 'evil'), 'dir');
+    assert.throws(
+      () => loadFrozenLocator('evil', 'stolen', { cwd, env: TEST_ENV }),
+      /resolves outside locators\//,
+    );
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
+  }
 });
 
 test('assertFrozen accepts a valid Tier-1/2 locator', () => {

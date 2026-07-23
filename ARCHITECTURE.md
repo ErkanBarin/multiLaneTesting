@@ -122,14 +122,18 @@ flowchart LR
 | Vision discovery (Tier 3, authoring) | OpenCV region proposals + offline OCR (PaddleOCR/EasyOCR, Apache-2.0) | All offline, no external service; no licence risk |
 | Computer-use (Tier 3/4, authoring) | n/a — dropped (external screenshot egress prohibited) | Replaced by local CV + OCR discovery |
 | Display / isolation | Xvfb + Docker, VNC/RDP | Isolated VM, no secrets to model |
-| Evidence | HTML / JUnit / JSON + requirements system / Jira / test-report adapters | |
+| Evidence | HTML / JUnit / JSON + requirements system / Jira / test-report adapters | Every run emits JUnit + HTML with a `requirement_ref` for traceability |
 
 ---
 
 ## 6. The other lanes (web, API, WS)
 
-These lanes are **first-class**, not optional plugins. They follow the same conventions proven in mature Playwright DOM suites;
-the screen-driver lane is the new addition. Build whichever lanes the target system exposes.
+These lanes are **first-class**, not optional plugins. What they share with the screen-driver lane
+is the *discipline*: env-gated activation, no host literals, user-intent test naming, evidence
+output, and traceability. The screen-only rules (frozen locators, tier ladder, partition refusal,
+golden-image/OCR oracles) do **not** apply here — the web lane keeps standard Playwright
+conventions, and the API/WS lanes are passive contract checks. Build whichever lanes the target
+system exposes.
 
 | Lane | Workspace | Env gate | Key tool | Conventions |
 |---|---|---|---|---|
@@ -166,6 +170,7 @@ screen-explorer  →  screen-test-designer  →  repo-keeper
         └────────── screen-flake-debugger ◄──────────┘  (on failure / drift)
 ```
 
-The web/API/WS lanes use the same conventions, memory model, and PR hygiene as the screen-driver lane.
-The screen-driver lane adds a new discovery surface: socket → control tree → template → vision.
-Everything downstream (authoring style, traceability, Robot orchestration) is the same across all lanes.
+All lanes share the authoring style, memory model, traceability, Robot orchestration, and PR
+hygiene. Only the screen-driver lane adds the discovery surface (socket → control tree → template →
+vision) and the frozen-locator replay rules — the web/API/WS lanes never use tiers, locator
+freezing, or partition replay.

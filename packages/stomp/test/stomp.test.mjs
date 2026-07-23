@@ -117,6 +117,24 @@ test('send rejects after timeoutMs when the broker accepts WS but never complete
   }
 });
 
+test('subscribeOnce rejects promptly when the broker closes the socket before STOMP connect', async () => {
+  const { WebSocketServer } = await import('ws');
+  const wss = new WebSocketServer({ port: 0, host: '127.0.0.1' });
+  await new Promise((resolve) => wss.on('listening', resolve));
+  wss.on('connection', (socket) => socket.close());
+  const { port } = wss.address();
+  try {
+    const started = Date.now();
+    await assert.rejects(
+      subscribeOnce(`ws://127.0.0.1:${port}`, '/topic/closed', { timeoutMs: 5000 }),
+      /WebSocket closed before the STOMP session completed/,
+    );
+    assert.ok(Date.now() - started < 4000, 'clean close rejected before the generic timeout');
+  } finally {
+    await new Promise((resolve) => wss.close(resolve));
+  }
+});
+
 test('subscribeOnce rejects with a clear error when the WebSocket connection fails', async () => {
   const net = await import('node:net');
   const probe = net.createServer();

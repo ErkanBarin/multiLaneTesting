@@ -105,9 +105,15 @@ switch (command) {
       for (const f of files) console.log(`  + ${f}`);
       const authoringLanes = lanes.filter((l) => ALL_KNOWN_LANES.includes(l));
       if (authoringLanes.length) {
-        const { laneReports } = installAuthoring({ lanes: authoringLanes, cwd: root });
+        const { ok, laneReports } = installAuthoring({ lanes: authoringLanes, cwd: root });
         console.log('');
         console.log(formatInstallReport(laneReports));
+        if (!ok) {
+          fail(
+            `✖ create-system: authoring install failed (scaffold at ${root} is intact). ` +
+              'Install the reported authoring package(s) and rerun `mlt authoring install`.',
+          );
+        }
       }
       console.log('Next: cd', name, '&& npm ci && npm run verify');
     } catch (err) {

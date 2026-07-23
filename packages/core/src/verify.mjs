@@ -34,7 +34,9 @@ export function runVerify({ cwd = process.cwd(), env = process.env } = {}) {
       ok: noAi.ok,
       detail: noAi.ok
         ? `${noAi.scanned} runtime file(s) scanned`
-        : `${noAi.violations.length} violation(s): ${noAi.violations.map((v) => v.path).join(', ')}`,
+        : noAi.scanned === 0
+          ? '0 runtime files scanned — configure runtimeDirs in multilane.config.json'
+          : `${noAi.violations.length} violation(s): ${noAi.violations.map((v) => v.path).join(', ')}`,
     },
     {
       name: 'robot-contract',
