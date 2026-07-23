@@ -16,6 +16,28 @@ anything over VNC/RDP) via a deterministic screen driver, plus web/DOM (Playwrig
 and WebSocket contract lanes. This repository already contains a complete starter kit. Your job is to build the
 framework **according to the plan**, not to redesign it.
 
+### Tool setup
+
+Before reading or changing the repository, enable the following authoring tools when the host supports
+them. They are development tools only; neither may be reachable from a test run.
+
+1. Install the Ponytail plugin. In GitHub Copilot CLI run:
+  ```bash
+  copilot plugin install DietrichGebert/ponytail
+  ```
+  Then work in Ponytail's default `full` mode: use its YAGNI ladder and choose the smallest safe
+  implementation.
+2. Install Graphify with the preferred Python tool available on this machine:
+  ```bash
+  uv tool install graphifyy
+  ```
+  If `uv` is unavailable, run:
+  ```bash
+  python3 -m pip install --user graphifyy
+  ```
+  Use `/graphify` for codebase architecture and relationship questions when the host exposes the
+  Graphify skill; otherwise use the installed `graphify` command directly.
+
 ### Read first (in this order)
 
 1. `ARCHITECTURE.md` — driver tiers, three oracles, deterministic-replay model, building blocks, risks.
@@ -44,6 +66,8 @@ framework **according to the plan**, not to redesign it.
 - **DOM targets stay on Playwright.** Do not reimplement DOM testing on the screen driver.
 - **Curated memory, not transcripts.** Write only verified, reusable, route-changing facts to
   `docs/memory/*`. Never commit chat logs, secrets, or unverified assumptions.
+- **Ponytail is active.** Apply its `full` YAGNI ladder to implementation work; do not add local
+  copies of the plugin's skills or prompts.
 
 ### How to work
 

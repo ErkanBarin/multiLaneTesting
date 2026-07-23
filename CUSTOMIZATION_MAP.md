@@ -42,8 +42,11 @@ automatically — no second edit needed.
   `orchestrate` skill instead.
 - **`screen-memory-recall.prompt.md`** is **Copilot-only**; the recall policy itself lives in
   `AGENTS.md` and is followed natively by Claude.
-- **Ponytail** is supplied by the user-level plugin. Repository-local Ponytail skills and prompts
+- **Ponytail** is supplied by the user-level plugin. `BOOTSTRAP_PROMPT.md` installs it from
+  `DietrichGebert/ponytail` for GitHub Copilot CLI; repository-local Ponytail skills and prompts
   are intentionally absent because they would duplicate the plugin's slash-command tree.
+- **Graphify** is an external `graphifyy` tool installed by `BOOTSTRAP_PROMPT.md`, not a
+  repository-local skill. Use `/graphify` when the host exposes its skill, or the `graphify` CLI.
 - **`CLAUDE.md`** (repo root) is **Claude-only and gitignored** — local operational truth.
 
 ## Invocation policy

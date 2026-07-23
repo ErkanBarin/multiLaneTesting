@@ -57,7 +57,7 @@ Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and [`IMPLEMENTATION_PLAN.md`](IMPLEME
 | Coverage matrix | [docs/coverage-map.md](docs/coverage-map.md) |
 | Requirement traceability | [docs/traceability.md](docs/traceability.md) |
 | Compact memory layer (query first) | [docs/memory/](docs/memory/) |
-| Knowledge graph (architecture / cross-feature) | `graphify-out/graph.json` (if present — generate with `/graphify`); see [docs/rag/graphify-notes.md](docs/rag/graphify-notes.md) |
+| Knowledge graph (architecture / cross-feature) | `/graphify` (install `graphifyy` as directed by `BOOTSTRAP_PROMPT.md`); see [docs/rag/graphify-notes.md](docs/rag/graphify-notes.md) |
 
 ## Memory and recall
 
@@ -109,8 +109,8 @@ Change a skill/agent body on the Claude side and the Copilot wrapper picks it up
 3. **Ambiguity → ask.** Two plausible matches → ask one short question. Do not guess.
 4. **No match → improvise.** Plan and act with the standard tool palette. Do not invent a skill.
 5. **`orchestrate` is the meta-router.** Non-trivial work with no specific match → invoke `orchestrate`.
-6. **Ponytail when available.** Use the Ponytail skill for implementation simplification and
-   over-engineering reviews.
+6. **Ponytail.** Bootstrap installs the external Ponytail plugin; use it for implementation
+   simplification and over-engineering reviews.
 
 ## Delegation policy
 
