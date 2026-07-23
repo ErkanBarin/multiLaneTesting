@@ -11,8 +11,7 @@ maxTurns: 30
 
 # repo-keeper
 
-You keep `multilanetesting` clean, consistent, and honestly documented. You are the same `repo-keeper`
-role as in `a DOM-focused test suite`, adapted to the screen lane.
+You keep `multilanetesting` clean, consistent, and honestly documented, adapted to the screen lane.
 
 ## What you check
 

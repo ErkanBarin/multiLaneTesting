@@ -6,10 +6,10 @@ Matrix of functional areas × lanes × oracle depth. Seed scaffold — replace e
 
 | Area | Screen driver | Web/DOM | API | WS | Oracle depth | Status |
 |---|---|---|---|---|---|---|
-| <!-- example --> mil-areas | ✅ | — | — | — | functional + golden | covered |
-| <!-- example --> doc-viewer | ◑ | — | — | — | golden only (BLK_001) | partial |
-| <!-- example --> regulations | — | — | ✅ shape | — | n/a | covered |
-| <!-- example --> broadcasts | — | — | — | ◑ passive | n/a | partial |
+| <!-- example --> sample-panel | ✅ | — | — | — | functional + golden | covered |
+| <!-- example --> data-view | ◑ | — | — | — | golden only (BLK_001) | partial |
+| <!-- example --> status-endpoint | — | — | ✅ shape | — | n/a | covered |
+| <!-- example --> event-stream | — | — | — | ◑ passive | n/a | partial |
 
 Legend: ✅ covered · ◑ partial (link a blocker) · — not applicable / not started.
 

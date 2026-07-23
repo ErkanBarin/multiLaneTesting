@@ -1,7 +1,6 @@
 # Memory system flow — `multilanetesting`
 
-How memory is **stored, recalled, and updated**. Adapted from the web application memory model and the Robot
-orchestration contract, for a black-box screen-testing framework. This file is the source of truth for
+How memory is **stored, recalled, and updated** in this black-box screen-testing framework. This file is the source of truth for
 the policy; `AGENTS.md` carries the short canonical pointer.
 
 ## 1. Purpose
@@ -59,10 +58,9 @@ path · Blocker/guardrail · Last verified date.**
 ## 8. Robot orchestration link (optional tier-1 wrapper)
 
 A thin Robot Framework wrapper (`multilanetesting-robot`, sibling repo) can call this repo's npm/driver
-scripts via the Process library and collect exit codes into a unified report — same pattern as the
-web application `a DOM-focused test suite-robot` orchestration. Two tag systems stay in sync: Robot `[Tags]` vs framework
-`@tags` in spec titles. A contract guard (`npm run check:robot-contract`) keeps the spec title, the
-guard's tag list, and the contract doc aligned. Details:
+scripts via the Process library and collect exit codes into a unified report. Two tag systems stay in
+sync: Robot `[Tags]` vs framework `@tags` in spec titles. A contract guard (`npm run check:robot-contract`)
+keeps the spec title, the guard's tag list, and the contract doc aligned. Details:
 [`../ci/robot-orchestration.md`](../ci/robot-orchestration.md).
 
 ## 9. Guardrails

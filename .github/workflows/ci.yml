@@ -1,0 +1,43 @@
+# CI — deterministic validation only. No publishing, no releases, no deploy.
+# Actions are pinned to full commit SHAs (tag comments are informational).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  node:
+    name: Node — gates, typecheck, lint, unit, pack, dogfood
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run validate
+      - run: npm pack --workspaces --dry-run
+      - run: npm run dogfood
+
+  python:
+    name: Python — driver install + import smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.11"
+      # The driver is an early-stage stub: install without heavy runtime deps and prove it imports.
+      # Tighten to a full install + pytest once the driver grows real tests.
+      - run: python -m pip install --no-deps .
+      - run: python -c "import multilanetesting_driver"

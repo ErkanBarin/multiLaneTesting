@@ -16,8 +16,8 @@
 //        fallback, and Playwright browsers are installed on demand.
 //    It DETECTS and DEGRADES rather than hardcoding one assumption. Pass `agentLabel` to pin agents,
 //    or leave it empty to run on any agent.
-//  • PROXY / NEXUS AWARE. `.npmrc` is written from environment variables (never committed secrets);
-//    npm and Playwright downloads route through the corporate proxy via HTTP(S)_PROXY.
+//  • PROXY / REGISTRY AWARE. `.npmrc` is written from environment variables (never committed secrets);
+//    npm and Playwright downloads route through your HTTP proxy via HTTP(S)_PROXY.
 //  • CHROMIUM CAVEAT (documented, not solved). On locked-down Linux agents without root, Chromium may
 //    be missing shared system libraries. `--with-deps` is intentionally NOT used (it needs root). If
 //    the browser cannot install/launch, the web lane is marked UNSTABLE with a TODO(containerize-later)
@@ -44,7 +44,7 @@ def call(Map config = [:]) {
       MULTILANE_WEB_BASE_URL = "${targetUrl}"
       // Registry + proxy are inherited from the agent/credentials environment; never hardcoded here.
       // Expected (provide via Jenkins credentials/global env):
-      //   NEXUS_NPM_REGISTRY_URL, NEXUS_NPM_REGISTRY_AUTH_HOST, NEXUS_NPM_AUTH_TOKEN
+      //   NPM_REGISTRY_URL, NPM_REGISTRY_AUTH_HOST, NPM_REGISTRY_AUTH_TOKEN
       //   HTTP_PROXY, HTTPS_PROXY, NO_PROXY
       CI = 'true'
     }
@@ -134,11 +134,11 @@ void ensureNode(String nodeVersion) {
 // Write .npmrc from the environment. npm expands ${VAR} at read time, so no secret is materialised
 // in SCM or the workspace beyond this ephemeral file.
 void writeNpmrc() {
-  writeFile file: '.npmrc', text: '''@multilane:registry=${NEXUS_NPM_REGISTRY_URL}
-${NEXUS_NPM_REGISTRY_AUTH_HOST}:_authToken=${NEXUS_NPM_AUTH_TOKEN}
+  writeFile file: '.npmrc', text: '''@multilane:registry=${NPM_REGISTRY_URL}
+${NPM_REGISTRY_AUTH_HOST}:_authToken=${NPM_REGISTRY_AUTH_TOKEN}
 always-auth=true
 '''
-  echo 'Wrote .npmrc (scope @multilane -> Nexus). Proxy is read from HTTP(S)_PROXY.'
+  echo 'Wrote .npmrc (scope @multilane -> configured registry). Proxy is read from HTTP(S)_PROXY.'
 }
 
 // Install only the Chromium browser, routed through the proxy. Deliberately NOT --with-deps.

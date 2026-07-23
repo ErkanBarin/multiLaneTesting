@@ -1,7 +1,7 @@
 # Blocker index — `multilanetesting`
 
 What is **unobservable, blocked, or out of scope**, recorded honestly so agents don't waste effort or
-invent assertions for things they cannot prove. The screen analog of web application's blocker-index.
+invent assertions for things they cannot prove.
 
 ## Blockers
 

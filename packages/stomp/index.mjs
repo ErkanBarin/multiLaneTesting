@@ -45,6 +45,11 @@ export async function subscribeOnce(url, destination, { timeoutMs = 5000, header
       deactivate(client);
       reject(new Error(frame?.headers?.message ?? 'STOMP error'));
     };
+    client.onWebSocketError = (event) => {
+      clearTimeout(timer);
+      deactivate(client);
+      reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
+    };
 
     client.activate();
   });
@@ -55,10 +60,10 @@ export async function subscribeOnce(url, destination, { timeoutMs = 5000, header
  * @param {string} url
  * @param {string} destination
  * @param {string} body
- * @param {{ inject?: boolean, approvedHosts?: string[], headers?: Record<string, string> }} [options]
+ * @param {{ inject?: boolean, approvedHosts?: string[], headers?: Record<string, string>, timeoutMs?: number }} [options]
  * @returns {Promise<void>}
  */
-export async function send(url, destination, body, { inject = false, approvedHosts = [], headers = {} } = {}) {
+export async function send(url, destination, body, { inject = false, approvedHosts = [], headers = {}, timeoutMs = 5000 } = {}) {
   if (!inject) {
     throw new Error('Active SEND refused: pass inject:true (MULTILANE_WS_INJECT=1) to enable it.');
   }
@@ -76,14 +81,25 @@ export async function send(url, destination, body, { inject = false, approvedHos
       webSocketFactory: () => new WS(url),
       reconnectDelay: 0,
     });
+    const timer = setTimeout(() => {
+      deactivate(client);
+      reject(new Error(`send timed out after ${timeoutMs}ms connecting to ${destination}`));
+    }, timeoutMs);
     client.onConnect = () => {
+      clearTimeout(timer);
       client.publish({ destination, body, headers });
       deactivate(client);
       resolve();
     };
     client.onStompError = (frame) => {
+      clearTimeout(timer);
       deactivate(client);
       reject(new Error(frame?.headers?.message ?? 'STOMP error'));
+    };
+    client.onWebSocketError = (event) => {
+      clearTimeout(timer);
+      deactivate(client);
+      reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
     };
     client.activate();
   });

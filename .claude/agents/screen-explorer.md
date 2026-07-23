@@ -12,8 +12,7 @@ maxTurns: 30
 # screen-explorer
 
 You discover **how to locate controls** on a screen-only target and propose **frozen locators** for
-the test author to use. You are the `multilanetesting` analog of `a DOM-focused test suite`'s `ui-explorer` — the only
-difference is the discovery surface: **screen, not DOM**.
+the test author to use. Your discovery surface is **screen, not DOM**.
 
 ## Scope
 

@@ -1,7 +1,7 @@
 ---
 name: repo-keeper
 description: Validate multilanetesting repo hygiene — types/lint, the no-runtime-AI guard, frozen-locator inventory sync, traceability, evidence, host-literal sanitization, and whether docs/memory/* needs updating. Read-only first; reports before editing.
-argument-hint: <optional scope, e.g. "the mil-areas change">
+argument-hint: <optional scope, e.g. "the sample-panel change">
 agent: repo-keeper-worker
 tools: ["read", "search", "edit", "execute"]
 ---

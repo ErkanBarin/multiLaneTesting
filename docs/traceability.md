@@ -1,13 +1,13 @@
 # Traceability — `multilanetesting`
 
 Requirement → lane → spec → evidence, plus the **process-traceability boundary** (what kind of claim
-this evidence supports). Mirrors the web application `std-traceability.md` shape. Seed scaffold.
+this evidence supports). Seed scaffold.
 
 ## Requirement coverage
 
 | Requirement | Lane | Spec / evidence | Oracle | Coverage | Blocker |
 |---|---|---|---|---|---|
-| <!-- example --> REQ_SCR_001 | screen driver | `tests/mil-areas/create.spec` | functional + golden | full | — |
+| <!-- example --> REQ_SCR_001 | screen driver | `tests/sample-panel/create.spec` | functional + golden | full | — |
 | <!-- example --> REQ_SCR_002 | screen driver | `tests/doc-viewer/navigate.spec` | golden | partial | BLK_001 |
 | <!-- example --> REQ_API_001 | api-contract | `tests/http/...` | shape | full | — |
 

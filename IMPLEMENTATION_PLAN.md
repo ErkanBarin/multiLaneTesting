@@ -131,7 +131,7 @@ is healed via supervised re-pin; CI blocks any runtime AI path.
 
 ## Phase 3 — Remaining lanes + CI orchestration + Robot wrapper
 
-**Goal.** Multi-lane parity with `a DOM-focused test suite`, orchestrated and reported as one.
+**Goal.** Multi-lane parity across all applicable lanes, orchestrated and reported as one.
 
 **Do.**
 1. Add **web** (Playwright DOM), **api-contract** (passive HTTP), **ws-contract** (passive STOMP +
@@ -142,7 +142,7 @@ is healed via supervised re-pin; CI blocks any runtime AI path.
 
 **Deliverables.**
 - `tests/web/`, `tests/http/`, `tests/stomp/` lane specs.
-- `orchestration/` Robot suites + `screen_process`-style resource; `docs/ci/robot-orchestration.md`.
+- `orchestration/` Robot suites + process resource file; `docs/ci/robot-orchestration.md`.
 - `Jenkinsfile`; merged HTML/JUnit report.
 
 **Exit gate.** `./bin/run.sh suites/lanes.robot` runs every enabled lane and produces one merged report.
@@ -180,6 +180,9 @@ is healed via supervised re-pin; CI blocks any runtime AI path.
 
 ## File map the agent should produce (by end of Phase 3)
 
+> **Status note:** this file map is the original design sketch and is superseded by the `packages/*`
+> engine + estate-repo shape. The paths below do not exist in this repository.
+
 ```
 multilanetesting/
   AGENTS.md  CLAUDE.md(local)  .github/  .claude/  docs/
@@ -209,4 +212,4 @@ multilanetesting/
 - Asserts **functional truth** as the gate; rendering/legibility as corroboration.
 - Emits JUnit + HTML evidence with a `requirement_ref`.
 - Adds/updates the relevant `docs/memory/*` index and `docs/traceability.md` row.
-- Passes the `webapp-pr-hygiene`-style checklist (`.claude/skills/pr-hygiene`).
+- Passes the pr-hygiene checklist (`.claude/skills/pr-hygiene`).

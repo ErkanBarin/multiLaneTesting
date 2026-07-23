@@ -6,7 +6,7 @@ user-invocable: true
 
 # screen-operator
 
-Pick the right surface for screen/browser work. The screen analog of web application's `playwright-operator`.
+Pick the right surface for screen/browser work.
 
 ## Decision tree
 

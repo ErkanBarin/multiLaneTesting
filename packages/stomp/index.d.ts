@@ -15,5 +15,11 @@ export function send(
   url: string,
   destination: string,
   body: string,
-  options?: { inject?: boolean; approvedHosts?: string[]; headers?: Record<string, string> },
+  options?: {
+    inject?: boolean;
+    approvedHosts?: string[];
+    headers?: Record<string, string>;
+    /** Reject if the broker connection does not complete within this time. Default 5000. */
+    timeoutMs?: number;
+  },
 ): Promise<void>;

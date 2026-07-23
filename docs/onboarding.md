@@ -25,7 +25,7 @@ the agent makes the right choices.
 
 ```bash
 git clone https://github.com/ErkanBarin/multiLaneTesting.git
-cd multilanetesting
+cd multiLaneTesting
 npm install
 ```
 

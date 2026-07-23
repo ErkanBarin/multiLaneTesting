@@ -1,7 +1,7 @@
 // @multilane/cli — project scaffolder for `mlt new`.
 //
 // Generates a *consumer* project that depends on the published engine packages. It never vendors
-// framework source — the generated project installs `@multilane/*` from your Nexus registry.
+// framework source — the generated project installs `@multilane/*` from your npm registry.
 //
 // Every generated artifact is deterministic and free of host/URL/secret literals: target values are
 // referenced by env-var name, and the registry/proxy come from the environment via `.npmrc`.
@@ -245,10 +245,10 @@ const SCREEN_LOCATOR = `${JSON.stringify(
 
 // --- shared static artifacts ---
 
-const NPMRC = `# .npmrc — scope @multilane to your internal Nexus registry. No literal host/token is committed.
+const NPMRC = `# .npmrc — scope @multilane to your npm registry. No literal host/token is committed.
 # npm expands \${VAR} from the environment before parsing, so every value comes from CI/env.
-@multilane:registry=\${NEXUS_NPM_REGISTRY_URL}
-\${NEXUS_NPM_REGISTRY_AUTH_HOST}:_authToken=\${NEXUS_NPM_AUTH_TOKEN}
+@multilane:registry=\${NPM_REGISTRY_URL}
+\${NPM_REGISTRY_AUTH_HOST}:_authToken=\${NPM_REGISTRY_AUTH_TOKEN}
 always-auth=true
 
 # Proxy: npm also honors the standard HTTP_PROXY / HTTPS_PROXY environment variables.
@@ -289,7 +289,7 @@ System tests for **${name}**, built on the [multilanetesting](../) engine. Lanes
     .map((l) => `\`${l}\``)
     .join(', ')}.
 
-The engine ships as versioned \`@multilane/*\` packages from the internal Nexus registry — this
+The engine ships as versioned \`@multilane/*\` packages from your npm registry — this
 project **consumes** them and never vendors framework source.
 
 ## Setup

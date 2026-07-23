@@ -20,18 +20,27 @@ export function assertApprovedHost(url, approvedHosts = []) {
 
 /**
  * Passive GET returning parsed JSON (or raw text) plus status and headers.
+ * Bounded by default: a hung server rejects after `timeoutMs`, an oversized
+ * response rejects once `maxBodyBytes` is exceeded.
  * @param {string} url
- * @param {{ headers?: Record<string, string>, approvedHosts?: string[] }} [options]
+ * @param {{ headers?: Record<string, string>, approvedHosts?: string[], timeoutMs?: number, maxBodyBytes?: number }} [options]
  * @returns {Promise<{ status: number, headers: object, body: unknown }>}
  */
-export function getJson(url, { headers = {}, approvedHosts = [] } = {}) {
+export function getJson(url, { headers = {}, approvedHosts = [], timeoutMs = 30_000, maxBodyBytes = 10_000_000 } = {}) {
   assertApprovedHost(url, approvedHosts);
   const client = url.startsWith('https:') ? https : http;
   return new Promise((resolve, reject) => {
     const req = client.get(url, { headers }, (res) => {
       let data = '';
+      let received = 0;
       res.setEncoding('utf8');
+      res.on('error', reject);
       res.on('data', (chunk) => {
+        received += Buffer.byteLength(chunk);
+        if (received > maxBodyBytes) {
+          res.destroy(new Error(`Response exceeded maxBodyBytes (${maxBodyBytes}).`));
+          return;
+        }
         data += chunk;
       });
       res.on('end', () => {
@@ -43,6 +52,9 @@ export function getJson(url, { headers = {}, approvedHosts = [] } = {}) {
         }
         resolve({ status: res.statusCode, headers: res.headers, body });
       });
+    });
+    req.setTimeout(timeoutMs, () => {
+      req.destroy(new Error(`Request timed out after ${timeoutMs} ms.`));
     });
     req.on('error', reject);
     req.end();

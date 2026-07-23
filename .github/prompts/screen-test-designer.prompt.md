@@ -1,7 +1,7 @@
 ---
 name: screen-test-designer
 description: Author a deterministic screen spec from a frozen-locator set — RPS fixture into a test partition, frozen Tier-1/2 locators, functional-truth gate corroborated by golden-image and OCR, JUnit/HTML evidence with a requirement_ref. No runtime AI.
-argument-hint: <area + frozen-locator keys, e.g. "mil-areas: createButton, areaList">
+argument-hint: <area + frozen-locator keys, e.g. "sample-panel: createButton, panelList">
 agent: screen-test-designer-worker
 tools: ["read", "search", "edit", "execute"]
 ---

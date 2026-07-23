@@ -1,6 +1,6 @@
 # docs/API.md — the multilanetesting public API
 
-The engine ships as versioned `@multilane/*` packages from the internal Nexus registry. This page is
+The engine ships as versioned `@multilane/*` packages from your private npm registry. This page is
 the contract: **what a consumer may import** and **what is private**. Anything not listed here is an
 internal implementation detail and may change without a semver-major bump.
 

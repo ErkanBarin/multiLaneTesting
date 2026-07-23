@@ -81,3 +81,34 @@ test('assertShape passes for a matching structural shape', () => {
   assert.equal(result.ok, true);
   assert.deepEqual(result.errors, []);
 });
+
+test('getJson rejects after timeoutMs when the server never responds', async () => {
+  const { createServer } = await import('node:http');
+  const server = createServer(() => {
+    // accept the request, never respond
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const { port } = server.address();
+  try {
+    await assert.rejects(
+      getJson(`http://127.0.0.1:${port}/never`, { timeoutMs: 200 }),
+      /timed out after 200 ms/,
+    );
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test('getJson rejects when the response body exceeds maxBodyBytes', async () => {
+  const emulator = await startHttpEmulator({
+    '/big': { status: 200, headers: { 'content-type': 'text/plain' }, body: 'x'.repeat(5000) },
+  });
+  try {
+    await assert.rejects(
+      getJson(`${emulator.url}/big`, { maxBodyBytes: 1000 }),
+      /exceeded maxBodyBytes/,
+    );
+  } finally {
+    await emulator.close();
+  }
+});

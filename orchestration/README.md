@@ -26,11 +26,10 @@ multilanetesting-robot/
 
 ## Supported tags (seed list — keep in sync with the guard + specs)
 
-`@milAreasCrud`, `@docNavigate`, `@regulationShape` … (replace with real tags as specs land).
-Guarded (require the two-flag opt-in + approved host inside the called script): `@injectBroadcast` …
+`@samplePanelCrud`, `@viewNavigate`, `@statusShape` … (replace with real tags as specs land).
+Guarded (require the two-flag opt-in + approved host inside the called script): `@eventInject` …
 
 ## Why a separate repo
 
 - Keeps the core framework runnable with **no Robot/Java dependency**.
 - Lets CI check out both siblings and run the wrapper without coupling release cadences.
-- Matches the web application `a DOM-focused test suite` / `a DOM-focused test suite-robot` split exactly.

@@ -1,7 +1,7 @@
 ---
 name: screen-memory-recall
 description: Read-only context loader. Walks the multilanetesting memory tiers in order (compact indices → operational truth → heavyweight reference) and reports what is already known about a target, area, locator, blocker, or requirement before any work begins. Does not edit files.
-argument-hint: <topic, e.g. "mil-areas locators" or "what blocks the desktop application lane">
+argument-hint: <topic, e.g. "sample-panel locators" or "what blocks the desktop application lane">
 tools: ["read", "search"]
 ---
 

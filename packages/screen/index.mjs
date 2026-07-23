@@ -22,12 +22,19 @@ import { loadConfig, assertTestPartition } from '@multilane/core';
  * @param {{ cwd?: string, locatorsDir?: string, env?: Record<string, string | undefined> }} [options]
  * @returns {object} the frozen locator record
  */
+const SAFE_SEGMENT = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/;
+
 export function loadFrozenLocator(
   area,
   key,
   { cwd = process.cwd(), locatorsDir = 'locators', env = process.env } = {},
 ) {
   assertTestPartition(loadConfig(env));
+  for (const [name, value] of [['area', area], ['key', key]]) {
+    if (typeof value !== 'string' || !SAFE_SEGMENT.test(value)) {
+      throw new Error(`Invalid locator ${name} "${value}": must match ${SAFE_SEGMENT} (single path segment).`);
+    }
+  }
   const path = join(cwd, locatorsDir, area, `${key}.json`);
   return JSON.parse(readFileSync(path, 'utf8'));
 }

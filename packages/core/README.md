@@ -9,7 +9,7 @@ consumer project honest. No runtime AI, no host literals, no build step.
 npm install --save-dev @multilane/core
 ```
 
-(Installs from your internal Nexus registry — see the root `.npmrc.sample`.)
+(Installs from your configured npm registry — see the root `.npmrc.sample`.)
 
 ## Public API
 
@@ -44,6 +44,6 @@ Tune scan roots and the Robot `@tag` allowlist with a `multilane.config.json` at
 {
   "specDir": "tests",
   "runtimeDirs": ["drivers", "tests", "apps"],
-  "robotTags": ["@milAreasCrud"]
+  "robotTags": ["@samplePanelCrud"]
 }
 ```

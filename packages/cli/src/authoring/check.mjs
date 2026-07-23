@@ -3,7 +3,7 @@
 // Detects drift between what was installed (recorded in the provenance file) and what is actually
 // on disk / currently resolvable. A digest mismatch means the file changed since install — it does
 // NOT authenticate who published the source package. Supply-chain trust for the package itself
-// comes from npm package integrity + registry access controls (Nexus), not this digest.
+// comes from npm package integrity + registry access controls, not this digest.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 

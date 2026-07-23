@@ -15,7 +15,7 @@ configuration, dependencies, or new files, prove they are required.
 
 | Lane | Surface | Tooling |
 |---|---|---|
-| **Web / DOM** | Angular / browser UI | Playwright + selector factories |
+| **Web / DOM** | Browser UI | Playwright + selector factories |
 | **API contract** | REST/HTTP endpoints | `node:https` / `tsx` (passive, opt-in) |
 | **WS contract** | STOMP / WebSocket | `@stomp/stompjs` (passive + supervised active SEND, opt-in) |
 | **Screen driver** | Framebuffer / VNC/RDP / C++ HMI / COTS | Deterministic driver; AI at authoring only |
@@ -73,7 +73,8 @@ reusable knowledge that saves the next task from rediscovery.
 1. `docs/memory/*` — curated, compact indices. **Query this layer first.**
 2. Operational truth docs — `docs/test-strategy.md`, `docs/coverage-map.md`, `docs/traceability.md`,
    `locators/` inventory, `ARCHITECTURE.md`.
-3. `docs/reference/*` — heavyweight source documents. Only when layers 1–2 are insufficient.
+3. `docs/reference/*` — heavyweight source documents (if the project keeps any; untracked by
+   default). Only when layers 1–2 are insufficient.
 4. Tool-local memory/logs — local, read-only, **never authoritative**.
 
 **Write rules:**
@@ -126,10 +127,10 @@ Generic workers are fallbacks only. They must never replace, retune, rename, wea
 matching specialist path or an explicit model requirement. Invocation-time model selection takes
 priority over worker defaults; defaults are preferences, not hard runtime pins.
 
-| Routine unmatched task | Worker | Preferred models, in order |
+| Routine unmatched task | Worker | Preferred capability tier, in order |
 |---|---|---|
-| Read-only repository mapping, discovery, documentation/configuration review, evidence collection | `cheap-repository-worker` | `Luna Medium`, then `GPT-5.3 Codex` |
-| Narrow read-only code, test, automation, or implementation review | `technical-worker` | `GPT-5.3 Codex`, then `Luna High` |
+| Read-only repository mapping, discovery, documentation/configuration review, evidence collection | `cheap-repository-worker` | low-cost general model, then mid-tier coding model |
+| Narrow read-only code, test, automation, or implementation review | `technical-worker` | mid-tier coding model, then stronger reasoning model |
 
 The Copilot orchestrator at `.github/agents/orchestrator.agent.md` is the only constrained named
 delegation entrypoint. It must keep the `agent` tool and an explicit allowlist containing exactly
@@ -210,8 +211,8 @@ No unrequested abstractions, no boilerplate "for later", deletion over addition.
 | Unit tests | `npm run test:unit` | |
 | No-runtime-AI guard | `npm run check:no-runtime-ai` | |
 | Robot tag contract | `npm run check:robot-contract` | |
-| All engine gates | `npm run validate` | composite of the four above + typecheck + lint |
+| All engine gates | `npm run validate` | runs all of the above in order |
 | PR hygiene | `/pr-hygiene` (or `/repo-keeper`) | |
 
-Lane-specific test commands (`npm test -w systems/<name>`, `robot robot/`) run in the **estate repo**
-against a system project — not here. See `example-test-estate/AGENTS.md`.
+Lane-specific test commands (`npm test -w systems/<name>`, `robot robot/`) run in your **estate
+repo** against a system project — not here.

@@ -6,7 +6,7 @@ user-invocable: true
 
 # pr-hygiene
 
-Run this before opening a PR. The screen analog of web application's `webapp-pr-hygiene`.
+Run this before opening a PR.
 
 ## Checklist
 

@@ -1,7 +1,7 @@
 ---
 name: screen-flake-debugger
 description: Diagnose and fix a flaky or drifted screen spec without weakening assertions or adding runtime AI. Classifies locator drift, synchronization, non-deterministic fixture, rendering-oracle noise, or real defect, then applies the matching fix (supervised Tier-4 re-pin for genuine drift).
-argument-hint: <failing spec path or symptom, e.g. "tests/mil-areas/create.spec flaps in CI">
+argument-hint: <failing spec path or symptom, e.g. "tests/sample-panel/create.spec flaps in CI">
 agent: screen-flake-debugger-worker
 tools: ["read", "search", "edit", "execute"]
 ---

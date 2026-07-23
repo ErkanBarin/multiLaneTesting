@@ -35,12 +35,12 @@ Description: <what it does>
 - `TEST_C` — available: yes/no
 - `PROD` — **NEVER target this**
 
-## ART / RPS harness (screen-driver lane)
+## RPS / functional-test harness (screen-driver lane)
 
-<!-- If the target has an existing functional-test harness, record it here. -->
-ART path: <path to HCI/ods_art or equivalent>
-Cluster YAML dir: <path to TestFrame/Clusters/<CLUSTER>/>
-Known clusters: <list>
+<!-- If the target has an existing functional-test harness or record-and-playback facility, record it here. -->
+Harness path: <path to the harness root or equivalent>
+Scenario config dir: <path to scenario YAML / cluster metadata, if any>
+Known scenario groups: <list>
 
 ## Commands
 

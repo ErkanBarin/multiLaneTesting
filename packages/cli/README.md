@@ -31,5 +31,5 @@ npm run verify
 ```
 
 The generated project includes a config skeleton, a frozen-locator directory, one example spec per
-selected lane, a proxy/Nexus-aware `.npmrc`, and a thin `Jenkinsfile` that calls the shared library.
+selected lane, a proxy/registry-aware `.npmrc`, and a thin `Jenkinsfile` that calls the shared library.
 No host, URL, or secret literal is written to any generated file.

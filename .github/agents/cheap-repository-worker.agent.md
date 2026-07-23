@@ -2,8 +2,9 @@
 name: cheap-repository-worker
 description: Narrow repository investigation, documentation review, mapping, and evidence collection.
 model:
-  - Luna Medium
-  - GPT-5.3 Codex
+  # cheap tier, then coding tier — configure concrete identifiers for your environment
+  - <low-cost general model available in your environment>
+  - <mid-tier coding model available in your environment>
 tools: ["read", "search"]
 agents: []
 user-invocable: false

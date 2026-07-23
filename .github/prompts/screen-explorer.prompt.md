@@ -1,7 +1,7 @@
 ---
 name: screen-explorer
 description: Discover and freeze stable Tier-1/Tier-2 locators on a live screen-only target (screen-only HMI, COTS, desktop application over VNC/RDP). Authoring-only; produces frozen locators, never a runtime path.
-argument-hint: <area or screen to explore, e.g. "the mil-areas editor on the screen-only HMI">
+argument-hint: <area or screen to explore, e.g. "the sample panel editor on the screen-only HMI">
 agent: screen-explorer-worker
 tools: ["read", "search", "edit", "execute"]
 ---

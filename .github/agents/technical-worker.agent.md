@@ -2,8 +2,9 @@
 name: technical-worker
 description: Reviews code, tests, automation, Playwright, API, WebSocket, and implementation details.
 model:
-  - GPT-5.3 Codex
-  - Luna High
+  # coding tier, then fallback — configure concrete identifiers for your environment
+  - <mid-tier coding model available in your environment>
+  - <mid-tier coding model available in your environment (fallback)>
 tools: ["read", "search"]
 agents: []
 user-invocable: false

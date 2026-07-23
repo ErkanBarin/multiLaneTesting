@@ -1,7 +1,7 @@
 # Feature index — `multilanetesting`
 
 Domain concepts an agent needs to author/validate specs: oracles, partitions, status semantics, and
-the deterministic world. The screen analog of web application's feature-index.
+the deterministic world.
 
 ## Oracles (assert in this order of authority)
 
@@ -17,7 +17,7 @@ A spec **must** assert functional truth. Rendering/legibility only corroborate �
 
 - **RPS** (Recording & Playback System) replays a recorded scenario into a **test partition**.
 - **Partitions:** `TEST_A`, `TEST_B`, `TEST_C` are test partitions. **`PROD` is operational — never target it.**
-- **ART harness** (HCI / `ods_art`, YAML clusters, `requirement_refs` slot) carries scenario config.
+- **Functional-test harness / RPS** — if the target already has one, reuse its introspection socket and scenario metadata (see `ARCHITECTURE.md §4`).
 
 ## Driver tiers (how a locator resolves)
 
