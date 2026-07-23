@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "multilanetesting",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Multi-lane testing framework — web/DOM, API contract, WS contract, and screen-driver lanes.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test:unit",
+    "test:unit": "node --test packages/core/test/*.test.mjs packages/cli/test/*.test.mjs packages/http/test/*.test.mjs packages/stomp/test/*.test.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint .",
+    "check:no-runtime-ai": "node scripts/check-no-runtime-ai.mjs",
+    "check:robot-contract": "node scripts/check-robot-contract.mjs",
+    "validate": "npm run check:no-runtime-ai && npm run check:robot-contract && npm run typecheck && npm run lint && npm run test:unit",
+    "dogfood": "node scripts/dogfood.mjs"
+  },
+  "devDependencies": {
+    "@playwright/mcp": "0.0.70",
+    "@playwright/test": "1.61.1",
+    "@stomp/stompjs": "7.3.0",
+    "@types/node": "26.1.0",
+    "dotenv-cli": "11.0.0",
+    "eslint": "9.39.4",
+    "tsx": "4.22.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.62.1",
+    "ws": "8.21.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

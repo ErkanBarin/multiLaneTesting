@@ -1,0 +1,13 @@
+# .npmrc.sample — copy to .npmrc (gitignored) or provide these values via CI env.
+#
+# Scopes @multilane to your npm registry without committing a host or token literal.
+# npm expands ${VAR} from the environment before parsing, so every value comes from the environment.
+#
+# Required environment variables (set by your platform / CI credentials, NOT here):
+#   NEXUS_NPM_REGISTRY_URL        Full registry URL for the @multilane scope
+#   NEXUS_NPM_REGISTRY_AUTH_HOST  npm auth key prefix, for example //registry.example/repository/npm/
+#   NEXUS_NPM_AUTH_TOKEN          Registry authentication token
+
+@multilane:registry=${NEXUS_NPM_REGISTRY_URL}
+${NEXUS_NPM_REGISTRY_AUTH_HOST}:_authToken=${NEXUS_NPM_AUTH_TOKEN}
+always-auth=true

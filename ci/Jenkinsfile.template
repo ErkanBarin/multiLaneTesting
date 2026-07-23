@@ -1,0 +1,22 @@
+// Jenkinsfile — thin per-system pipeline for multilanetesting.
+//
+// Copy this into a consumer test project (the `mlt new` scaffolder also generates one). All logic
+// lives in the reusable "multilane-jenkins" Shared Library so per-system jobs never repeat it.
+// Register the library under: Manage Jenkins > System > Global Pipeline Libraries.
+@Library('multilane-jenkins') _
+
+properties([
+  parameters([
+    string(name: 'TARGET_URL',   defaultValue: '',            description: 'Base URL / host of the system under test'),
+    string(name: 'LANES',        defaultValue: 'web,http',    description: 'Comma-separated lanes: web,http,stomp,screen'),
+    string(name: 'NODE_VERSION', defaultValue: '22.11.0',       description: 'Pinned Node major to provision'),
+    string(name: 'AGENT_LABEL',  defaultValue: '<JENKINS_AGENT_LABEL>', description: 'Agent label (empty = any agent)'),
+  ])
+])
+
+runLaneTests(
+  lanes:       params.LANES ?: 'web,http',
+  targetUrl:   params.TARGET_URL ?: '',
+  nodeVersion: params.NODE_VERSION ?: '22.11.0',
+  agentLabel:  params.AGENT_LABEL ?: '',
+)

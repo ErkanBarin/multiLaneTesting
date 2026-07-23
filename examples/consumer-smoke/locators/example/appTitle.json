@@ -1,0 +1,9 @@
+{
+  "area": "example",
+  "key": "appTitle",
+  "tier": 1,
+  "resolver": "object:app.titleLabel",
+  "stamp": { "dpi": 96, "resolution": "1920x1080", "theme": "default" },
+  "requirement_ref": "REQ_EXAMPLE_0001",
+  "last_verified": "2026-07-07"
+}

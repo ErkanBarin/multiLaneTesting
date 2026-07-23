@@ -1,0 +1,37 @@
+{
+  "name": "@multilane/cli",
+  "version": "0.1.0",
+  "description": "The `mlt` command line for multilanetesting: verify deterministic gates and scaffold consumer projects.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "bin": {
+    "mlt": "./bin/mlt.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "bin/mlt.mjs",
+    "index.mjs",
+    "index.d.ts",
+    "src/**/*.mjs",
+    "README.md"
+  ],
+  "dependencies": {
+    "@multilane/core": "0.1.0"
+  },
+  "devDependencies": {
+    "@multilane/authoring-web": "0.1.0",
+    "@multilane/authoring-http": "0.1.0",
+    "@multilane/authoring-stomp": "0.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

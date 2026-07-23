@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project]
+name = "multilanetesting-driver"
+version = "0.1.0"
+description = "Deterministic screen driver + offline oracles for multilanetesting. AI at authoring, never at runtime."
+requires-python = ">=3.11"
+
+# Runtime (deterministic) dependencies — no AI/model client here on purpose.
+dependencies = [
+    # Input synthesis
+    "pyautogui>=0.9.54",
+    # Image-template driver (Tier 2) + golden-image diff
+    "opencv-python>=4.10",
+    "numpy>=1.26",
+    "Pillow>=10.4",
+    # Legibility oracle (offline OCR) — pick one; tesseract needs the system binary
+    "pytesseract>=0.3.13",
+    # "paddleocr>=2.7",   # alternative offline OCR
+    # "easyocr>=1.7",     # alternative offline OCR
+]
+
+[project.optional-dependencies]
+# Tier-1 object/a11y introspection — platform-specific, install per target OS.
+a11y-windows = [
+    "pywinauto>=0.6.8",
+    # FlaUI is .NET; bridge via pythonnet if used:
+    "pythonnet>=3.0",
+]
+a11y-linux = [
+    "python-atspi>=2.46; sys_platform == 'linux'",
+]
+
+# Authoring-only (NEVER imported by the runtime driver). Local CV + offline OCR discovery.
+# Kept out of the default install so it can't leak into a test run.
+authoring = [
+    # Tier-3 authoring discovery: OpenCV region proposals + offline OCR (all Apache-2.0).
+    # OmniParser was dropped (AGPL icon-detect weights) and the external computer-use loop
+    # was dropped (screenshot egress to external API). See docs/memory/tool-licence-audit.md.
+    "paddleocr>=2.7",    # offline OCR — authoring discovery + legibility oracle
+    "easyocr>=1.7",      # alternative offline OCR (Apache-2.0)
+]
+
+[tool.multilanetesting]
+# Mirrored by scripts/check-no-runtime-ai.mjs: nothing under drivers/, tests/, or apps/ (outside
+# authoring-exempt paths) may import these at runtime.
+runtime_forbidden_imports = ["anthropic", "openai", "omniparser", "paddleocr", "easyocr"]

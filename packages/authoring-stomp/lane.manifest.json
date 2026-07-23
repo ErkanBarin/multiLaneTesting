@@ -1,0 +1,63 @@
+{
+  "lane": "stomp",
+  "version": "0.1.0",
+  "runtimePackage": "@multilane/stomp",
+  "authoringPackage": "@multilane/authoring-stomp",
+  "compatibility": {
+    "minRuntimeVersion": "0.1.0",
+    "maxRuntimeVersion": "0.x"
+  },
+  "requiredTools": ["read", "search", "edit"],
+  "optionalMcpServers": [],
+  "envPrerequisites": ["MULTILANE_WS_URL"],
+  "skills": [
+    {
+      "id": "stomp-test-authoring",
+      "kind": "skill",
+      "title": "STOMP/WS contract test authoring",
+      "description": "Author passive STOMP/WebSocket contract checks (SUBSCRIBE-first) and, when explicitly required, the supervised active-SEND opt-in.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/stomp-test-authoring/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/stomp-test-authoring/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/stomp-test-authoring.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "stomp-explorer",
+      "kind": "agent",
+      "title": "STOMP destination explorer",
+      "description": "Explore a STOMP/WS broker (or a local emulator) to discover destinations and message shapes, and debug subscription timing/flake. Authoring-only.",
+      "portable": "portable-after-env-config",
+      "always": false,
+      "configureId": "stomp-explorer",
+      "requires": {
+        "env": ["MULTILANE_WS_URL"]
+      },
+      "source": "assets/agents/stomp-explorer/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/stomp-explorer.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/stomp-explorer-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/stomp-explorer.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ]
+}
