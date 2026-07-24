@@ -91,14 +91,18 @@ packages are **not published**, so run the CLI from a clone of this repo:
 ```bash
 cd ..                                # scaffold next to your clone; names are lowercase [a-z0-9-]
 node multiLaneTesting/packages/cli/bin/mlt.mjs new my-system --lanes web,http
+node multiLaneTesting/scripts/install-tarballs.mjs my-system
 cd my-system                         # lanes: web, http, stomp, screen
+npm run verify
 ```
 
-The generated `package.json` depends on `@multilane/*` packages that no registry serves yet —
-install them from `npm pack` tarballs with `overrides`, exactly as
-[`scripts/dogfood.mjs`](scripts/dogfood.mjs) does, until a publishing decision is made. The first
-`npm install` creates the consumer's `package-lock.json`; commit it so its CI can run `npm ci`.
-The dogfood harness exercises this exact flow (scaffold → tarball install → `mlt verify`) offline.
+The generated `package.json` depends on `@multilane/*` packages that no registry serves yet.
+[`scripts/install-tarballs.mjs`](scripts/install-tarballs.mjs) packs the engine workspaces into
+`my-system/vendor/multilane/`, rewrites the scaffold's `@multilane/*` dependencies to those
+tarballs (with `overrides` so nested engine deps stay local), and runs the first `npm install` —
+which creates the consumer's `package-lock.json`. Commit the lockfile and `vendor/multilane/` so
+the consumer's CI can run `npm ci` without the engine clone. The dogfood harness runs this exact
+script against a fresh scaffold, offline.
 
 The generated project ships a config skeleton, a frozen-`locators/` dir, one example spec per lane,
 a registry-agnostic `.npmrc` template, and an optional thin `Jenkinsfile`. Lanes are independently
@@ -126,8 +130,9 @@ packs all 10 workspaces with `npm pack`, rewrites an example consumer
 `overrides` so nested workspace deps stay local), installs with npm's `--offline` flag, then runs
 `mlt verify` plus an installation/export smoke across every package. It also runs a minimal
 consumer (CLI + core only) and asserts `mlt create-system` exits nonzero when authoring packages
-are unresolvable, and a scaffolded consumer (`mlt create-system` with the `http` lane) whose
-generated project installs the tarballs offline, gains a `package-lock.json`, and passes `mlt verify`. This proves the *packaged* engine installs and exports correctly with zero registry
+are unresolvable, and a scaffolded consumer (`mlt create-system` with the `http` lane) installed
+offline by the same [`scripts/install-tarballs.mjs`](scripts/install-tarballs.mjs) users run,
+gaining a `package-lock.json` and passing `mlt verify`. This proves the *packaged* engine installs and exports correctly with zero registry
 access — it is a package-surface check, not functional lane coverage.
 
 ## Security model

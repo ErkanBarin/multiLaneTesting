@@ -2,7 +2,7 @@
 // `mlt` — the multilanetesting command line.
 //
 //   mlt verify                         run every deterministic gate against the current project
-//   mlt new <name> --lanes web,http    scaffold a consumer project (depends on the published engine)
+//   mlt new <name> --lanes web,http    scaffold a consumer project (depends on the versioned engine packages)
 import { runVerify, printVerifyTable } from '@multilane/core';
 import { scaffoldProject, SUPPORTED_LANES } from '../src/scaffold.mjs';
 import { installAuthoring, formatInstallReport } from '../src/authoring/install.mjs';

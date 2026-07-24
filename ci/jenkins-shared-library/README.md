@@ -39,7 +39,7 @@ runLaneTests(lanes: 'web,http', targetUrl: params.TARGET_URL, nodeVersion: '22.1
 1. **Checkout** the consumer repo.
 2. **Ensure Node** — prefers the Jenkins **NodeJS tool** `node-<version>`; falls back to Node already
    on `PATH` (static agents) or **nvm** (documented). Fails clearly if none are available.
-3. **Write `.npmrc`** from environment variables (scope `@multilane` → your npm registry). No secret is committed.
+3. **Write `.npmrc`** from environment variables (scope `@multilane` → the configured npm registry). No secret is committed.
 4. **`npm ci`** — reproducible install through the configured proxy.
 5. **Playwright browsers** (web lane only) — installs Chromium routed through the proxy. **Not**
    `--with-deps` (needs root — see caveat).

@@ -129,16 +129,12 @@ try {
   run('npm install --no-audit --no-fund --offline', scaffoldHome);
   run('npx --no-install mlt create-system my-system --lanes http', scaffoldHome);
   const project = join(scaffoldHome, 'my-system');
-  const projPkgPath = join(project, 'package.json');
-  const projPkg = JSON.parse(readFileSync(projPkgPath, 'utf8'));
-  for (const dep of Object.keys(projPkg.devDependencies ?? {})) {
-    if (tarballs[dep]) projPkg.devDependencies[dep] = `file:${tarballs[dep]}`;
-  }
-  projPkg.overrides = Object.fromEntries(
-    Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
-  );
-  writeFileSync(projPkgPath, `${JSON.stringify(projPkg, null, 2)}\n`);
-  run('npm install --no-audit --no-fund --offline', project, scaffoldEnv);
+  // Install via the same script the README tells users to run; npm_config_offline keeps the
+  // inner `npm install` hermetic (the http-lane scaffold's deps are all engine tarballs).
+  run(`node "${join(repo, 'scripts', 'install-tarballs.mjs')}" my-system`, scaffoldHome, {
+    ...scaffoldEnv,
+    npm_config_offline: 'true',
+  });
   if (!existsSync(join(project, 'package-lock.json'))) {
     throw new Error('scaffolded consumer: npm install must create package-lock.json.');
   }
