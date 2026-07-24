@@ -6,7 +6,8 @@ framebuffer, COTS applications with no DOM).
 
 **Core principle: AI may assist at authoring time; test execution is always deterministic.**
 AI can help discover screen locators or draft specs, but every artifact that runs in CI is frozen,
-reviewed, and replayed with no model in the loop — enforced by an automated gate, not convention.
+reviewed, and replayed with no model in the loop — enforced by a source-scanning gate, not
+convention.
 
 ## Status and maturity
 
@@ -137,8 +138,9 @@ access — it is a package-surface check, not functional lane coverage.
 
 ## Security model
 
-- **No AI at runtime** — `npm run check:no-runtime-ai` scans runtime sources for model/API usage
-  and fails the build on a match — or if it scans zero files.
+- **No AI at runtime** — `npm run check:no-runtime-ai` pattern-scans runtime sources for model/API
+  usage and fails the build on a match — or if it scans zero files. It is a source-pattern policy
+  gate, not a call-graph proof.
 - **No host literals or secrets in the repo** — targets are env-var references; `.env` is gitignored.
 - **Read-only by default** — the HTTP lane only GETs; the STOMP lane only subscribes. Active SEND
   requires an explicit inject flag **and** an approved-hosts allowlist match.

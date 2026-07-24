@@ -41,6 +41,14 @@ Examples:
 `);
 }
 
+function printNextSteps(name) {
+  console.log(`
+Next (no registry serves @multilane/* yet — install from tarballs):
+  node <engine-repo>/scripts/install-tarballs.mjs ${name}   # first install — creates package-lock.json; commit it (and vendor/multilane/)
+  cd ${name} && npm run verify
+Once the packages are published to a registry, the tarball step becomes a plain \`npm install\` in ${name}/.`);
+}
+
 function parseLanes(value) {
   return String(value ?? '')
     .split(',')
@@ -88,8 +96,7 @@ switch (command) {
       const { root, files } = scaffoldProject({ name, lanes, cwd: process.cwd(), force: !!flags.force });
       console.log(`✓ Scaffolded ${name} at ${root}`);
       for (const f of files) console.log(`  + ${f}`);
-      console.log('\nNext: cd', name, '&& npm install && npm run verify');
-      console.log('(npm install creates package-lock.json — commit it so CI can run `npm ci`.)');
+      printNextSteps(name);
     } catch (err) {
       fail(`✖ ${err.message}`);
     }
@@ -116,8 +123,7 @@ switch (command) {
           );
         }
       }
-      console.log('Next: cd', name, '&& npm install && npm run verify');
-      console.log('(npm install creates package-lock.json — commit it so CI can run `npm ci`.)');
+      printNextSteps(name);
     } catch (err) {
       fail(`✖ ${err.message}`);
     }

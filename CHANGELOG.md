@@ -36,10 +36,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `mlt new`/`mlt create-system` scaffolds now declare the selected lanes'
   `@multilane/authoring-*` packages as devDependencies, so `mlt authoring
   install` resolves them from the consumer's own `node_modules`.
-- Scaffolding now prints `npm install` (which creates the consumer's
-  `package-lock.json`) as the next step instead of `npm ci`, which cannot run
-  before a lockfile exists; the generated README says the same and tells users
-  to commit the lockfile.
+- Scaffolding next steps: `mlt new`/`mlt create-system` completion output and
+  the generated consumer README lead with the tarball installer
+  (`node <engine-repo>/scripts/install-tarballs.mjs`) while the packages are
+  unpublished — a plain `npm install` fails before the tarball rewrite and is
+  now documented only as the post-publication path. The first install creates
+  the consumer's `package-lock.json`, which users are told to commit. Unit and
+  dogfood tests assert the generated instructions.
 - Consumer quickstart documented as a runnable flow: project names are
   lowercase `[a-z0-9-]` and the scaffold lands under the current directory, so
   the README now runs `mlt new` from the clone's parent directory, followed by
@@ -66,6 +69,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `scripts/install-tarballs.mjs` executes npm via argument-vector `execFileSync`
+  instead of an interpolated shell command string, so consumer paths containing
+  spaces, quotes, or shell metacharacters are passed as data instead of being
+  interpreted as shell syntax (a command-injection surface). The dogfood
+  scaffolded-consumer probe now runs the installer under such a path.
 - `@multilane/http` `getJson` timeout is now an absolute deadline for the whole
   request+response instead of a socket-inactivity timer, so a slow-drip response
   can no longer hold a run open indefinitely. Invalid `timeoutMs`/`maxBodyBytes`
@@ -92,6 +100,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Security
 
-- `check:no-runtime-ai` policy gate enforces that no AI or model network calls
-  are present in runtime packages; AI tooling is confined to authoring time.
-  The gate fails if it scans zero files.
+- `check:no-runtime-ai` policy gate pattern-scans runtime package sources for
+  AI/model network-call usage (a source-pattern check, not a call-graph proof);
+  AI tooling is confined to authoring time. The gate fails if it scans zero
+  files.

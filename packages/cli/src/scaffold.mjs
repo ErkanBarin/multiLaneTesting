@@ -304,15 +304,20 @@ framework source.
 
 ## Setup
 
+No registry serves \`@multilane/*\` yet — install the engine from \`npm pack\` tarballs with the
+engine repo's installer (see the engine repo README → Using the engine in a test project):
+
 \`\`\`bash
-# Registry + proxy come from the environment (see .npmrc). Then:
-npm install      # first install — creates package-lock.json; commit it so CI can run npm ci
+# First install — packs the engine into vendor/multilane/ and creates package-lock.json;
+# commit both so CI can run npm ci.
+node <engine-repo>/scripts/install-tarballs.mjs .
 ${lanes.includes('web') ? 'npx playwright install chromium\n' : ''}npm run verify   # runs the deterministic gates (mlt verify)
 \`\`\`
 
-No registry serves \`@multilane/*\` yet — run
-\`node <engine-repo>/scripts/install-tarballs.mjs .\` from this directory to install them from
-\`npm pack\` tarballs (see the engine repo README → Using the engine in a test project).
+### After publication
+
+Once the \`@multilane/*\` packages are published, the tarball step becomes a plain \`npm install\`
+(registry + proxy come from the environment — see \`.npmrc\`).
 
 ## Run lanes
 

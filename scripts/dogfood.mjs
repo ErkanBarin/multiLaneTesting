@@ -103,7 +103,9 @@ try {
     NPM_REGISTRY_AUTH_HOST: '//127.0.0.1:9/',
     NPM_REGISTRY_AUTH_TOKEN: 'offline-unused',
   };
-  const scaffoldHome = join(staging, 'scaffold-home');
+  // The directory name is deliberately hostile (space, quotes, command substitution): the
+  // installer must treat the consumer path as data, not shell syntax.
+  const scaffoldHome = join(staging, `scaffold home "'$(echo injected)`);
   mkdirSync(scaffoldHome, { recursive: true });
   writeFileSync(
     join(scaffoldHome, 'package.json'),
@@ -127,7 +129,20 @@ try {
     )}\n`,
   );
   run('npm install --no-audit --no-fund --offline', scaffoldHome);
-  run('npx --no-install mlt create-system my-system --lanes http', scaffoldHome);
+  console.log('$ npx --no-install mlt create-system my-system --lanes http');
+  const createOut = execSync('npx --no-install mlt create-system my-system --lanes http', {
+    cwd: scaffoldHome,
+    encoding: 'utf8',
+  });
+  console.log(createOut);
+  // While the packages are unpublished, the CLI's own next step must be the tarball installer,
+  // not a plain `npm install` (which fails before the tarball rewrite).
+  if (!createOut.includes('install-tarballs.mjs')) {
+    throw new Error('create-system output must point at scripts/install-tarballs.mjs as the next step.');
+  }
+  if (createOut.includes('npm install &&')) {
+    throw new Error('create-system output must not lead users to a plain `npm install`.');
+  }
   const project = join(scaffoldHome, 'my-system');
   // Install via the same script the README tells users to run; npm_config_offline keeps the
   // inner `npm install` hermetic (the http-lane scaffold's deps are all engine tarballs).
