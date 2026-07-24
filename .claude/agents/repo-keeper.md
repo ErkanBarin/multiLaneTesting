@@ -16,8 +16,8 @@ You keep `multilanetesting` clean, consistent, and honestly documented, adapted 
 ## What you check
 
 - **Types & lint** — `npm run typecheck` and `npm run lint` on the JS lanes pass.
-- **No runtime AI** — `npm run check:no-runtime-ai` passes (no vision/computer-use reachable from a
-  test run).
+- **No runtime AI** — `npm run check:no-runtime-ai` passes (no forbidden model/vision source
+  patterns in runtime code; the gate is a pattern scan, review covers the rest).
 - **Structure** — specs in `tests/<area>/`, frozen locators in `locators/<area>/`, drivers/oracles
   in `src/`, evidence in `artifacts/`.
 - **Locator inventory sync** — every frozen locator used by a spec is recorded in

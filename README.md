@@ -6,8 +6,8 @@ framebuffer, COTS applications with no DOM).
 
 **Core principle: AI may assist at authoring time; test execution is always deterministic.**
 AI can help discover screen locators or draft specs, but every artifact that runs in CI is frozen,
-reviewed, and replayed with no model in the loop — enforced by a source-scanning gate, not
-convention.
+reviewed, and replayed with no model in the loop — checked by a source-pattern gate and code
+review (a policy heuristic, not a reachability proof).
 
 ## Status and maturity
 
@@ -103,7 +103,9 @@ The generated `package.json` depends on `@multilane/*` packages that no registry
 tarballs (with `overrides` so nested engine deps stay local), and runs the first `npm install` —
 which creates the consumer's `package-lock.json`. Commit the lockfile and `vendor/multilane/` so
 the consumer's CI can run `npm ci` without the engine clone. The dogfood harness runs this exact
-script against a fresh scaffold, offline.
+script against a fresh scaffold, offline. The installer supports POSIX platforms (on Windows use
+WSL) and rejects project paths containing `#`, `%`, `\`, or `:` — characters npm cannot handle in
+`file:` specs.
 
 The generated project ships a config skeleton, a frozen-`locators/` dir, one example spec per lane,
 a registry-agnostic `.npmrc` template, and an optional thin `Jenkinsfile`. Lanes are independently
@@ -138,9 +140,10 @@ access — it is a package-surface check, not functional lane coverage.
 
 ## Security model
 
-- **No AI at runtime** — `npm run check:no-runtime-ai` pattern-scans runtime sources for model/API
-  usage and fails the build on a match — or if it scans zero files. It is a source-pattern policy
-  gate, not a call-graph proof.
+- **No AI at runtime (policy)** — `npm run check:no-runtime-ai` pattern-scans runtime sources and
+  fails the build when a configured forbidden pattern matches — or if it scans zero files. It is a
+  finite source-pattern heuristic backed by code review, not a call-graph or reachability proof;
+  dynamically constructed imports/URLs are outside its scope.
 - **No host literals or secrets in the repo** — targets are env-var references; `.env` is gitignored.
 - **Read-only by default** — the HTTP lane only GETs; the STOMP lane only subscribes. Active SEND
   requires an explicit inject flag **and** an approved-hosts allowlist match.
@@ -169,8 +172,8 @@ agents under [`.claude/`](.claude/), Copilot mirrors under [`.github/`](.github/
 Playwright and an authoring-only screen-introspection server, and a curated memory system under
 [`docs/memory/`](docs/memory/). Entry point for any agent: [`AGENTS.md`](AGENTS.md).
 
-None of this is required to run tests, and none of it can reach a test run — the no-runtime-AI gate
-is the enforcement, not the documentation.
+None of this is required to run tests. The no-runtime-AI source-pattern gate plus code review
+guard the authoring/runtime boundary — the gate is a policy heuristic, not a reachability proof.
 
 ## Repository layout
 

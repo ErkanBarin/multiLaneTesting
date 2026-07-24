@@ -8,7 +8,7 @@ the web application Jenkins shape with screen-specific additions.
 1. **Checkout** — this repo (and the sibling `multilanetesting-robot` if using the Robot wrapper).
 2. **Setup** — install JS deps (`npm ci`), Python driver deps (`pip install -e .` / `uv sync`), and
    start the display stack (Xvfb + the VNC/RDP bridge) for headless screen runs.
-3. **Guard** — `npm run check:no-runtime-ai` (no vision/computer-use reachable at runtime) and
+3. **Guard** — `npm run check:no-runtime-ai` (source-pattern scan for model/vision usage in runtime code) and
    `npm run check:robot-contract` (tag consistency). **Fail fast** if either trips.
 4. **Typecheck + lint** — `npm run typecheck`, `npm run lint`.
 5. **Run** — replay specs into a **test partition** (never `PROD`). Each spec runs **twice**; identical

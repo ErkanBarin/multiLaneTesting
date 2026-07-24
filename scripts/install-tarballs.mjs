@@ -13,10 +13,28 @@ import { mkdirSync, readFileSync, writeFileSync, readdirSync, existsSync } from 
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+if (process.platform === 'win32') {
+  console.error(
+    '✖ install-tarballs.mjs supports POSIX platforms only: npm is invoked without a shell, and the\n' +
+      '  Windows npm launcher is a .cmd shim that execFile cannot run. Use WSL.',
+  );
+  process.exit(1);
+}
+
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const target = process.argv[2] && resolve(process.argv[2]);
 if (!target || !existsSync(join(target, 'package.json'))) {
   console.error('Usage: node scripts/install-tarballs.mjs <project-dir>  (dir must contain a package.json)');
+  process.exit(1);
+}
+
+// Fail fast BEFORE mutating anything: npm mishandles these characters in the consumer's absolute
+// path (# truncates as a URL fragment, % fails URI decoding, \ is rewritten to /, and : breaks
+// the node_modules/.bin PATH entry), so a clear refusal beats a half-installed project.
+const bad = target.match(/[#%\\:]/);
+if (bad) {
+  console.error(`✖ project path contains "${bad[0]}", which npm cannot handle in file: specs: ${target}`);
+  console.error('  Move/rename the project so its path avoids # % \\ : and rerun.');
   process.exit(1);
 }
 

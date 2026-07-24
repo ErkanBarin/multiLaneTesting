@@ -72,7 +72,7 @@ def call(Map config = [:]) {
       }
 
       stage('Verify (deterministic gates)') {
-        // mlt verify == no-runtime-ai + robot-contract. No AI, no network model calls.
+        // mlt verify == no-runtime-ai (source-pattern gate) + robot-contract.
         steps { sh 'npx --no-install mlt verify' }
       }
 

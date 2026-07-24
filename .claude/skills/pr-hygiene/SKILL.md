@@ -12,8 +12,8 @@ Run this before opening a PR.
 
 1. **Determinism** — every touched spec passes **twice** with identical functional readback; no
    `sleep`/retry loops.
-2. **No runtime AI** — `npm run check:no-runtime-ai` passes; no vision/computer-use/`screen-driver`
-   discovery reachable from a test run.
+2. **No runtime AI** — `npm run check:no-runtime-ai` passes; no model/vision/`screen-driver`
+   discovery source patterns in runtime code (a pattern scan — review covers the rest).
 3. **Partition safety** — specs replay an RPS scenario into a **test partition** (`TEST_A`/`TEST_B`/`TEST_C`),
    never `PROD`.
 4. **Functional gate** — functional truth is asserted as the gate; rendering/legibility only
