@@ -1,0 +1,86 @@
+# Regenerate package-lock.json on a runner with unrestricted registry access.
+#
+# A lockfile generated behind a restricted proxy lacks `resolved`/`integrity` for external
+# dependencies, and npm 11 refuses to `npm ci` from it. GitHub-hosted runners reach
+# registry.npmjs.org, so this manually triggered workflow repairs the metadata with the pinned
+# npm 10.9.0, proves `npm ci` under both npm 10 and npm 11 (Node 24), and — only if every guard
+# passes and nothing but package-lock.json changed — commits the result back to the branch it
+# ran on. Trigger it from the Actions tab ("Run workflow"); review the resulting bot commit.
+name: regenerate-lockfile
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: 22
+
+      - name: Pin npm 10.9.0 (the packageManager version)
+        run: |
+          npm install -g npm@10.9.0
+          npm --version
+
+      - name: Regenerate lockfile metadata (versions stay exact-pinned)
+        run: npm install --package-lock-only
+
+      - name: 'Guard: every external entry carries resolved + integrity'
+        run: |
+          node -e '
+            const l = require("./package-lock.json");
+            const bad = Object.entries(l.packages).filter(([k, v]) =>
+              k && !k.startsWith("packages/") && !v.link && (!v.resolved || !v.integrity));
+            if (bad.length) {
+              console.error("entries missing resolved/integrity: " + bad.length);
+              bad.forEach(([k]) => console.error("  " + k));
+              process.exit(1);
+            }
+            console.log("OK: all external entries carry resolved + integrity");
+          '
+
+      - name: 'Guard: only package-lock.json changed, no dependency version changed'
+        run: |
+          changed="$(git diff --name-only)"
+          if [ -n "$changed" ] && [ "$changed" != "package-lock.json" ]; then
+            echo "unexpected files changed:"; echo "$changed"; exit 1
+          fi
+          if git diff -U0 package-lock.json | grep -E '^[+-]\s*"version":'; then
+            echo "dependency versions changed — refusing to auto-commit"; exit 1
+          fi
+          git diff --stat
+
+      - name: npm ci + full validate under npm 10
+        run: |
+          npm ci
+          npm run validate
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: 24
+
+      - name: npm ci under npm 11 / Node 24 (the previously failing combination)
+        run: |
+          npm --version
+          rm -rf node_modules
+          npm ci
+
+      - name: Commit and push the repaired lockfile
+        run: |
+          if git diff --quiet package-lock.json; then
+            echo "lockfile already complete — nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898279+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "Regenerate package-lock.json with npm 10.9.0 on an unrestricted runner" \
+            -m "All external entries now carry resolved + integrity. Verified in this workflow run: npm ci + full validate under npm 10.9.0, and npm ci under npm 11 / Node 24."
+          git push

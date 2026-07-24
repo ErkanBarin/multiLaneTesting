@@ -30,6 +30,29 @@ state of each part:
 Packages are **not published to any registry**. Consume them via `npm pack` tarballs (see
 [Dogfooding](#dogfooding-the-packaged-engine)) until a publishing decision is made.
 
+## Who this is for — and how to adopt it
+
+You own a system with one or more testable surfaces — a browser UI, an HTTP API, STOMP/WebSocket
+streams, or a screen-only UI that DOM tools can't reach — and you want automated tests that behave
+the same on every run. What adopting this engine buys you:
+
+- **Deterministic CI** — no model calls during a run, so failures reproduce and reruns are cheap.
+- **Coverage where DOM tools stop** — the screen lane tests VNC/RDP and COTS UIs via frozen,
+  reviewed locators.
+- **AI speed without AI risk** — agents help discover locators and draft specs at authoring time;
+  a source-pattern gate keeps models out of every run.
+- **One engine, many teams** — each team scaffolds its own small consumer project for its own
+  system; the engine evolves centrally and is re-installed, not copied.
+- **Evidence per run** — JUnit/HTML artifacts suitable for review and traceability.
+
+Adoption is a scaffold, not a fork: your specs, locators, `.env`, and CI job live in your own
+repository, and lanes are independently optional. To tailor it further — different lanes, adjusted
+scaffold templates, your own authoring assets — the engine is a reference implementation designed
+to be modified.
+
+**Start here: [`docs/onboarding.md`](docs/onboarding.md)** — step by step from clone to a passing
+first test against your system, including CI wiring and how to adapt the framework to your needs.
+
 ## Quickstart
 
 Requires Node >= 20 and npm 10.
