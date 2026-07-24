@@ -13,13 +13,10 @@ best-effort basis. There is no guarantee of patch timelines.
 
 Do not open a public GitHub issue for security vulnerabilities.
 
-Report vulnerabilities privately to:
-
-**[SECURITY CONTACT — to be confirmed by the maintainer]**
-
-If the maintainer has enabled GitHub's private vulnerability reporting feature
-for this repository, you may also use that channel (check the repository's
-Security tab). Whether that feature is enabled is not guaranteed at this time.
+Report vulnerabilities privately via GitHub's private vulnerability reporting:
+open the repository's **Security** tab and choose **Report a vulnerability**.
+This feature is enabled for this repository and is the only reporting channel;
+there is no separate security contact address.
 
 Please include:
 

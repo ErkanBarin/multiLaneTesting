@@ -19,9 +19,10 @@ the loop when tests *run*.
 Your system's tests never live in the engine repo. You scaffold a small consumer project, install
 the engine into it, and write specs there. Engine updates arrive by re-running the installer.
 
-> **License note:** the engine is currently `UNLICENSED` while a licensing decision is pending —
-> see the [README license section](../README.md#license). Evaluate freely; check before
-> production use.
+> **License note:** the engine is deliberately `UNLICENSED` — it is shared as a working sample
+> with no formal grant, support, or warranty. See the
+> [README license section](../README.md#license). Evaluate freely; if your use requires a formal
+> grant, ask the repository owner.
 
 ---
 
