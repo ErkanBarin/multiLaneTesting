@@ -38,8 +38,7 @@ A spec must assert functional truth; the other two corroborate.
 
 Toolchain chosen for the cleanest licence (MIT/Apache preferred), **zero external network egress at
 runtime**, and broadest coverage of the target types (Win32 C++ HMI, COTS over VNC). All inference is
-local/offline; model weights are pre-provisioned, never committed. _Verified 2026-06-30 — full table in
-`docs/memory/tool-licence-audit.md`._
+local/offline; model weights are pre-provisioned, never committed. _Verified 2026-06-30._
 
 | Tier / role | Tool | SPDX | Offline |
 |---|---|---|---|

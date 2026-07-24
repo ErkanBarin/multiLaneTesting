@@ -79,6 +79,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   by npm 10 on a restricted network.
 - `dotenv-cli` removed (unused devDependency).
 
+### Removed
+
+- `IMPLEMENTATION_PLAN.md` (the historical phased build-out plan — the engine is built;
+  `ARCHITECTURE.md` and `BOOTSTRAP_PROMPT.md` remain the design and extension docs) and
+  `docs/memory/tool-licence-audit.md` (audit history for a tool dropped in June; the licensing
+  outcome is recorded in `ARCHITECTURE.md` and the blocker index).
+
 ### Fixed
 
 - `scripts/install-tarballs.mjs` refuses — before mutating the project — consumer

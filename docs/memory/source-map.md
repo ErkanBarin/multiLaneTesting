@@ -11,7 +11,6 @@ look.
 | Claude adapter (local) | `CLAUDE.md` | **gitignored** — may hold env-specific truth |
 | Path-scoped rules | `.github/instructions/*.instructions.md` | `applyTo` globs |
 | Architecture & driver tiers | `ARCHITECTURE.md` | The "how it works" |
-| Phased build plan | `IMPLEMENTATION_PLAN.md` | Phases 0–4, approval gates |
 | Compact memory | `docs/memory/*` | Query first |
 | What's covered | `docs/coverage-map.md` | Coverage matrix |
 | Test strategy / lanes | `docs/test-strategy.md` | UI + optional lanes |

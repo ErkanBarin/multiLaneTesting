@@ -14,8 +14,7 @@ Playwright, API contract, and WS contract follow the same conventions proven in 
 
 This document defines the screen-driver model (driver tiers, oracles, deterministic world) that
 does not exist in the other lanes. For the other lanes, see the path-scoped instruction files in
-`.github/instructions/`. The [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) turns everything
-into phased work.
+`.github/instructions/`.
 
 ---
 
@@ -155,7 +154,7 @@ system exposes.
 | Pixel fragility (Tier 2) | Pin DPI, resolution, and theme with each template; prefer Tier 1 |
 | Per-run AI cost creep | **No vision/computer-use at runtime** — enforced in CI |
 | Security / data exfiltration | Isolated VM; **never** send secrets or operational data to a model |
-| Licensing | All authoring tools are Apache-2.0 / BSD-3-Clause; tool-licence audit verified 2026-06-30 — see `docs/memory/tool-licence-audit.md` |
+| Licensing | All authoring tools are Apache-2.0 / BSD-3-Clause (audit verified 2026-06-30) |
 | Scope creep onto DOM targets | DOM targets stay on Playwright; the screen lane is for no-DOM only |
 | Registry/proxy install unproven offline | `npm run dogfood` proves the packaged tarballs install and pass gates; validate the live registry-through-proxy path once on a real CI agent before trusting a full job |
 

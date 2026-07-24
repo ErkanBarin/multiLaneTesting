@@ -208,7 +208,7 @@ guard the authoring/runtime boundary — the gate is a policy heuristic, not a r
 | `ci/` | Optional Jenkins shared-library template |
 | `.claude/`, `.github/` | Authoring-time agent/skill layer (Claude source of truth, Copilot mirror) |
 | `pyproject.toml`, `src/` | Python screen-driver package (stub) |
-| `ARCHITECTURE.md`, `IMPLEMENTATION_PLAN.md`, `BOOTSTRAP_PROMPT.md` | Design + build-out docs |
+| `ARCHITECTURE.md`, `BOOTSTRAP_PROMPT.md` | Design + build-out docs |
 
 ## Contributing
 

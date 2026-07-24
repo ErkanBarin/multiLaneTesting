@@ -41,10 +41,9 @@ tools only; neither may be reachable from a test run.
 ### Read first (in this order)
 
 1. `ARCHITECTURE.md` — driver tiers, three oracles, deterministic-replay model, building blocks, risks.
-2. `IMPLEMENTATION_PLAN.md` — the phased plan (Phase 0 → 4) with deliverables and exit gates.
-3. `AGENTS.md` — the cross-agent entrypoint and the memory/recall policy.
-4. `docs/memory/README.md` — how the curated memory system works (store/recall/update).
-5. `CUSTOMIZATION_MAP.md` — the Claude (source of truth) ↔ Copilot (wrapper) mirror.
+2. `AGENTS.md` — the cross-agent entrypoint and the memory/recall policy.
+3. `docs/memory/README.md` — how the curated memory system works (store/recall/update).
+4. `CUSTOMIZATION_MAP.md` — the Claude (source of truth) ↔ Copilot (wrapper) mirror.
 
 ### Non-negotiable rules
 
@@ -83,7 +82,7 @@ tools only; neither may be reachable from a test run.
 - **Validate before claiming done.** Typecheck/lint the JS lanes, run the new spec twice for
   determinism, and pass the `pr-hygiene` checklist.
 
-### Build order (summary — full detail in `IMPLEMENTATION_PLAN.md`)
+### Build order (summary)
 
 1. **Phase 0 — Target analysis & lane selection** *(approval gate)*: inventory the target's testable
    surfaces, assess feasibility per surface, choose the lane order, write the memo. **Stop for sign-off.**
@@ -115,8 +114,7 @@ channel exists, which partition is safe, or whether a control has an object/cont
 
 If you just want to start, paste this instead:
 
-> Follow `BOOTSTRAP_PROMPT.md`. Read `ARCHITECTURE.md`, `IMPLEMENTATION_PLAN.md`, and
-> `AGENTS.md` first. Implement **Phase 0 only** (target analysis & lane selection for the target
+> Follow `BOOTSTRAP_PROMPT.md`. Read `ARCHITECTURE.md` and `AGENTS.md` first. Implement **Phase 0 only** (target analysis & lane selection for the target
 > system described to you) and stop for my sign-off. Honor every non-negotiable rule — especially *AI at
 > authoring, never at runtime* and *replay into a test partition, never PROD*. Keep a todo list and
 > tell me what you need from me to run the spike.

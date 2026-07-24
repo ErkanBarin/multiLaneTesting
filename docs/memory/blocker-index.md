@@ -7,7 +7,7 @@ invent assertions for things they cannot prove.
 
 | ID | What | Why blocked | Status | Last verified |
 |---|---|---|---|---|
-| BLK_003 | OmniParser icon-detect license | ~~AGPL component needs legal review before any shipped use~~ | **Resolved 2026-06-30** — OmniParser dropped; replaced with OpenCV + offline OCR (Apache-2.0). See `docs/memory/tool-licence-audit.md`. | 2026-06-30 |
+| BLK_003 | OmniParser icon-detect license | ~~AGPL component needs legal review before any shipped use~~ | **Resolved 2026-06-30** — OmniParser dropped; replaced with OpenCV + offline OCR (Apache-2.0). | 2026-06-30 |
 
 ## Rules
 

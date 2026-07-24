@@ -41,7 +41,7 @@ a11y-linux = [
 authoring = [
     # Tier-3 authoring discovery: OpenCV region proposals + offline OCR (all Apache-2.0).
     # OmniParser was dropped (AGPL icon-detect weights) and the external computer-use loop
-    # was dropped (screenshot egress to external API). See docs/memory/tool-licence-audit.md.
+    # was dropped (screenshot egress to external API).
     "paddleocr>=2.7",    # offline OCR — authoring discovery + legibility oracle
     "easyocr>=1.7",      # alternative offline OCR (Apache-2.0)
 ]

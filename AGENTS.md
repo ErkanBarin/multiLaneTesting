@@ -37,14 +37,13 @@ its own small **estate repo**, one self-contained
 - Replay RPS scenarios into a **test partition** (`TEST_A`/`TEST_B`/`TEST_C`), never `PROD`.
 - Frozen locators live under `locators/<area>/`; no runtime discovery.
 
-Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) first.
+Read [`ARCHITECTURE.md`](ARCHITECTURE.md) first.
 
 ## Where to look
 
 | Question | Read this first |
 |---|---|
 | Conceptual model (tiers, oracles, replay) | [ARCHITECTURE.md](ARCHITECTURE.md) |
-| What to build and in what order | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) |
 | Repo-wide guardrails (Copilot adapter) | [.github/copilot-instructions.md](.github/copilot-instructions.md) |
 | Path-scoped lane rules | [.github/instructions/](.github/instructions/) — `*.instructions.md` with `applyTo:` globs |
 | Copilot custom agents | [.github/agents/](.github/agents/) — orchestrator + hidden workers |

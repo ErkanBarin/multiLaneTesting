@@ -178,8 +178,8 @@ update.
 ## Extending the engine itself
 
 Building a new lane or driver rather than consuming the engine? Start from
-[`IMPLEMENTATION_PLAN.md`](../IMPLEMENTATION_PLAN.md) and [`BOOTSTRAP_PROMPT.md`](../BOOTSTRAP_PROMPT.md)
-— the phased build-out docs — and keep `npm run validate` green.
+[`BOOTSTRAP_PROMPT.md`](../BOOTSTRAP_PROMPT.md) — the build-out doc — and keep
+`npm run validate` green.
 
 ## Guardrails (non-negotiable)
 
