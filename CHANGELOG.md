@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   GitHub issue templates, PR template, and Dependabot configuration.
 - CI pipeline for automated validation on push and pull request.
 - Committed `package-lock.json` for reproducible installs.
+- `.github/workflows/regenerate-lockfile.yml`: manually triggered workflow that regenerates
+  `package-lock.json` on an unrestricted GitHub runner with the pinned npm 10.9.0. It guards that
+  every external entry gains `resolved` + `integrity`, that nothing but the lockfile changed and
+  no dependency version moved, verifies `npm ci` + full validate under npm 10 and `npm ci` under
+  npm 11 / Node 24, and only then commits the repaired lockfile as the CI bot.
 - `scripts/install-tarballs.mjs`: supported installer for the unpublished engine — packs every
   workspace into a consumer's `vendor/multilane/`, rewrites its `@multilane/*` dependencies to
   those tarballs with `overrides`, and runs the first `npm install` (creating the consumer's
@@ -23,6 +28,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `docs/onboarding.md` rewritten as a team-adoption guide: the engine-vs-consumer model, lane
+  selection, the scaffold + tarball-install flow, environment configuration, CI wiring, optional
+  AI-assisted authoring, and how to adapt the framework — replacing the pre-engine "agent builds
+  the framework" bootstrap flow, which is now linked as the engine-extension path. The README
+  gains a "Who this is for — and how to adopt it" section pointing at it.
 - TLS bypass removed from MCP server configuration; TLS verification is now on
   by default with no committed exception.
 - MCP tool versions pinned for reproducibility.

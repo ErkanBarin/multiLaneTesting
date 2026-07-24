@@ -1,11 +1,27 @@
-# Onboarding — `multilanetesting`
+# Onboarding — adopting `multilanetesting` in your team
 
-For teams consuming published packages from another repository, see:
-your registry administrator's npm onboarding guide
+This guide takes a team from zero to a passing first test against **your own system**, using this
+repository as a shared engine. It assumes nothing about your organization — any team with a system
+under test and a CI runner can follow it.
 
-Everything a new team member or a new-system team needs to go from zero to a passing first test.
-The framework builds itself through an AI agent — your job is to set up the context correctly so
-the agent makes the right choices.
+**Who this is for.** Teams that own a system exposing one or more testable surfaces — a browser
+UI, an HTTP API, STOMP/WebSocket streams, or a screen-only UI (VNC/RDP, C++ HMI, COTS application
+with no DOM) — and want deterministic automated tests. AI may help *write* tests; it is never in
+the loop when tests *run*.
+
+**The model.** Two repositories, clearly separated:
+
+| Repo | Owned by | Contains |
+|---|---|---|
+| The engine (this repo) | shared / maintainers | `@multilane/*` packages, gates, scaffolder, docs |
+| Your consumer project | your team | your specs, your locators, your `.env`, your CI job |
+
+Your system's tests never live in the engine repo. You scaffold a small consumer project, install
+the engine into it, and write specs there. Engine updates arrive by re-running the installer.
+
+> **License note:** the engine is currently `UNLICENSED` while a licensing decision is pending —
+> see the [README license section](../README.md#license). Evaluate freely; check before
+> production use.
 
 ---
 
@@ -14,34 +30,67 @@ the agent makes the right choices.
 | Tool | Version | Notes |
 |---|---|---|
 | Node.js | ≥ 20 | `node --version` |
-| npm | ≥ 10 | bundled with Node 20 |
-| Python | ≥ 3.11 | only for the screen-driver lane |
-| Git | any | SSH access to your team's git host |
-| Claude Code or GitHub Copilot | current | the agent that builds the framework |
+| npm | 10.x | bundled with Node 20/22 |
+| Git | any | access to your team's git host for the consumer project |
+| Python | ≥ 3.11 | **only** if you build the screen-driver lane |
+| Claude Code or GitHub Copilot | current | **only** for optional AI-assisted authoring (Step 6) |
+
+The installer supports POSIX platforms; on Windows use WSL.
 
 ---
 
-## Step 1 — Clone and install
+## Step 1 — Clone the engine and prove it is healthy
 
 ```bash
 git clone https://github.com/ErkanBarin/multiLaneTesting.git
 cd multiLaneTesting
-npm install
+npm ci
+npm run validate     # no-runtime-AI gate + robot-contract gate + typecheck + lint + unit tests
 ```
+
+Everything runs offline after `npm ci` — no target system, no credentials. If `validate` is not
+green, stop and fix that first (see [SUPPORT.md](../SUPPORT.md)).
+
+Optional but recommended: `npm run dogfood` packs all packages and installs them into example
+consumers exactly the way you will in Step 2.
 
 ---
 
-## Step 2 — Create your `.env`
+## Step 2 — Scaffold your team's test project
 
-Copy the template and fill in the values for your target system. The `.env` file is gitignored —
-it never goes to remote.
+Pick your lanes from what your system actually exposes — build only those:
+
+| Your system has… | Lane | What a spec asserts |
+|---|---|---|
+| A browser/DOM UI | `web` | User flows via Playwright + selector factories |
+| REST/HTTP endpoints | `http` | Status/shape/header contracts (passive GETs) |
+| STOMP/WebSocket streams | `stomp` | Message shape (passive SUBSCRIBE; SEND is double-gated) |
+| A screen-only UI (VNC/RDP, COTS) | `screen` | Frozen-locator replay + functional/golden/OCR oracles |
 
 ```bash
-cp .env.example .env
-# edit .env — fill in only the sections that apply to your target system
+cd ..                                # scaffold next to your engine clone; names are lowercase [a-z0-9-]
+node multiLaneTesting/packages/cli/bin/mlt.mjs new my-system --lanes web,http
+node multiLaneTesting/scripts/install-tarballs.mjs my-system
+cd my-system
+npm run verify                       # the same deterministic gates, now in YOUR project
 ```
 
-Key variables:
+The `@multilane/*` packages are not published to any registry yet, so the installer packs the
+engine into `my-system/vendor/multilane/` and rewrites the dependencies to those tarballs. Commit
+`package-lock.json` **and** `vendor/multilane/` — your CI can then run `npm ci` without the engine
+clone. (The installer rejects project paths containing `#`, `%`, `\`, or `:`.)
+
+Put `my-system/` in your team's own git repository.
+
+---
+
+## Step 3 — Configure your environment
+
+All target values come from the environment. Copy the template and fill in only what applies:
+
+```bash
+cp .env.example .env      # .env is gitignored — it never reaches the remote
+```
 
 | Variable | What it is |
 |---|---|
@@ -49,97 +98,98 @@ Key variables:
 | `MULTILANE_TARGET_HOST` | Host for API contract calls |
 | `MULTILANE_WS_URL` | STOMP/WebSocket endpoint |
 | `SCREEN_TARGET_HOST` | VNC/RDP host for the screen-driver lane |
-| `SCREEN_RPS_PARTITION` | Test partition — `TEST_A`, `TEST_B`, or `TEST_C`. **Never `PROD`.** |
+| `SCREEN_RPS_PARTITION` | Test partition — e.g. `TEST_A`. **Never `PROD`** — the lane refuses to run. |
+
+**No host literals in committed files, ever** — env-var names only. This is what makes the same
+specs portable across your dev/test/CI environments.
 
 ---
 
-## Step 3 — Create `CLAUDE.md` (if using Claude Code)
+## Step 4 — Write your first spec
 
-`CLAUDE.md` is gitignored — it holds your local, environment-specific operational truth.
-Copy the template:
+The scaffold ships one example spec per lane under `tests/<lane>/` — copy the pattern:
 
 ```bash
-cp CLAUDE.md.example CLAUDE.md
-# edit CLAUDE.md — fill in your system name, hosts, partition, any known blockers
+npm run verify            # gates must stay green
+npm test                  # runs the lane specs (web lane: npx playwright install chromium first)
 ```
 
-If using GitHub Copilot instead of Claude Code, skip this step — Copilot reads
-`.github/copilot-instructions.md` (already committed).
+Determinism rules that apply to every spec you write:
+
+- Assert **functional truth** (state/objects), not screenshots alone.
+- No sleeps — wait on conditions. No retry-until-green loops.
+- Run every new spec **twice**; identical results required.
+- Screen lane: only frozen, reviewed locators from `locators/<area>/` — discovery happens at
+  authoring time, never during a run.
+
+Background reading: [test strategy](test-strategy.md), [public API](API.md),
+[architecture](../ARCHITECTURE.md).
 
 ---
 
-## Step 4 — Run the guard scripts
+## Step 5 — Wire up your CI
+
+Any CI system that can run npm works:
+
+```
+npm ci
+npx --no-install mlt verify      # deterministic gates — fail fast
+npm test                         # lane specs; archive JUnit/HTML evidence
+```
+
+The scaffold includes an optional thin `Jenkinsfile`; a Jenkins shared-library template lives in
+the engine repo under [`ci/jenkins-shared-library/`](../ci/jenkins-shared-library/). Inject
+secrets and hosts from your CI credential store — never commit them.
+
+---
+
+## Step 6 (optional) — AI-assisted authoring
+
+AI helps you *write* specs faster; the no-runtime-AI gate keeps it out of every run.
 
 ```bash
-npm run check:no-runtime-ai    # should pass immediately (no tests yet)
-npm run check:robot-contract   # should pass immediately (no tags yet)
+npx --no-install mlt authoring install --lanes web,http   # materialize skills/agents for your lanes
 ```
 
-If either fails before you've written any tests, something is wrong with the repo state — read the
-error output before continuing.
+- **Claude Code:** `cp CLAUDE.md.example CLAUDE.md` in the engine clone (gitignored, holds your
+  local specifics), then run `claude` in your consumer project.
+- **GitHub Copilot:** the committed `.github/` mirrors are picked up automatically.
+
+`mlt authoring check` detects drift; `mlt authoring update` re-materializes assets after an engine
+update.
 
 ---
 
-## Step 5 — Open the repo in your AI agent
+## Adapting the framework to your needs
 
-**Claude Code:**
-```bash
-claude  # opens in the current directory
-```
+- **Lanes are independent** — an `http`-only project pulls no Playwright or STOMP dependencies.
+  Add a lane later with `mlt new`'s scaffold as reference, or re-scaffold and copy your specs in.
+- **Scaffold templates** live in `packages/cli/src/scaffold.mjs`; authoring assets in
+  `packages/authoring-*/assets/`. Fork-and-adjust is expected — the engine is a reference
+  implementation.
+- **Gates are configurable** — `multilane.config.json` controls which trees the no-runtime-AI gate
+  scans; keep it pointed at all your runtime code (a zero-file scan fails by design).
+- **Screen lane** — the authoring flow (introspect → propose → freeze → review) is documented in
+  [ARCHITECTURE.md](../ARCHITECTURE.md); frozen locators are reviewed like code.
+- **Improvements welcome** — upstream fixes and new lanes via PRs, see
+  [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-**GitHub Copilot (VS Code):**
-Open the `multilanetesting/` folder in VS Code. The `AGENTS.md` file is auto-attached.
+## Extending the engine itself
 
----
+Building a new lane or driver rather than consuming the engine? Start from
+[`IMPLEMENTATION_PLAN.md`](../IMPLEMENTATION_PLAN.md) and [`BOOTSTRAP_PROMPT.md`](../BOOTSTRAP_PROMPT.md)
+— the phased build-out docs — and keep `npm run validate` green.
 
-## Step 6 — Run Phase 0 (surface inventory, approval gate)
+## Guardrails (non-negotiable)
 
-Paste this to the agent, or say *"Follow `BOOTSTRAP_PROMPT.md`"*:
-
-> Implement **Phase 0 only** (the surface inventory for `<your system name>`). Read
-> `ARCHITECTURE.md`, `IMPLEMENTATION_PLAN.md`, and `AGENTS.md` first. Stop for my sign-off after
-> the memo. Tell me what you need from me to complete the inventory.
-
-The agent will ask what surfaces the system exposes (DOM, REST, WS, screen). Answer honestly —
-this determines which lanes get built and in what order. **Do not skip Phase 0.**
-
----
-
-## Step 7 — Sign off the memo, then build
-
-After Phase 0:
-1. Read the memo the agent produces in `spikes/phase0-<system>/`.
-2. If the surface inventory looks right, sign it off (reply "approved, proceed to Phase 1").
-3. The agent builds Phase 1 (first lane MVP) — your only job during Phase 1 is to confirm the
-   spec passes and evidence looks correct.
-
----
-
-## What the agent builds (you don't write this by hand)
-
-The missing directories (`apps/`, `src/`, `tests/`, `locators/`, `bin/`) are **intentionally
-absent** from the starter kit. They are created by the agent during Phases 1–4. The kit ships
-the *plan, conventions, and AI customization* so the agent builds everything correctly the first
-time.
-
----
-
-## Guardrails to enforce (remind the agent if it forgets)
-
-- **No host literals in committed files** — env-var names only.
-- **No AI in a test run** — `npm run check:no-runtime-ai` must stay green.
+- **No host literals or secrets in committed files** — env-var names only.
+- **No AI in a test run** — `npm run check:no-runtime-ai` must stay green (a source-pattern gate
+  backed by code review).
 - **Screen specs replay into a test partition** — never `PROD`.
-- **Functional truth is the gate** — a spec does not pass on a golden-image diff alone.
+- **Functional truth is the gate** — golden-image/OCR corroborate, they don't decide.
 - **Run every new spec twice** — identical functional readback required.
 
----
+## Getting help
 
-## Multi-system usage
-
-Once Phase 4 is complete (a second system onboards from `targets/<name>/` profiles), onboarding a
-new system is:
-
-1. Add a `targets/<new-system>/` profile (channel, partition, theme/DPI for screen specs).
-2. Seed `docs/memory/route-map.md` with the new system's surfaces.
-3. Run Phase 0 for the new system.
-4. Phase 1 builds the first lane from the existing driver/workspace scaffolding — no core edits.
+Questions: [SUPPORT.md](../SUPPORT.md). Bugs: GitHub issues. Security: [SECURITY.md](../SECURITY.md)
+— never a public issue.
