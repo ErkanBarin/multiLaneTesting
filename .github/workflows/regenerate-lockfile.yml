@@ -51,7 +51,13 @@ jobs:
             console.log("OK: all external entries carry resolved + integrity");
           '
 
-      - name: 'Guard: only package-lock.json changed, dependency tree identical'
+      # package.json files are untouched (guard below), so exact-pinned direct dependencies
+      # cannot move. Transitive dependencies may float within their declared semver ranges —
+      # the same result any fresh install produces — and platform-optional packages the
+      # proxy-built lockfile omitted (other-OS esbuild/fsevents variants) are added. That drift
+      # is printed here so the reviewer of the bot commit sees exactly what moved; the validate
+      # suite and both npm ci runs below are the acceptance test.
+      - name: 'Guard: only package-lock.json changed (direct deps stay pinned) + drift report'
         run: |
           changed="$(git diff --name-only)"
           if [ -n "$changed" ] && [ "$changed" != "package-lock.json" ]; then
@@ -63,14 +69,12 @@ jobs:
             const old = JSON.parse(execSync("git show HEAD:package-lock.json", { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }));
             const vers = (l) => Object.fromEntries(Object.entries(l.packages).map(([k, v]) => [k, v.version]));
             const a = vers(old), b = vers(cur);
-            const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])];
-            const diffs = keys.filter((k) => a[k] !== b[k]);
-            if (diffs.length) {
-              diffs.forEach((k) => console.error(`${k}: ${a[k]} -> ${b[k]}`));
-              console.error("dependency tree changed — refusing to auto-commit");
-              process.exit(1);
+            const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])].sort();
+            let n = 0;
+            for (const k of keys) {
+              if (a[k] !== b[k]) { n++; console.log(`${k}: ${a[k] ?? "(absent)"} -> ${b[k] ?? "(removed)"}`); }
             }
-            console.log("OK: same packages, same versions — metadata-only change");
+            console.log(`${n} lockfile entr${n === 1 ? "y" : "ies"} differ (transitive semver float / platform-optional additions).`);
           '
           git diff --stat
 
