@@ -156,6 +156,31 @@ try {
   run('npx --no-install mlt verify', project, scaffoldEnv);
   console.log('✓ scaffolded consumer: create-system → tarball install → lockfile created → verify passed.');
 
+  // 6) Unsupported-path fail-fast: npm mishandles # % \ : in consumer paths (file:-spec/URI
+  //    parsing, .bin PATH entries), so the installer must refuse them clearly BEFORE mutating
+  //    the project.
+  const hashHome = join(staging, 'hash#name');
+  mkdirSync(hashHome, { recursive: true });
+  writeFileSync(join(hashHome, 'package.json'), '{"name":"hash-consumer","private":true,"version":"0.0.0"}\n');
+  let pathRejected = false;
+  try {
+    execSync(`node "${join(repo, 'scripts', 'install-tarballs.mjs')}" .`, {
+      cwd: hashHome,
+      stdio: 'pipe',
+      encoding: 'utf8',
+    });
+  } catch (err) {
+    pathRejected = true;
+    if (!`${err.stdout}${err.stderr}`.includes('contains "#"')) {
+      throw new Error(`installer must name the unsupported character; got:\n${err.stdout}${err.stderr}`);
+    }
+  }
+  if (!pathRejected) throw new Error('installer must reject a consumer path containing "#".');
+  if (existsSync(join(hashHome, 'vendor'))) {
+    throw new Error('installer must reject unsupported paths before creating vendor/.');
+  }
+  console.log('✓ installer refuses unsupported consumer paths (#) before mutating the project.');
+
   console.log('\n✓ dogfood: packaged engine installed from tarballs; gates + smoke suite passed.');
 } finally {
   rmSync(staging, { recursive: true, force: true });

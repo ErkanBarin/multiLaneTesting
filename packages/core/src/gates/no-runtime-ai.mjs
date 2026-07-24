@@ -1,8 +1,10 @@
 // @multilane/core — no-runtime-AI gate.
 //
-// The core invariant of multilanetesting: AI runs at AUTHORING time, never at RUNTIME. This gate
-// fails if any runtime path (drivers/, tests/, web/api/ws lanes) imports a vision / computer-use /
-// discovery module. Authoring-only code lives under authoring/ (and drivers/mcp) and is exempt.
+// The core policy of multilanetesting: AI runs at AUTHORING time, never at RUNTIME. This gate
+// scans runtime paths (drivers/, tests/, web/api/ws lanes) for a finite list of forbidden source
+// patterns (model SDK imports, vision/computer-use markers). It is a policy heuristic, not a
+// call-graph or reachability proof — dynamically constructed imports/URLs evade a pattern list;
+// code review covers those. Authoring-only code lives under authoring/ (and drivers/mcp), exempt.
 //
 // Extracted from scripts/check-no-runtime-ai.mjs so the engine, the `mlt verify` CLI, and consumer
 // projects all run the same implementation.
@@ -28,7 +30,7 @@ export const FORBIDDEN_RUNTIME_PATTERNS = [
 const CODE_EXT = new Set(['.ts', '.tsx', '.js', '.mjs', '.cjs', '.py']);
 
 /**
- * Scan runtime trees for forbidden model usage.
+ * Scan runtime trees for the configured forbidden source patterns.
  * @returns {{ ok: boolean, scanned: number, violations: Array<{ path: string, pattern: string }> }}
  */
 export function runNoRuntimeAiGate({
@@ -70,8 +72,8 @@ export function runNoRuntimeAiGate({
 
   for (const d of runtimeDirs) walk(join(cwd, d));
 
-  // A zero-file scan is a FAILURE, not a pass: it means the gate checked nothing, so it cannot
-  // claim enforcement. Point runtimeDirs (multilane.config.json) at the real runtime code.
+  // A zero-file scan is a FAILURE, not a pass: the gate checked nothing, so a pass would be
+  // vacuous. Point runtimeDirs (multilane.config.json) at the real runtime code.
   return { ok: violations.length === 0 && scanned > 0, scanned, violations };
 }
 
@@ -82,17 +84,19 @@ export function runNoRuntimeAiGate({
 export function reportNoRuntimeAi(result) {
   if (result.scanned === 0) {
     console.error(
-      '✖ no-runtime-ai guard FAILED — 0 runtime files scanned, so nothing was enforced. ' +
+      '✖ no-runtime-ai guard FAILED — 0 runtime files scanned, so nothing was checked. ' +
         'Configure runtimeDirs in multilane.config.json to cover your runtime code.',
     );
     return false;
   }
   if (!result.ok) {
-    console.error('✖ no-runtime-ai guard FAILED — model usage reachable from a runtime path:');
+    console.error('✖ no-runtime-ai guard FAILED — forbidden source pattern(s) matched in runtime files:');
     for (const v of result.violations) console.error(`  ${v.path}  (matched /${v.pattern}/)`);
     console.error('\nMove this code under authoring/ or remove the model dependency from the run path.');
     return false;
   }
-  console.log(`✓ no-runtime-ai guard passed — ${result.scanned} runtime file(s) scanned, no model usage reachable.`);
+  console.log(
+    `✓ no-runtime-ai guard passed — no configured forbidden source patterns detected in ${result.scanned} scanned runtime file(s).`,
+  );
   return true;
 }

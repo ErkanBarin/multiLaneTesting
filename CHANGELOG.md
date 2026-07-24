@@ -69,6 +69,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `scripts/install-tarballs.mjs` refuses — before mutating the project — consumer
+  paths containing `#`, `%`, `\`, or `:`, which npm mishandles in `file:` specs
+  (`#` truncates as a URL fragment, `%` fails URI decoding, `\` is rewritten to
+  `/`, `:` breaks the `node_modules/.bin` PATH entry), with a clear error naming
+  the offending character. It also refuses to run on native Windows, where the
+  npm `.cmd` launcher cannot be invoked without a shell (use WSL). The dogfood
+  harness asserts the refusal happens before any mutation.
 - `scripts/install-tarballs.mjs` executes npm via argument-vector `execFileSync`
   instead of an interpolated shell command string, so consumer paths containing
   spaces, quotes, or shell metacharacters are passed as data instead of being
@@ -92,6 +99,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   scanning `packages/` and `scripts/` (authoring packages and the gate's own
   pattern definitions exempted), covering 24 runtime files.
 
+- No-runtime-AI wording no longer claims reachability: the gate's messages now
+  read "no configured forbidden source patterns detected in N scanned runtime
+  file(s)" / "forbidden source pattern(s) matched", and SECURITY.md, the README,
+  `docs/test-strategy.md`, and the Jenkins docs drop "reachable" / "any usage" /
+  "enforcement" claims, stating instead that the gate is a finite source-pattern
+  heuristic backed by code review — dynamically constructed imports/URLs are
+  outside its scope.
+
 ### Known limitations
 
 - The committed `package-lock.json` was generated with npm 10 behind a
@@ -101,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Security
 
 - `check:no-runtime-ai` policy gate pattern-scans runtime package sources for
-  AI/model network-call usage (a source-pattern check, not a call-graph proof);
-  AI tooling is confined to authoring time. The gate fails if it scans zero
-  files.
+  AI/model network-call usage (a source-pattern check, not a call-graph proof;
+  dynamically constructed imports/URLs are outside its scope and rely on code
+  review); AI tooling is confined to authoring time. The gate fails if it scans
+  zero files.

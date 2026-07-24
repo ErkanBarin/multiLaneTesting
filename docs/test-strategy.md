@@ -29,8 +29,8 @@ A spec must assert functional truth; the other two corroborate.
 ## Determinism rules
 
 - Replay a recorded **RPS scenario** into a **test partition** (`TEST_A`/`TEST_B`/`TEST_C`) — never `PROD`.
-- Frozen Tier-1/2 locators only at runtime. No vision/computer-use reachable from a test run
-  (`check:no-runtime-ai` guard).
+- Frozen Tier-1/2 locators only at runtime. No vision/computer-use in the run path — a policy
+  pattern-checked by the `check:no-runtime-ai` gate and upheld in code review.
 - No sleeps — wait on the object channel. No host literals — env-var names only.
 - Run a touched spec **twice**; identical functional readback required.
 

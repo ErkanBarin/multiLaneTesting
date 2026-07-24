@@ -34,13 +34,16 @@ experimental status of this project, response times are best-effort.
 
 ### Determinism and model-offline runtime
 
-Test runtime is deterministic and **model-offline**: no AI or model/API network
-calls occur at runtime. Target-system network access is lane-dependent (the
-HTTP/STOMP/web lanes talk to the system under test). The `npm run
-check:no-runtime-ai` policy gate scans the runtime package sources and fails on
-any model/API usage — or if it scans zero files. AI tooling (MCP servers, agent
-configuration files) is confined to authoring time and must never receive
-credentials, secrets, or the content of `.env` files.
+Test runtime is designed to be deterministic and **model-offline**: the runtime
+packages declare no AI/model dependencies, and the `npm run check:no-runtime-ai`
+policy gate pattern-scans runtime package sources, failing when a configured
+forbidden source pattern is detected — or when it scans zero files. This is a
+finite source-pattern heuristic backed by code review, not a call-graph or
+dependency-reachability proof: dynamically constructed imports or URLs are not
+detectable by a pattern list. Target-system network access is lane-dependent
+(the HTTP/STOMP/web lanes talk to the system under test). AI tooling (MCP
+servers, agent configuration files) is confined to authoring time and must
+never receive credentials, secrets, or the content of `.env` files.
 
 ### Trust boundary
 
