@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   GitHub issue templates, PR template, and Dependabot configuration.
 - CI pipeline for automated validation on push and pull request.
 - Committed `package-lock.json` for reproducible installs.
+- `scripts/install-tarballs.mjs`: supported installer for the unpublished engine — packs every
+  workspace into a consumer's `vendor/multilane/`, rewrites its `@multilane/*` dependencies to
+  those tarballs with `overrides`, and runs the first `npm install` (creating the consumer's
+  `package-lock.json`). The README consumer flow and the dogfood scaffolded-consumer probe run
+  this same script.
 
 ### Changed
 
@@ -37,7 +42,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   to commit the lockfile.
 - Consumer quickstart documented as a runnable flow: project names are
   lowercase `[a-z0-9-]` and the scaffold lands under the current directory, so
-  the README now runs `mlt new` from the clone's parent directory.
+  the README now runs `mlt new` from the clone's parent directory, followed by
+  `scripts/install-tarballs.mjs` as the literal tarball-install step.
+- Remaining "published engine packages" / "your npm registry" wording in the
+  CLI package (README, source comments, generated consumer README and `.npmrc`)
+  now states the actual model: `npm pack` tarballs today, registry installation
+  only after publication.
 - Package READMEs and `docs/API.md` now state that the `@multilane/*` packages
   are unpublished and must be consumed via `npm pack` tarballs until a
   publishing decision is made.
@@ -72,7 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The no-runtime-AI gate fails when it scans zero runtime files — a vacuous scan
   is no longer a pass. The engine repo now commits a `multilane.config.json`
   scanning `packages/` and `scripts/` (authoring packages and the gate's own
-  pattern definitions exempted), covering 23 runtime files.
+  pattern definitions exempted), covering 24 runtime files.
 
 ### Known limitations
 

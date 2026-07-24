@@ -1,6 +1,7 @@
 # .npmrc.sample — copy to .npmrc (gitignored) or provide these values via CI env.
 #
-# Scopes @multilane to your npm registry without committing a host or token literal.
+# Scopes @multilane to an npm registry (used once the packages are published) without
+# committing a host or token literal.
 # npm expands ${VAR} from the environment before parsing, so every value comes from the environment.
 #
 # Required environment variables (set by your platform / CI credentials, NOT here):

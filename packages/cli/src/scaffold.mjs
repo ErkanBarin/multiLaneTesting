@@ -1,7 +1,8 @@
 // @multilane/cli — project scaffolder for `mlt new`.
 //
-// Generates a *consumer* project that depends on the published engine packages. It never vendors
-// framework source — the generated project installs `@multilane/*` from your npm registry.
+// Generates a *consumer* project that depends on the versioned engine packages. It never vendors
+// framework source — the generated project installs `@multilane/*` from `npm pack` tarballs today
+// (engine repo scripts/install-tarballs.mjs) and from a registry once the packages are published.
 //
 // Every generated artifact is deterministic and free of host/URL/secret literals: target values are
 // referenced by env-var name, and the registry/proxy come from the environment via `.npmrc`.
@@ -252,7 +253,8 @@ const SCREEN_LOCATOR = `${JSON.stringify(
 
 // --- shared static artifacts ---
 
-const NPMRC = `# .npmrc — scope @multilane to your npm registry. No literal host/token is committed.
+const NPMRC = `# .npmrc — scope @multilane to an npm registry (used once the packages are published;
+# tarball installs never contact it). No literal host/token is committed.
 # npm expands \${VAR} from the environment before parsing, so every value comes from CI/env.
 @multilane:registry=\${NPM_REGISTRY_URL}
 \${NPM_REGISTRY_AUTH_HOST}:_authToken=\${NPM_REGISTRY_AUTH_TOKEN}
@@ -296,8 +298,9 @@ System tests for **${name}**, built on the [multilanetesting](../) engine. Lanes
     .map((l) => `\`${l}\``)
     .join(', ')}.
 
-The engine ships as versioned \`@multilane/*\` packages from your npm registry — this
-project **consumes** them and never vendors framework source.
+The engine ships as versioned \`@multilane/*\` packages — this project **consumes** them
+(currently as \`npm pack\` tarballs; from a registry once they are published) and never vendors
+framework source.
 
 ## Setup
 
@@ -307,8 +310,9 @@ npm install      # first install — creates package-lock.json; commit it so CI 
 ${lanes.includes('web') ? 'npx playwright install chromium\n' : ''}npm run verify   # runs the deterministic gates (mlt verify)
 \`\`\`
 
-If your registry does not serve \`@multilane/*\` yet, install them from \`npm pack\` tarballs
-with \`overrides\` (see the engine repo README → Dogfooding).
+No registry serves \`@multilane/*\` yet — run
+\`node <engine-repo>/scripts/install-tarballs.mjs .\` from this directory to install them from
+\`npm pack\` tarballs (see the engine repo README → Using the engine in a test project).
 
 ## Run lanes
 

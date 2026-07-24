@@ -24,15 +24,19 @@ the engine's own `npm run check:*` scripts.
 
 ### `mlt new <name> --lanes <list>`
 
-Scaffold a consumer test project that **depends on** the published engine packages (it never vendors
-framework source). Lanes: `web`, `http`, `stomp`, `screen`.
+Scaffold a consumer test project that **depends on** the versioned engine packages (it never
+vendors framework source). Until the packages are published, install them into the scaffold from
+`npm pack` tarballs with the engine repo's `scripts/install-tarballs.mjs`; registry installation
+applies after publication. Lanes: `web`, `http`, `stomp`, `screen`.
 
 ```bash
 mlt new demo --lanes web,http
+node <engine-repo>/scripts/install-tarballs.mjs demo   # first install — creates package-lock.json; commit it
 cd demo
-npm install      # first install creates package-lock.json — commit it so CI can run npm ci
 npm run verify
 ```
+
+(After publication the tarball step becomes a plain `npm install` in `demo/`.)
 
 The generated project includes a config skeleton, a frozen-locator directory, one example spec per
 selected lane, a proxy/registry-aware `.npmrc`, and a thin `Jenkinsfile` that calls the shared library.
