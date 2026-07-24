@@ -29,15 +29,20 @@ jobs:
           npm install -g npm@10.9.0
           npm --version
 
-      - name: Regenerate lockfile metadata (versions stay exact-pinned)
-        run: npm install --package-lock-only
+      # npm keeps existing lockfile entries untouched with --package-lock-only, so the incomplete
+      # metadata would survive; regenerate from scratch instead. Every dependency is exact-pinned,
+      # and the version-identity guard below proves the tree did not change.
+      - name: Regenerate the lockfile from scratch
+        run: |
+          rm package-lock.json
+          npm install --package-lock-only
 
       - name: 'Guard: every external entry carries resolved + integrity'
         run: |
           node -e '
             const l = require("./package-lock.json");
             const bad = Object.entries(l.packages).filter(([k, v]) =>
-              k && !k.startsWith("packages/") && !v.link && (!v.resolved || !v.integrity));
+              k && !k.startsWith("packages/") && !v.link && !v.inBundle && (!v.resolved || !v.integrity));
             if (bad.length) {
               console.error("entries missing resolved/integrity: " + bad.length);
               bad.forEach(([k]) => console.error("  " + k));
@@ -46,15 +51,27 @@ jobs:
             console.log("OK: all external entries carry resolved + integrity");
           '
 
-      - name: 'Guard: only package-lock.json changed, no dependency version changed'
+      - name: 'Guard: only package-lock.json changed, dependency tree identical'
         run: |
           changed="$(git diff --name-only)"
           if [ -n "$changed" ] && [ "$changed" != "package-lock.json" ]; then
             echo "unexpected files changed:"; echo "$changed"; exit 1
           fi
-          if git diff -U0 package-lock.json | grep -E '^[+-]\s*"version":'; then
-            echo "dependency versions changed — refusing to auto-commit"; exit 1
-          fi
+          node -e '
+            const { execSync } = require("child_process");
+            const cur = require("./package-lock.json");
+            const old = JSON.parse(execSync("git show HEAD:package-lock.json", { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }));
+            const vers = (l) => Object.fromEntries(Object.entries(l.packages).map(([k, v]) => [k, v.version]));
+            const a = vers(old), b = vers(cur);
+            const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])];
+            const diffs = keys.filter((k) => a[k] !== b[k]);
+            if (diffs.length) {
+              diffs.forEach((k) => console.error(`${k}: ${a[k]} -> ${b[k]}`));
+              console.error("dependency tree changed — refusing to auto-commit");
+              process.exit(1);
+            }
+            console.log("OK: same packages, same versions — metadata-only change");
+          '
           git diff --stat
 
       - name: npm ci + full validate under npm 10
