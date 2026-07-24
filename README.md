@@ -55,7 +55,7 @@ first test against your system, including CI wiring and how to adapt the framewo
 
 ## Quickstart
 
-Requires Node >= 20 and npm 10.
+Requires Node >= 20 and npm 10 or 11.
 
 ```bash
 git clone https://github.com/ErkanBarin/multiLaneTesting.git
@@ -66,10 +66,8 @@ npm run dogfood      # packs all 10 packages, installs them offline into example
 ```
 
 Everything above runs offline after `npm ci` — no target system, no credentials, no registry access.
-
-> **Lockfile caveat:** `package-lock.json` was generated with npm 10 behind a restricted proxy.
-> npm 11 (bundled with Node 24) may reject it during `npm ci`. If it does, regenerate the lockfile
-> on an unrestricted network (`npm install --package-lock-only`) and review the diff.
+`package-lock.json` is fully resolved against the public npm registry (every entry carries
+`resolved` + `integrity`); `npm ci` is verified under both npm 10 and npm 11.
 
 ## Architecture in one minute
 

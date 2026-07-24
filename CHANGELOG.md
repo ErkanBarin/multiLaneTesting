@@ -17,9 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Committed `package-lock.json` for reproducible installs.
 - `.github/workflows/regenerate-lockfile.yml`: manually triggered workflow that regenerates
   `package-lock.json` on an unrestricted GitHub runner with the pinned npm 10.9.0. It guards that
-  every external entry gains `resolved` + `integrity`, that nothing but the lockfile changed and
-  no dependency version moved, verifies `npm ci` + full validate under npm 10 and `npm ci` under
-  npm 11 / Node 24, and only then commits the repaired lockfile as the CI bot.
+  every external entry gains `resolved` + `integrity` and that nothing but the lockfile changed
+  (direct dependencies stay pinned by the untouched `package.json`; transitive drift is printed
+  as a report for the bot-commit reviewer), verifies `npm ci` + full validate under npm 10 and
+  `npm ci` under npm 11 / Node 24, and only then commits the repaired lockfile as the CI bot.
 - `scripts/install-tarballs.mjs`: supported installer for the unpublished engine — packs every
   workspace into a consumer's `vendor/multilane/`, rewrites its `@multilane/*` dependencies to
   those tarballs with `overrides`, and runs the first `npm install` (creating the consumer's
@@ -64,8 +65,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Package READMEs and `docs/API.md` now state that the `@multilane/*` packages
   are unpublished and must be consumed via `npm pack` tarballs until a
   publishing decision is made.
-- `engines.npm` declared as `^10` alongside `packageManager` — the committed
-  lockfile is npm-10-generated and npm 11 may reject it.
+- `engines.npm` declared as `^10 || ^11` alongside `packageManager` — `npm ci`
+  from the committed lockfile is verified under both npm majors by the
+  regenerate-lockfile workflow.
 - The dogfood harness gained a scaffolded-consumer probe: `mlt create-system`
   with the `http` lane from packed tarballs, offline install of the generated
   project, assertion that a `package-lock.json` is created, and a passing
@@ -109,6 +111,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   scanning `packages/` and `scripts/` (authoring packages and the gate's own
   pattern definitions exempted), covering 24 runtime files.
 
+- `package-lock.json` regenerated on an unrestricted runner via the
+  regenerate-lockfile workflow: every external entry now carries `resolved` +
+  `integrity`, and `npm ci` is proven under npm 10 (with full validate) and
+  npm 11 / Node 24 — the proxy-built lockfile previously failed `npm ci` under
+  npm 11.
+- The dogfood harness passes the consumer smoke-test glob unquoted
+  (`node --test tests/*/*.test.mjs`) so the shell expands it: Node 20 — the
+  supported minimum, used by CI — does not glob `--test` arguments, which made
+  the dogfood step fail in CI while newer local Node versions masked it.
 - No-runtime-AI wording no longer claims reachability: the gate's messages now
   read "no configured forbidden source patterns detected in N scanned runtime
   file(s)" / "forbidden source pattern(s) matched", and SECURITY.md, the README,
@@ -116,12 +127,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   "enforcement" claims, stating instead that the gate is a finite source-pattern
   heuristic backed by code review — dynamically constructed imports/URLs are
   outside its scope.
-
-### Known limitations
-
-- The committed `package-lock.json` was generated with npm 10 behind a
-  restricted proxy. npm 11 (bundled with Node 24) may reject it during
-  `npm ci`; regenerate the lockfile on an unrestricted network if that occurs.
 
 ### Security
 
