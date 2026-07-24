@@ -8,7 +8,7 @@
 // (with `overrides` so nested engine deps like screen -> core stay local), then runs the first
 // `npm install`, which creates the consumer's package-lock.json. Commit the lockfile (and
 // vendor/multilane/) so the consumer's CI can run `npm ci` without this script.
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,7 +25,9 @@ mkdirSync(vendor, { recursive: true });
 
 const tarballs = {};
 for (const p of readdirSync(join(repo, 'packages'))) {
-  const out = execSync(`npm pack -w @multilane/${p} --pack-destination "${vendor}" --json`, {
+  // Argument-vector execution: the consumer path is data, never shell syntax — spaces, quotes,
+  // and metacharacters in the target directory must not change or inject commands.
+  const out = execFileSync('npm', ['pack', '-w', `@multilane/${p}`, '--pack-destination', vendor, '--json'], {
     cwd: repo,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'ignore'],
@@ -56,7 +58,7 @@ const env = {
   ...process.env,
 };
 console.log('$ npm install --no-audit --no-fund');
-execSync('npm install --no-audit --no-fund', { cwd: target, stdio: 'inherit', env });
+execFileSync('npm', ['install', '--no-audit', '--no-fund'], { cwd: target, stdio: 'inherit', env });
 
 console.log('\n✓ engine installed from tarballs; package-lock.json created.');
 console.log('  Commit package-lock.json and vendor/multilane/ so CI can run `npm ci`.');

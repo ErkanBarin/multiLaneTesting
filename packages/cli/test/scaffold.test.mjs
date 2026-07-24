@@ -1,8 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { mkdtempSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { scaffoldProject } from '../index.mjs';
 import { runVerify } from '@multilane/core';
@@ -37,6 +39,27 @@ test('scaffolded web+http project passes mlt verify', () => {
   // The generated project must be green under the deterministic gates.
   const result = runVerify({ cwd: root });
   assert.equal(result.ok, true);
+});
+
+test('generated README leads with the tarball installer, not a plain npm install', () => {
+  const cwd = tmpWorkspace();
+  const { root } = scaffoldProject({ name: 'demo', lanes: ['http'], cwd });
+  const readme = readFileSync(join(root, 'README.md'), 'utf8');
+  const installer = readme.indexOf('install-tarballs.mjs');
+  const plainInstall = readme.indexOf('npm install');
+  assert.ok(installer !== -1, 'README must document scripts/install-tarballs.mjs');
+  assert.ok(plainInstall === -1 || installer < plainInstall, 'installer must come before plain npm install');
+  assert.ok(readme.includes('After publication'), 'plain npm install belongs to a post-publication section');
+});
+
+test('mlt new prints the tarball installer as the next step', () => {
+  const bin = join(dirname(fileURLToPath(import.meta.url)), '..', 'bin', 'mlt.mjs');
+  const out = execFileSync(process.execPath, [bin, 'new', 'demo', '--lanes', 'http'], {
+    cwd: tmpWorkspace(),
+    encoding: 'utf8',
+  });
+  assert.ok(out.includes('install-tarballs.mjs'), 'next step must be the tarball installer');
+  assert.ok(!out.includes('npm install &&'), 'must not lead users to a plain npm install');
 });
 
 test('generated files carry no host/URL/secret literals', () => {
