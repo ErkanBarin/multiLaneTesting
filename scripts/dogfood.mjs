@@ -56,7 +56,8 @@ try {
   // 3) Install the packaged engine (offline) and run gates + smoke.
   run('npm install --no-audit --no-fund --offline', consumer);
   run('npx --no-install mlt verify', consumer);
-  run('node --test "tests/**/*.test.mjs"', consumer);
+  // Unquoted so the shell expands it: Node 20 (the supported minimum) does not glob --test args.
+  run('node --test tests/*/*.test.mjs', consumer);
 
   // 4) Minimal-entry consumer: install ONLY the documented entry packages (cli + core). When a
   //    lane's authoring package is unresolvable, `mlt create-system` must exit nonzero — a partial
