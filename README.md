@@ -217,6 +217,8 @@ standards: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md); questions: [`SUPPORT.md`]
 
 ## License
 
-**No license has been selected yet** — the packages are marked `UNLICENSED` and all rights are
-reserved until the maintainers make an explicit licensing decision. Until then you may read and
-evaluate the code, but redistribution or production use is not granted.
+This repository is shared as a working sample — a reference for how one team approaches
+deterministic multi-lane testing. **It deliberately carries no license**: the packages are marked
+`UNLICENSED`, no rights are formally granted, and no support, warranty, or maintenance commitment
+is made. You are welcome to read it, evaluate it, and use it as a starting point for your own
+work; if your use requires a formal grant, ask the repository owner.

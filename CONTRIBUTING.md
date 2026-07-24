@@ -5,9 +5,8 @@ Thank you for your interest in contributing to multilanetesting.
 ## Status
 
 This project is experimental and pre-1.0. The public API, package structure,
-and governance are not yet stable. Significant contributions may be held until
-the license and DCO/CLA terms are settled — see the note at the end of this
-file.
+and governance are not yet stable. It is shared as a working sample with no
+license and no contributor agreement — see the note at the end of this file.
 
 ## Setup
 
@@ -72,10 +71,8 @@ files.
 
 ## License and DCO/CLA
 
-The packages in this repository are currently marked `UNLICENSED`. A license
-has not yet been chosen; that is a pending human decision. Until the license
-and any contributor agreement are finalized, significant contributions may be
-held for review and may require retroactive agreement to the terms that are
-ultimately adopted. By opening a PR you acknowledge this situation.
-
-[PLACEHOLDER — DCO/CLA terms to be confirmed by the maintainer]
+The packages in this repository are deliberately marked `UNLICENSED`: this is
+a working sample shared for reference, not a product, and no formal license or
+DCO/CLA is in place. By opening a PR you accept that your contribution enters
+the repository under the same terms — no rights formally granted — and that it
+may be relicensed if the owner later adopts a license.
