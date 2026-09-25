@@ -4,7 +4,7 @@ description: Explore a running web/DOM target via the Playwright MCP browser too
 color: blue
 model: sonnet
 tools: Read, Glob, Grep, Write, Edit
-skills: web-test-authoring
+skills: [web-test-authoring]
 mcpServers: playwright
 maxTurns: 20
 ---

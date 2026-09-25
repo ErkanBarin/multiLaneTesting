@@ -1,0 +1,68 @@
+{
+  "lane": "snmp",
+  "version": "0.1.2",
+  "runtimePackage": "@multilane/snmp-runtime",
+  "authoringPackage": "@multilane/authoring-snmp",
+  "compatibility": {
+    "minRuntimeVersion": "0.1.0",
+    "maxRuntimeVersion": "0.x"
+  },
+  "requiredTools": ["read", "search", "edit"],
+  "optionalMcpServers": [],
+  "envPrerequisites": [
+    "MULTILANE_SNMP_HOST",
+    "MULTILANE_SNMP_COMMUNITY",
+    "MULTILANE_APPROVED_HOSTS"
+  ],
+  "skills": [
+    {
+      "id": "snmp-test-authoring",
+      "kind": "skill",
+      "title": "SNMP contract test authoring",
+      "description": "Author SNMP contract checks: model validation, emulated-agent GET/WALK assertions, declared shape/type/enum checks, and opt-in read-only checks against a live agent. Writes require explicit approval.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/snmp-test-authoring/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/snmp-test-authoring/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/snmp-test-authoring.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "snmp-explorer",
+      "kind": "agent",
+      "title": "SNMP explorer",
+      "description": "Explore a read-only SNMP agent (or the in-process emulator) to reconcile an EmulatedAgentModel against what is actually served and propose shape/type assertions. Authoring-only.",
+      "portable": "portable-after-env-config",
+      "always": false,
+      "configureId": "snmp-explorer",
+      "tools": ["execute"],
+      "requires": {
+        "env": ["MULTILANE_SNMP_HOST", "MULTILANE_APPROVED_HOSTS"]
+      },
+      "source": "assets/agents/snmp-explorer/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/snmp-explorer.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/snmp-explorer-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/snmp-explorer.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ]
+}

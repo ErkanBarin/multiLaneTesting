@@ -1,6 +1,6 @@
 {
   "lane": "web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "runtimePackage": "@multilane/web",
   "authoringPackage": "@multilane/authoring-web",
   "compatibility": {

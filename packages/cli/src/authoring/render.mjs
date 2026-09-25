@@ -59,10 +59,11 @@ ${asset.description}
 function renderCopilotAgentWorker(asset, targetPath, allTargetPaths) {
   const claudePath = allTargetPaths.get('claude');
   const sourceLink = claudePath ? `[\`${claudePath}\`](${linkFrom(targetPath, claudePath)})` : 'the source-of-truth file';
+  const tools = ['read', 'search', 'edit', ...(asset.tools ?? []), ...(asset.requires?.mcpServers ?? []).map((server) => `${server}/*`)];
   return `---
 name: ${asset.id}-worker
 description: Hidden worker wrapping the ${asset.id} authoring agent from ${asset.title ?? asset.id}.
-tools: ["read", "search", "edit"]
+tools: ${JSON.stringify(tools)}
 user-invocable: false
 ---
 

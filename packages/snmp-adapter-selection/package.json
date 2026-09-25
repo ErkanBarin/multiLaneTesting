@@ -1,0 +1,28 @@
+{
+  "name": "@multilane/snmp-adapter-selection",
+  "version": "0.1.0",
+  "description": "Selection-list and SMI/MIB adapter for @multilane/snmp-model.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "src/**/*.mjs",
+    "README.md"
+  ],
+  "dependencies": {
+    "@multilane/snmp-model": "0.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

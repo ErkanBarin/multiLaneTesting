@@ -1,7 +1,7 @@
 {
   "name": "@multilane/screen",
-  "version": "0.1.0",
-  "description": "Screen-driver lane for multilanetesting: deterministic frozen-locator loading and validation. No runtime AI.",
+  "version": "0.2.0",
+  "description": "Screen-driver lane for multilanetesting: deterministic frozen-locator loading and validation, the Tier-1 AT-SPI driver, the framebuffer driver (capture, Tier-2 template find, golden-image and OCR oracles, input) and a VNC/RDP viewer bridge. No runtime AI.",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
@@ -13,24 +13,19 @@
   "files": [
     "index.mjs",
     "index.d.ts",
+    "driver/atspi_bridge.py",
+    "driver/menu_actuate.py",
+    "driver/framebuffer.py",
+    "driver/test_driver.py",
     "README.md"
   ],
   "dependencies": {
-    "@multilane/core": "0.1.0"
+    "@multilane/core": "0.1.1"
   },
   "engines": {
     "node": ">=20"
   },
   "publishConfig": {
     "access": "restricted"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
-    "directory": "packages/screen"
-  },
-  "homepage": "https://github.com/ErkanBarin/multiLaneTesting#readme",
-  "bugs": {
-    "url": "https://github.com/ErkanBarin/multiLaneTesting/issues"
   }
 }

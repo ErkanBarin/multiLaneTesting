@@ -3,8 +3,8 @@ name: stomp-explorer
 description: Explore a STOMP/WS broker (or a local emulator) to discover destinations and message shapes, and debug subscription timing/flake. Authoring-only; requires MULTILANE_WS_URL to be set.
 color: purple
 model: sonnet
-tools: Read, Glob, Grep, Write, Edit
-skills: stomp-test-authoring
+tools: Read, Glob, Grep, Bash, Write, Edit
+skills: [stomp-test-authoring]
 maxTurns: 20
 ---
 

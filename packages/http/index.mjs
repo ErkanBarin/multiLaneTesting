@@ -5,13 +5,32 @@
 import http from 'node:http';
 import https from 'node:https';
 
+let warnedUnset = false;
+
 /**
- * Enforce that a URL's host is on the approved allowlist (when one is provided).
+ * Enforce that a URL's host is on the approved allowlist.
+ *
+ * **Fail-OPEN on an empty allowlist, unlike `@multilane/stomp`'s `send`, which fails closed.** The
+ * difference is deliberate and follows the engine rule that the allowlist guards *active* calls:
+ * `send` mutates broker state, so no allowlist means no send; this lane only issues read-only GETs,
+ * and `stomp`'s equally passive `subscribeOnce` carries no host guard at all. Consumers ship
+ * `MULTILANE_APPROVED_HOSTS=` empty in `.env.example` (sample and example both do), so this returning
+ * early is the configured default, not an oversight — but an unset allowlist is announced once per
+ * process, because "I set the var to empty" and "I never knew about the var" must not look alike.
  * @param {string} url
  * @param {string[]} [approvedHosts]
  */
 export function assertApprovedHost(url, approvedHosts = []) {
-  if (!approvedHosts || approvedHosts.length === 0) return;
+  if (!approvedHosts || approvedHosts.length === 0) {
+    if (!warnedUnset) {
+      warnedUnset = true;
+      console.warn(
+        '⚠ @multilane/http: MULTILANE_APPROVED_HOSTS is empty — every host is allowed. Set it to ' +
+          'pin this lane to your test targets.',
+      );
+    }
+    return;
+  }
   const { host } = new URL(url);
   if (!approvedHosts.includes(host)) {
     throw new Error(`Host ${host} is not in the approved-hosts allowlist.`);
@@ -20,41 +39,18 @@ export function assertApprovedHost(url, approvedHosts = []) {
 
 /**
  * Passive GET returning parsed JSON (or raw text) plus status and headers.
- * Bounded by default: `timeoutMs` is an ABSOLUTE deadline for the whole request+response
- * (a slow-drip peer cannot keep it alive), and an oversized response rejects once
- * `maxBodyBytes` is exceeded.
  * @param {string} url
- * @param {{ headers?: Record<string, string>, approvedHosts?: string[], timeoutMs?: number, maxBodyBytes?: number }} [options]
+ * @param {{ headers?: Record<string, string>, approvedHosts?: string[] }} [options]
  * @returns {Promise<{ status: number, headers: object, body: unknown }>}
  */
-export function getJson(url, { headers = {}, approvedHosts = [], timeoutMs = 30_000, maxBodyBytes = 10_000_000 } = {}) {
+export function getJson(url, { headers = {}, approvedHosts = [] } = {}) {
   assertApprovedHost(url, approvedHosts);
-  for (const [name, value] of [['timeoutMs', timeoutMs], ['maxBodyBytes', maxBodyBytes]]) {
-    if (!Number.isInteger(value) || value <= 0) {
-      throw new Error(`Invalid ${name}: ${value} (expected a positive integer).`);
-    }
-  }
   const client = url.startsWith('https:') ? https : http;
   return new Promise((resolve, reject) => {
-    let settled = false;
-    const finish = (err, value) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(deadline);
-      if (err) reject(err);
-      else resolve(value);
-    };
     const req = client.get(url, { headers }, (res) => {
       let data = '';
-      let received = 0;
       res.setEncoding('utf8');
-      res.on('error', (err) => finish(err));
       res.on('data', (chunk) => {
-        received += Buffer.byteLength(chunk);
-        if (received > maxBodyBytes) {
-          res.destroy(new Error(`Response exceeded maxBodyBytes (${maxBodyBytes}).`));
-          return;
-        }
         data += chunk;
       });
       res.on('end', () => {
@@ -64,15 +60,11 @@ export function getJson(url, { headers = {}, approvedHosts = [], timeoutMs = 30_
         } catch {
           body = data; // non-JSON payload — return raw text
         }
-        finish(null, { status: res.statusCode, headers: res.headers, body });
+        resolve({ status: res.statusCode, headers: res.headers, body });
       });
     });
-    // Absolute deadline, not a socket-inactivity timeout: fires timeoutMs after the request
-    // starts regardless of traffic, destroying the request (and any in-flight response).
-    const deadline = setTimeout(() => {
-      req.destroy(new Error(`Request timed out after ${timeoutMs} ms.`));
-    }, timeoutMs);
-    req.on('error', (err) => finish(err));
+    req.on('error', reject);
+    req.end();
   });
 }
 

@@ -1,0 +1,1 @@
+export { buildSelectionModel, SelectionAdapterError } from './src/build-model.mjs';

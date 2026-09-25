@@ -65,18 +65,8 @@ for (const field of ['dependencies', 'devDependencies']) {
 pkg.overrides = { ...pkg.overrides, ...tarballs };
 writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 
-// The scaffold's .npmrc expands ${NPM_REGISTRY_*}; npm refuses to run while they are unset. The
-// engine packages install from the local tarballs, so an unreachable loopback placeholder is safe
-// when no real registry is configured — only non-@multilane dependencies (e.g. @playwright/test)
-// ever contact a registry, through npm's normal defaults. Values already in the environment win.
-const env = {
-  NPM_REGISTRY_URL: 'http://127.0.0.1:9/',
-  NPM_REGISTRY_AUTH_HOST: '//127.0.0.1:9/',
-  NPM_REGISTRY_AUTH_TOKEN: 'offline-unused',
-  ...process.env,
-};
 console.log('$ npm install --no-audit --no-fund');
-execFileSync('npm', ['install', '--no-audit', '--no-fund'], { cwd: target, stdio: 'inherit', env });
+execFileSync('npm', ['install', '--no-audit', '--no-fund'], { cwd: target, stdio: 'inherit' });
 
 console.log('\n✓ engine installed from tarballs; package-lock.json created.');
 console.log('  Commit package-lock.json and vendor/multilane/ so CI can run `npm ci`.');

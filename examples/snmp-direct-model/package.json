@@ -1,0 +1,12 @@
+{
+  "name": "snmp-direct-model-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@multilane/snmp-model": "0.1.0",
+    "@multilane/snmp-runtime": "0.1.0"
+  }
+}

@@ -2,7 +2,7 @@
 // `mlt` — the multilanetesting command line.
 //
 //   mlt verify                         run every deterministic gate against the current project
-//   mlt new <name> --lanes web,http    scaffold a consumer project (depends on the versioned engine packages)
+//   mlt new <name> --lanes web,http    scaffold a consumer project
 import { runVerify, printVerifyTable } from '@multilane/core';
 import { scaffoldProject, SUPPORTED_LANES } from '../src/scaffold.mjs';
 import { installAuthoring, formatInstallReport } from '../src/authoring/install.mjs';
@@ -39,14 +39,6 @@ Examples:
   mlt authoring install --lanes web
   mlt verify
 `);
-}
-
-function printNextSteps(name) {
-  console.log(`
-Next (no registry serves @multilane/* yet — install from tarballs):
-  node <engine-repo>/scripts/install-tarballs.mjs ${name}   # first install — creates package-lock.json; commit it (and vendor/multilane/)
-  cd ${name} && npm run verify
-Once the packages are published to a registry, the tarball step becomes a plain \`npm install\` in ${name}/.`);
 }
 
 function parseLanes(value) {
@@ -96,7 +88,7 @@ switch (command) {
       const { root, files } = scaffoldProject({ name, lanes, cwd: process.cwd(), force: !!flags.force });
       console.log(`✓ Scaffolded ${name} at ${root}`);
       for (const f of files) console.log(`  + ${f}`);
-      printNextSteps(name);
+      console.log('\nNext: cd', name, '&& node <engine-repo>/scripts/install-tarballs.mjs . && npm run verify');
     } catch (err) {
       fail(`✖ ${err.message}`);
     }
@@ -116,14 +108,9 @@ switch (command) {
         const { ok, laneReports } = installAuthoring({ lanes: authoringLanes, cwd: root });
         console.log('');
         console.log(formatInstallReport(laneReports));
-        if (!ok) {
-          fail(
-            `✖ create-system: authoring install failed (scaffold at ${root} is intact). ` +
-              'Install the reported authoring package(s) and rerun `mlt authoring install`.',
-          );
-        }
+        if (!ok) fail('Authoring setup incomplete: install the missing lane packages and retry.');
       }
-      printNextSteps(name);
+      console.log('Next: cd', name, '&& node <engine-repo>/scripts/install-tarballs.mjs . && npm run verify');
     } catch (err) {
       fail(`✖ ${err.message}`);
     }

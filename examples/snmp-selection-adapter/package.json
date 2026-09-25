@@ -1,0 +1,11 @@
+{
+  "name": "snmp-selection-adapter-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node index.mjs"
+  },
+  "dependencies": {
+    "@multilane/snmp-adapter-selection": "0.1.0"
+  }
+}

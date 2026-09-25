@@ -1,6 +1,6 @@
 {
   "lane": "http",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "runtimePackage": "@multilane/http",
   "authoringPackage": "@multilane/authoring-http",
   "compatibility": {
@@ -40,6 +40,7 @@
       "portable": "portable-after-env-config",
       "always": false,
       "configureId": "http-explorer",
+      "tools": ["execute"],
       "requires": {
         "env": ["MULTILANE_TARGET_HOST", "MULTILANE_APPROVED_HOSTS"]
       },

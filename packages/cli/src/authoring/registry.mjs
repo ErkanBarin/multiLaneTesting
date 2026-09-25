@@ -8,11 +8,18 @@ export const AUTHORING_LANE_PACKAGES = {
   web: '@multilane/authoring-web',
   http: '@multilane/authoring-http',
   stomp: '@multilane/authoring-stomp',
+  screen: '@multilane/authoring-screen',
+  snmp: '@multilane/authoring-snmp',
+  trap: '@multilane/authoring-trap',
 };
 
 export const IMPLEMENTED_AUTHORING_LANES = Object.keys(AUTHORING_LANE_PACKAGES);
 
-// Recognized runtime lanes that do not yet ship an authoring package.
-export const PLANNED_AUTHORING_LANES = ['screen'];
+// Recognized runtime lanes that do not yet ship an authoring package. Empty since 2026-09-21, when
+// screen/snmp/trap shipped theirs — every lane in `SUPPORTED_LANES` now has an authoring package.
+// The constant and the "unavailable" path in install.mjs stay: `SUPPORTED_LANES` is the runtime
+// vocabulary and an authoring package is a separate deliverable, so the next runtime lane lands here
+// first. Emptying it is not a reason to delete the code path that reads it.
+export const PLANNED_AUTHORING_LANES = [];
 
 export const ALL_KNOWN_LANES = [...IMPLEMENTED_AUTHORING_LANES, ...PLANNED_AUTHORING_LANES];

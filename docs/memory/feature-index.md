@@ -38,12 +38,13 @@ A spec **must** assert functional truth. Rendering/legibility only corroborate â
 
 All lanes are first-class. Build the ones that match the target system's surfaces (confirmed in the
 Phase 0 memo). **Web/DOM** (Playwright), **API contract** (passive HTTP), **WS contract** (passive
-STOMP + supervised active SEND), **Screen driver** (no-DOM targets, deterministic replay).
+STOMP + supervised active SEND), **Screen driver** (no-DOM targets, deterministic replay),
+**SNMP** (emulator or opt-in passive GET/WALK), and **Trap** (receive-only listener).
 
 ## Lane authoring toolkits
 
-`@multilane/authoring-{web,http,stomp}` ship a `lane.manifest.json` + skill/agent assets, installed
+`@multilane/authoring-{web,http,stomp,screen,snmp,trap}` ship a `lane.manifest.json` + skill/agent assets, installed
 into consumer repos via `mlt authoring install` (one shared root-level copy per lane, deterministic
-provenance in `.multilane/authoring.lock.json`). `screen` is the only lane without an authoring
-package (`PLANNED_AUTHORING_LANES`). Committed at `7919f8d` (2026-07-14) â€” see
-`LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md`. Source: `packages/cli/src/authoring/registry.mjs`.
+provenance in `.multilane/authoring.lock.json`). Optional live exploration still requires target
+configuration; installing authoring assets does not contact a target. Source:
+`packages/cli/src/authoring/registry.mjs`. Last verified: 2026-09-25.

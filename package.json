@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:unit": "node --test packages/core/test/*.test.mjs packages/cli/test/*.test.mjs packages/http/test/*.test.mjs packages/stomp/test/*.test.mjs packages/screen/test/*.test.mjs",
+    "test:unit": "node --test packages/core/test/*.test.mjs packages/cli/test/*.test.mjs packages/http/test/*.test.mjs packages/stomp/test/*.test.mjs packages/screen/test/*.test.mjs packages/authoring-screen/test/*.test.mjs packages/snmp-model/test/*.test.mjs packages/snmp-runtime/test/*.test.mjs packages/snmp-adapter-selection/test/*.test.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "check:no-runtime-ai": "node scripts/check-no-runtime-ai.mjs",

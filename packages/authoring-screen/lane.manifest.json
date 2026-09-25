@@ -1,0 +1,184 @@
+{
+  "lane": "screen",
+  "version": "0.2.2",
+  "runtimePackage": "@multilane/screen",
+  "authoringPackage": "@multilane/authoring-screen",
+  "compatibility": {
+    "minRuntimeVersion": "0.2.0",
+    "maxRuntimeVersion": "0.x"
+  },
+  "requiredTools": ["read", "search", "edit", "bash"],
+  "optionalMcpServers": ["screen-driver", "playwright"],
+  "mcpServerConfigs": {
+    "screen-driver": {
+      "command": "npx",
+      "args": ["--no-install", "multilane-screen-mcp"],
+      "env": { "SCREEN_DRIVER_MODE": "authoring" }
+    }
+  },
+  "envPrerequisites": ["SCREEN_TARGET_HOST", "SCREEN_RPS_PARTITION"],
+  "skills": [
+    {
+      "id": "screen-operator",
+      "kind": "skill",
+      "title": "Screen surface routing",
+      "description": "Route screen and browser work across the deterministic driver, the screen-driver MCP (authoring), local CV + offline OCR discovery, and Playwright (DOM lane), so runtime stays deterministic and AI stays at authoring time.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/screen-operator/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/screen-operator/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/screen-operator.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    },
+    {
+      "id": "screen-exploration",
+      "kind": "skill",
+      "title": "Screen locator exploration and freezing",
+      "description": "Explore a screen-only target to discover controls and freeze stable Tier-1/Tier-2 locators. Object introspection and control tree first; local CV + offline OCR only to discover a locator to freeze.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/screen-exploration/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/screen-exploration/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/screen-exploration.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    },
+    {
+      "id": "screen-test-implementation",
+      "kind": "skill",
+      "title": "Deterministic screen spec implementation",
+      "description": "Implement a deterministic screen spec from a frozen-locator set: replay an RPS scenario into a test partition, drive frozen Tier-1/2 locators, and assert functional truth as the gate with golden-image and OCR corroboration.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/screen-test-implementation/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/screen-test-implementation/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/screen-test-implementation.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    },
+    {
+      "id": "screen-flake-hardening",
+      "kind": "skill",
+      "title": "Screen flake and drift hardening",
+      "description": "Diagnose and fix flaky or drifted screen specs without weakening assertions or adding runtime AI, including supervised Tier-4 re-pin for genuine locator drift.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/screen-flake-hardening/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/screen-flake-hardening/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/screen-flake-hardening.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "screen-explorer",
+      "kind": "agent",
+      "title": "Screen explorer",
+      "description": "Discover and verify locators on a live screen-only target via object introspection, control tree, and — only when needed — local CV + offline OCR, then propose stable Tier-1/2 locators to freeze. Authoring-only.",
+      "portable": "portable-after-mcp-config",
+      "always": false,
+      "configureId": "screen-explorer",
+      "tools": ["execute"],
+      "requires": {
+        "mcpServers": ["screen-driver"]
+      },
+      "source": "assets/agents/screen-explorer/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/screen-explorer.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/screen-explorer-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/screen-explorer.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    },
+    {
+      "id": "screen-test-designer",
+      "kind": "agent",
+      "title": "Screen test designer",
+      "description": "Design and implement deterministic screen specs from a frozen-locator set, asserting functional truth as the gate with golden-image and OCR corroboration and a requirement_ref on every case. Authoring-only.",
+      "portable": "portable-after-mcp-config",
+      "always": false,
+      "configureId": "screen-test-designer",
+      "tools": ["execute"],
+      "requires": {
+        "mcpServers": ["screen-driver"]
+      },
+      "source": "assets/agents/screen-test-designer/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/screen-test-designer.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/screen-test-designer-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/screen-test-designer.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    },
+    {
+      "id": "screen-flake-debugger",
+      "kind": "agent",
+      "title": "Screen flake debugger",
+      "description": "Investigate and fix flaky or drifted screen specs, classifying drift, synchronization, fixture, rendering-oracle noise, and real defects, and proposing a supervised Tier-4 re-pin for human approval. Authoring-only.",
+      "portable": "portable-after-mcp-config",
+      "always": false,
+      "configureId": "screen-flake-debugger",
+      "tools": ["execute"],
+      "requires": {
+        "mcpServers": ["screen-driver"]
+      },
+      "source": "assets/agents/screen-flake-debugger/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/screen-flake-debugger.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/screen-flake-debugger-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/screen-flake-debugger.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ]
+}
