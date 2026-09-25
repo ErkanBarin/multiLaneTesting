@@ -1,0 +1,10 @@
+{
+  "name": "multilane-testing",
+  "version": "1.0.0",
+  "description": "Set up multilane testing in your repo: pick lanes from evidence, scaffold a test project from npm, and install the lane authoring skills and agents.",
+  "author": { "name": "ErkanBarin" },
+  "homepage": "https://github.com/ErkanBarin/multiLaneTesting",
+  "repository": "https://github.com/ErkanBarin/multiLaneTesting",
+  "license": "MIT",
+  "keywords": ["testing", "qa", "e2e", "playwright", "snmp", "screen", "multilane"]
+}

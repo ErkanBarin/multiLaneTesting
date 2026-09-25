@@ -169,6 +169,11 @@ npx --no-install mlt authoring install --lanes web,http              # materiali
 `mlt authoring check` detects drift; `mlt authoring update` re-materializes assets after an engine
 update.
 
+Shortcut: the `multilane-testing` plugin (`claude|copilot plugin marketplace add
+ErkanBarin/multiLaneTesting`, then `plugin install multilane-testing@multilane`) adds a
+`multilane-setup` skill that performs Steps 2–6 for you — it inspects your repo, recommends lanes,
+and asks before touching a live target or MCP configuration.
+
 ---
 
 ## Adapting the framework to your needs
