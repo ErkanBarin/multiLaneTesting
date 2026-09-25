@@ -33,6 +33,5 @@ build fails — this is the mechanism that keeps per-run AI cost at zero.
 > This file documents the intended **test/replay** pipeline (screen + lanes), which is conceptual
 > until the framework has real specs and a CI display host. A publish pipeline can be attached in
 > your CI; this repo ships only templates (`ci/`). Provision Node however your CI does (container
-> image, tool installer, or nvm). The `@multilane/*` packages are not served by a public registry —
-> consume them via `npm pack` tarballs (see the repo README → Dogfooding) until the maintainers
-> make an explicit publication decision.
+> image, tool installer, or nvm). The `@erkanbarin/*` packages install from the public npm
+> registry; point `@erkanbarin:registry` at a mirror only if your CI cannot reach it.

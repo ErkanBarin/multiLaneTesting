@@ -7,13 +7,13 @@ user-invocable: true
 # web-test-authoring
 
 Write and maintain web/DOM specs for the `multilanetesting` web lane. Runtime capability lives in
-`@multilane/web` (selector factories over Playwright); this skill is the authoring-time companion —
+`@erkanbarin/web` (selector factories over Playwright); this skill is the authoring-time companion —
 it never runs as part of a test.
 
 ## Procedure
 
 1. **Locate the selector map.** Web specs build a named map of stable selectors and resolve it with
-   `selectorFactory(page, map)` from `@multilane/web`. Look for an existing map before inventing new
+   `selectorFactory(page, map)` from `@erkanbarin/web`. Look for an existing map before inventing new
    selectors — reuse beats rediscovery.
 2. **Write one spec per user-observable behavior.** Steps read as user intent and outcome
    (`test.step('user opens…')`, `test.step('user sees…')`), not mechanics (`click`, `waitForSelector`).
@@ -24,7 +24,7 @@ it never runs as part of a test.
 5. **Env-var target only.** Base URL and any target host come from `MULTILANE_WEB_BASE_URL` (or the
    project's `.env`) — never hardcode a host literal in a committed spec.
 6. **Evidence.** Rely on the shared Playwright config's trace/screenshot/video settings
-   (`@multilane/playwright-config`) rather than ad hoc screenshot calls inside the spec body.
+   (`@erkanbarin/playwright-config`) rather than ad hoc screenshot calls inside the spec body.
 
 ## Guardrails
 

@@ -1,26 +1,23 @@
-# @multilane/snmp-runtime
+# @erkanbarin/snmp-runtime
 
 Controllable in-process SNMP agent runtime: `startEmulatedAgent(options)` stands an
-`@multilane/snmp-model` `EmulatedAgentModel` up as a live `net-snmp` agent on loopback UDP and
+`@erkanbarin/snmp-model` `EmulatedAgentModel` up as a live `net-snmp` agent on loopback UDP and
 returns a control plane (`set`, `addRow`, `removeRow`, `emit`, `goSilent`, `resume`, `close`).
 `startTrapListener(options)` is the receiving half.
 
 Works from direct model JSON alone — no selection import, no filesystem access, no adapter dependency.
 
-No public registry is configured for `@multilane/*`; install from tarballs built in an engine
-checkout. From a scaffolded consumer, run:
-
 ```sh
-node <engine-repo>/scripts/install-tarballs.mjs .
+npm install --save-dev @erkanbarin/snmp-runtime @erkanbarin/snmp-model
 ```
 
-The installer includes `@multilane/snmp-model` and other workspace dependencies in the same
-consumer lockfile.
+To try unreleased engine changes, run `node <engine-repo>/scripts/install-tarballs.mjs .` from a
+scaffolded consumer instead.
 
 ## Usage
 
 ```js
-import { startEmulatedAgent } from '@multilane/snmp-runtime';
+import { startEmulatedAgent } from '@erkanbarin/snmp-runtime';
 
 const agent = startEmulatedAgent({ model, port: 16161, community: 'my-test-community' });
 agent.set('myAgentStatus', 'down');
@@ -36,7 +33,7 @@ unless you widen `address` yourself. Pair it with `emit` to prove a notification
 live dispatcher or the privileged UDP 162.
 
 ```js
-import { startTrapListener } from '@multilane/snmp-runtime';
+import { startTrapListener } from '@erkanbarin/snmp-runtime';
 
 const listener = startTrapListener({ port: 16162 });
 const trap = await listener.waitForTrap((n) => n.varbinds.some((vb) => vb.oid === MY_OID), 5000);

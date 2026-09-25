@@ -1,4 +1,4 @@
-// @multilane/core — public API surface.
+// @erkanbarin/core — public API surface.
 //
 // Everything a consumer or the `mlt` CLI is allowed to import lives here. Anything not re-exported
 // from this file is private engine internals (enforced by the package `exports` map, which exposes

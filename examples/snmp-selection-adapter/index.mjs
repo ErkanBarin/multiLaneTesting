@@ -1,4 +1,4 @@
-import { buildSelectionModel } from '@multilane/snmp-adapter-selection';
+import { buildSelectionModel } from '@erkanbarin/snmp-adapter-selection';
 
 const { SELECTION_PATH, MIB_PATH } = process.env;
 if (!SELECTION_PATH || !MIB_PATH) throw new Error('SELECTION_PATH and MIB_PATH must be set');

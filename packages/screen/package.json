@@ -1,8 +1,8 @@
 {
-  "name": "@multilane/screen",
+  "name": "@erkanbarin/screen",
   "version": "0.2.0",
   "description": "Screen-driver lane for multilanetesting: deterministic frozen-locator loading and validation, the Tier-1 AT-SPI driver, the framebuffer driver (capture, Tier-2 template find, golden-image and OCR oracles, input) and a VNC/RDP viewer bridge. No runtime AI.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -20,12 +20,18 @@
     "README.md"
   ],
   "dependencies": {
-    "@multilane/core": "0.1.1"
+    "@erkanbarin/core": "0.1.1"
   },
   "engines": {
     "node": ">=20"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
+    "directory": "packages/screen"
   }
 }

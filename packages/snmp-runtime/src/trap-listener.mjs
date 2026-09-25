@@ -1,4 +1,4 @@
-// @multilane/snmp-runtime — passive trap listener.
+// @erkanbarin/snmp-runtime — passive trap listener.
 //
 // Receive-only, and deliberately so: this module never sends SNMP to any host, never binds beyond
 // the address it is given, and performs no SET or trap injection. It is the receiving half of the

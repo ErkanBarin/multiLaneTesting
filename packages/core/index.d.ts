@@ -1,4 +1,4 @@
-// Type definitions for @multilane/core.
+// Type definitions for @erkanbarin/core.
 
 export interface WebConfig {
   baseUrl: string;

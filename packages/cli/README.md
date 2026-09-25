@@ -1,11 +1,11 @@
-# @multilane/cli
+# @erkanbarin/cli
 
 The `mlt` command line for **multilanetesting**.
 
 ## Install
 
 ```bash
-npm install --save-dev @multilane/cli
+npm install --save-dev @erkanbarin/cli
 ```
 
 Provides the `mlt` binary (also runnable with `npx mlt`).

@@ -6,6 +6,6 @@
     "generate": "node index.mjs"
   },
   "dependencies": {
-    "@multilane/snmp-adapter-selection": "0.1.0"
+    "@erkanbarin/snmp-adapter-selection": "0.1.0"
   }
 }

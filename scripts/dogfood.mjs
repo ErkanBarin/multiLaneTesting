@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // dogfood.mjs — prove the PACKAGED engine works.
 //
-// Packs every @multilane/* workspace with `npm pack`, installs those tarballs into a temp copy of
+// Packs every @erkanbarin/* workspace with `npm pack`, installs those tarballs into a temp copy of
 // examples/consumer-smoke (no source imports, no registry), then runs `mlt verify` + the smoke
-// suite. `overrides` repoints nested @multilane/* dependencies (e.g. screen -> core) at the same
+// suite. `overrides` repoints nested @erkanbarin/* dependencies (e.g. screen -> core) at the same
 // tarballs. Third-party dependencies may resolve through the configured npm registry.
 import { execSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync, readdirSync, existsSync } from 'node:fs';
@@ -27,13 +27,13 @@ try {
   // 1) Pack each engine package into the temp tarball dir.
   const tarballs = {};
   for (const p of PACKAGES) {
-    const out = execSync(`npm pack -w @multilane/${p} --pack-destination "${tarDir}" --json`, {
+    const out = execSync(`npm pack -w @erkanbarin/${p} --pack-destination "${tarDir}" --json`, {
       cwd: repo,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     });
     const filename = JSON.parse(out)[0].filename;
-    tarballs[`@multilane/${p}`] = join(tarDir, filename);
+    tarballs[`@erkanbarin/${p}`] = join(tarDir, filename);
   }
   console.log('✓ packed:', Object.keys(tarballs).join(', '));
 
@@ -45,7 +45,7 @@ try {
   for (const dep of Object.keys(pkg.devDependencies ?? {})) {
     if (tarballs[dep]) pkg.devDependencies[dep] = `file:${tarballs[dep]}`;
   }
-  // Overrides make nested @multilane/* dependencies resolve to the tarballs too, keeping the
+  // Overrides make nested @erkanbarin/* dependencies resolve to the tarballs too, keeping the
   // install hermetic (no packument fetch for workspace-internal deps).
   pkg.overrides = Object.fromEntries(
     Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
@@ -72,8 +72,8 @@ try {
         version: '0.0.0',
         type: 'module',
         devDependencies: {
-          '@multilane/cli': `file:${tarballs['@multilane/cli']}`,
-          '@multilane/core': `file:${tarballs['@multilane/core']}`,
+          '@erkanbarin/cli': `file:${tarballs['@erkanbarin/cli']}`,
+          '@erkanbarin/core': `file:${tarballs['@erkanbarin/core']}`,
         },
         overrides: Object.fromEntries(
           Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
@@ -91,7 +91,7 @@ try {
     createSystemFailed = true;
   }
   if (!createSystemFailed) {
-    throw new Error('create-system must exit nonzero when @multilane/authoring-web is unresolvable.');
+    throw new Error('create-system must exit nonzero when @erkanbarin/authoring-web is unresolvable.');
   }
   console.log('✓ minimal-entry consumer: create-system exits nonzero when the authoring package is missing.');
 
@@ -109,9 +109,9 @@ try {
         version: '0.0.0',
         type: 'module',
         devDependencies: {
-          '@multilane/cli': `file:${tarballs['@multilane/cli']}`,
-          '@multilane/core': `file:${tarballs['@multilane/core']}`,
-          '@multilane/authoring-http': `file:${tarballs['@multilane/authoring-http']}`,
+          '@erkanbarin/cli': `file:${tarballs['@erkanbarin/cli']}`,
+          '@erkanbarin/core': `file:${tarballs['@erkanbarin/core']}`,
+          '@erkanbarin/authoring-http': `file:${tarballs['@erkanbarin/authoring-http']}`,
         },
         overrides: Object.fromEntries(
           Object.entries(tarballs).map(([name, path]) => [name, `file:${path}`]),
@@ -128,13 +128,10 @@ try {
     encoding: 'utf8',
   });
   console.log(createOut);
-  // While the packages are unpublished, the CLI's own next step must be the tarball installer,
-  // not a plain `npm install` (which fails before the tarball rewrite).
-  if (!createOut.includes('install-tarballs.mjs')) {
-    throw new Error('create-system output must point at scripts/install-tarballs.mjs as the next step.');
-  }
-  if (createOut.includes('npm install &&')) {
-    throw new Error('create-system output must not lead users to a plain `npm install`.');
+  // The CLI's next step is `npm install` from the public registry; the tarball installer stays the
+  // documented alternative for unreleased engine changes, and is what this offline run exercises.
+  if (!createOut.includes('npm install &&') || !createOut.includes('install-tarballs.mjs')) {
+    throw new Error('create-system output must show `npm install` and the install-tarballs.mjs alternative.');
   }
   const project = join(scaffoldHome, 'my-system');
   // The HTTP-only scaffold has no third-party dependencies and stays offline.

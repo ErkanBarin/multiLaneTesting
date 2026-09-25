@@ -1,4 +1,4 @@
-// Type definitions for @multilane/screen.
+// Type definitions for @erkanbarin/screen.
 
 export interface FrozenLocator {
   area: string;

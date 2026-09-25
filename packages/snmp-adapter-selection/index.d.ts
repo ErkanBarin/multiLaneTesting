@@ -1,4 +1,4 @@
-import type { EmulatedAgentModel } from '@multilane/snmp-model';
+import type { EmulatedAgentModel } from '@erkanbarin/snmp-model';
 
 export interface SelectionAdapterOptions {
   /** Selection list content. Supply this or `selectionPath`. */

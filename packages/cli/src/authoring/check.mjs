@@ -1,4 +1,4 @@
-// @multilane/cli — `mlt authoring check`.
+// @erkanbarin/cli — `mlt authoring check`.
 //
 // Detects drift between what was installed (recorded in the provenance file) and what is actually
 // on disk / currently resolvable. A digest mismatch means the file changed since install — it does
@@ -11,7 +11,7 @@ import { AUTHORING_LANE_PACKAGES } from './registry.mjs';
 import { resolveAuthoringPackage } from './resolve.mjs';
 import { digestContent } from './digest.mjs';
 import { readProvenance, PROVENANCE_PATH } from './provenance.mjs';
-import { loadProjectConfig } from '@multilane/core';
+import { loadProjectConfig } from '@erkanbarin/core';
 
 /**
  * @returns {{ ok: boolean, issues: Array<{ lane: string|null, type: string, detail: string }> }}

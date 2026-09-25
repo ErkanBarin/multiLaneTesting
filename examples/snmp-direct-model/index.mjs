@@ -1,5 +1,5 @@
-import { validateModel } from '@multilane/snmp-model';
-import { startEmulatedAgent } from '@multilane/snmp-runtime';
+import { validateModel } from '@erkanbarin/snmp-model';
+import { startEmulatedAgent } from '@erkanbarin/snmp-runtime';
 
 const model = {
   subsystem: 'direct-example', confFile: '', smiFile: '', hostTypes: [{ name: 'example', version: 'v2c' }],

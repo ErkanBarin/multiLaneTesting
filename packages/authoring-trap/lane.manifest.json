@@ -1,8 +1,8 @@
 {
   "lane": "trap",
   "version": "0.1.2",
-  "runtimePackage": "@multilane/snmp-runtime",
-  "authoringPackage": "@multilane/authoring-trap",
+  "runtimePackage": "@erkanbarin/snmp-runtime",
+  "authoringPackage": "@erkanbarin/authoring-trap",
   "compatibility": {
     "minRuntimeVersion": "0.1.0",
     "maxRuntimeVersion": "0.x"

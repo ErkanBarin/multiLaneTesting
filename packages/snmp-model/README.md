@@ -1,4 +1,4 @@
-# @multilane/snmp-model
+# @erkanbarin/snmp-model
 
 Pure data model for an emulated SNMP agent: `EmulatedAgentModel` and its nested scalar/table/
 notification/gap types, plus `validateModel` for structural checks (duplicate names/OIDs, index
@@ -11,7 +11,7 @@ use this package.
 ## Usage
 
 ```js
-import { validateModel } from '@multilane/snmp-model';
+import { validateModel } from '@erkanbarin/snmp-model';
 
 const errors = validateModel(model);
 if (errors.length > 0) {
@@ -20,5 +20,5 @@ if (errors.length > 0) {
 ```
 
 See `docs/snmp/api-contract.md` at the workspace root for the full frozen API surface, and
-`docs/snmp/architecture.md` for this package's boundary rules relative to `@multilane/snmp-runtime`
-and `@multilane/snmp-adapter-selection`.
+`docs/snmp/architecture.md` for this package's boundary rules relative to `@erkanbarin/snmp-runtime`
+and `@erkanbarin/snmp-adapter-selection`.

@@ -1,4 +1,4 @@
-// Type definitions for @multilane/snmp-model.
+// Type definitions for @erkanbarin/snmp-model.
 
 export type SnmpBaseType =
   | 'Integer'

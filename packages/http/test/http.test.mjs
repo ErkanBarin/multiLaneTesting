@@ -1,4 +1,4 @@
-// @multilane/http — tests against a local emulator (no live network target required).
+// @erkanbarin/http — tests against a local emulator (no live network target required).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 

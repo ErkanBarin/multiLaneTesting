@@ -1,4 +1,4 @@
-// A scaffolded project pins exact @multilane/* versions. If a pin names a version that is not the
+// A scaffolded project pins exact @erkanbarin/* versions. If a pin names a version that is not the
 // one the workspace publishes, every consumer's `npm ci` dies with ETARGET/404 — and no existing
 // test noticed, because `dogfood.mjs` rewrites the deps to local `file:` tarballs before installing.
 import { test } from 'node:test';
@@ -25,7 +25,7 @@ function workspaceVersions() {
   return out;
 }
 
-test('every @multilane pin in a scaffolded project matches the workspace version', () => {
+test('every @erkanbarin pin in a scaffolded project matches the workspace version', () => {
   const versions = workspaceVersions();
   const tmp = mkdtempSync(join(tmpdir(), 'mlt-scaffold-versions-'));
   try {
@@ -34,7 +34,7 @@ test('every @multilane pin in a scaffolded project matches the workspace version
       const { root } = scaffoldProject({ name: `demo-${lane}`, lanes: [lane], cwd: tmp });
       const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
       for (const [dep, pinned] of Object.entries(pkg.devDependencies)) {
-        if (!dep.startsWith('@multilane/')) continue;
+        if (!dep.startsWith('@erkanbarin/')) continue;
         assert.equal(
           pinned,
           versions.get(dep),

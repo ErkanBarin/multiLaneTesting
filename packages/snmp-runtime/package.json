@@ -1,9 +1,9 @@
 {
-  "name": "@multilane/snmp-runtime",
+  "name": "@erkanbarin/snmp-runtime",
   "version": "0.1.0",
-  "description": "Controllable in-process SNMP agent runtime driven by an @multilane/snmp-model EmulatedAgentModel.",
+  "description": "Controllable in-process SNMP agent runtime driven by an @erkanbarin/snmp-model EmulatedAgentModel.",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "exports": {
     ".": {
       "types": "./index.d.ts",
@@ -17,13 +17,19 @@
     "README.md"
   ],
   "dependencies": {
-    "@multilane/snmp-model": "0.1.0",
+    "@erkanbarin/snmp-model": "0.1.0",
     "net-snmp": "^3.26.3"
   },
   "engines": {
     "node": ">=20"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
+    "directory": "packages/snmp-runtime"
   }
 }

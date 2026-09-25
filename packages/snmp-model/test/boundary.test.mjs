@@ -21,10 +21,10 @@ function sourceText(packageName) {
 
 test('snmp-model stays free of runtime and selection dependencies', () => {
   const source = sourceText('snmp-model');
-  assert.doesNotMatch(source, /from\s+['"](?:net-snmp|@multilane\/snmp-adapter-selection)['"]/);
+  assert.doesNotMatch(source, /from\s+['"](?:net-snmp|@erkanbarin\/snmp-adapter-selection)['"]/);
 });
 
 test('snmp-runtime stays free of selection adapter dependencies', () => {
   const source = sourceText('snmp-runtime');
-  assert.doesNotMatch(source, /from\s+['"]@multilane\/snmp-adapter-selection['"]/);
+  assert.doesNotMatch(source, /from\s+['"]@erkanbarin\/snmp-adapter-selection['"]/);
 });

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Initial public snapshot at version 0.1.0: npm workspace of ten `@multilane/*`
+- Initial public snapshot at version 0.1.0: npm workspace of ten `@erkanbarin/*`
   packages (core, cli, http, stomp, web, screen, authoring-http, authoring-stomp,
   authoring-web, playwright-config) plus a stub Python screen driver.
 - Community files: CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md, SUPPORT.md,
@@ -22,12 +22,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   as a report for the bot-commit reviewer), verifies `npm ci` + full validate under npm 10 and
   `npm ci` under npm 11 / Node 24, and only then commits the repaired lockfile as the CI bot.
 - `scripts/install-tarballs.mjs`: supported installer for the unpublished engine — packs every
-  workspace into a consumer's `vendor/multilane/`, rewrites its `@multilane/*` dependencies to
+  workspace into a consumer's `vendor/multilane/`, rewrites its `@erkanbarin/*` dependencies to
   those tarballs with `overrides`, and runs the first `npm install` (creating the consumer's
   `package-lock.json`). The README consumer flow and the dogfood scaffolded-consumer probe run
   this same script.
 
 ### Changed
+
+- **Published to npm under MIT.** Packages are renamed from the `@multilane/*` scope to
+  `@erkanbarin/*` and licensed MIT (was `UNLICENSED`), with `publishConfig.access: public` and
+  provenance. Consumers now `npx @erkanbarin/cli new …` and `npm install`; the tarball installer
+  remains for unreleased engine changes. `mlt new`/`create-system` print `npm install` as the next
+  step, and the Jenkins template writes `.npmrc` only when a private mirror is configured.
+- `.github/workflows/release.yml`: manual publish of every workspace version not yet on npm
+  (dry run by default), via npm trusted publishing — see `docs/releasing.md`.
 
 - `docs/onboarding.md` rewritten as a team-adoption guide: the engine-vs-consumer model, lane
   selection, the scaffold + tarball-install flow, environment configuration, CI wiring, optional
@@ -45,7 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and `NPM_REGISTRY_AUTH_TOKEN`; operators of pre-rename CI jobs must update
   their job environment to the new names.
 - `mlt new`/`mlt create-system` scaffolds now declare the selected lanes'
-  `@multilane/authoring-*` packages as devDependencies, so `mlt authoring
+  `@erkanbarin/authoring-*` packages as devDependencies, so `mlt authoring
   install` resolves them from the consumer's own `node_modules`.
 - Scaffolding next steps: `mlt new`/`mlt create-system` completion output and
   the generated consumer README lead with the tarball installer
@@ -62,7 +70,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   CLI package (README, source comments, generated consumer README and `.npmrc`)
   now states the actual model: `npm pack` tarballs today, registry installation
   only after publication.
-- Package READMEs and `docs/API.md` now state that the `@multilane/*` packages
+- Package READMEs and `docs/API.md` now state that the `@erkanbarin/*` packages
   are unpublished and must be consumed via `npm pack` tarballs until a
   publishing decision is made.
 - `engines.npm` declared as `^10 || ^11` alongside `packageManager` — `npm ci`
@@ -100,14 +108,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   spaces, quotes, or shell metacharacters are passed as data instead of being
   interpreted as shell syntax (a command-injection surface). The dogfood
   scaffolded-consumer probe now runs the installer under such a path.
-- `@multilane/http` `getJson` timeout is now an absolute deadline for the whole
+- `@erkanbarin/http` `getJson` timeout is now an absolute deadline for the whole
   request+response instead of a socket-inactivity timer, so a slow-drip response
   can no longer hold a run open indefinitely. Invalid `timeoutMs`/`maxBodyBytes`
   options are rejected up front.
-- `@multilane/stomp` helpers settle exactly once and reject promptly when the
+- `@erkanbarin/stomp` helpers settle exactly once and reject promptly when the
   WebSocket closes before the STOMP session completes, instead of waiting for
   the full timeout.
-- `@multilane/screen` locator loading resolves real paths and refuses any
+- `@erkanbarin/screen` locator loading resolves real paths and refuses any
   locator that escapes `locators/` via symlink.
 - `mlt create-system` now exits nonzero when the post-scaffold authoring
   install fails (the scaffold on disk is left intact); previously it reported

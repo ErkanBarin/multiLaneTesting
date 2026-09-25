@@ -1,4 +1,4 @@
-// @multilane/snmp-model — structural validation.
+// @erkanbarin/snmp-model — structural validation.
 //
 // Checks internal consistency only: this never reaches into a filesystem or a producer's own
 // input, so the same checks apply whether the model came from a MIB adapter, a hand-written

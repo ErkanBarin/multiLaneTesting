@@ -1,4 +1,4 @@
-// @multilane/stomp — tests against a local in-process STOMP-over-WS emulator (no live broker
+// @erkanbarin/stomp — tests against a local in-process STOMP-over-WS emulator (no live broker
 // required). Deterministic: every send is preceded by waiting on the emulator's own subscribe
 // event, never a wall-clock sleep.
 import { test } from 'node:test';

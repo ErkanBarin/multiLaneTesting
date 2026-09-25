@@ -1,4 +1,4 @@
-// @multilane/snmp-model — public API surface.
+// @erkanbarin/snmp-model — public API surface.
 //
 // Plain data types for an emulated SNMP agent, plus a structural validator. No `net-snmp`, no
 // filesystem access, no producer-specific coupling: anything that builds an `EmulatedAgentModel`

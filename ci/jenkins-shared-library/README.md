@@ -39,7 +39,7 @@ runLaneTests(lanes: 'web,http', targetUrl: params.TARGET_URL, nodeVersion: '22.1
 1. **Checkout** the consumer repo.
 2. **Ensure Node** — prefers the Jenkins **NodeJS tool** `node-<version>`; falls back to Node already
    on `PATH` (static agents) or **nvm** (documented). Fails clearly if none are available.
-3. **Write `.npmrc`** from environment variables (scope `@multilane` → the configured npm registry). No secret is committed.
+3. **Write `.npmrc`** — only when `NPM_REGISTRY_URL` is set (private mirror for scope `@erkanbarin`); otherwise packages come from the public npm registry. No secret is committed.
 4. **`npm ci`** — reproducible install through the configured proxy.
 5. **Playwright browsers** (web lane only) — installs Chromium routed through the proxy. **Not**
    `--with-deps` (needs root — see caveat).
@@ -56,11 +56,13 @@ runLaneTests(lanes: 'web,http', targetUrl: params.TARGET_URL, nodeVersion: '22.1
 The step **detects and degrades** rather than hardcoding either; pass `agentLabel` to pin, or leave
 it empty to run anywhere.
 
-## Required environment (Jenkins credentials / global env — never committed)
+## Optional environment (Jenkins credentials / global env — never committed)
+
+The registry variables are needed only for a private npm mirror.
 
 | Variable | Purpose | Example |
 |---|---|---|
-| `NPM_REGISTRY_URL` | scoped registry URL for `@multilane` | `https://registry.example/repository/npm/` |
+| `NPM_REGISTRY_URL` | scoped registry URL for `@erkanbarin` | `https://registry.example/repository/npm/` |
 | `NPM_REGISTRY_AUTH_HOST` | `//host/path/` auth-key prefix for that registry | `//registry.example/repository/npm/` |
 | `NPM_REGISTRY_AUTH_TOKEN` | registry authentication token | configured as a Jenkins credential |
 | `HTTP_PROXY` / `HTTPS_PROXY` / `NO_PROXY` | optional proxy settings | `NO_PROXY` should include the registry host |

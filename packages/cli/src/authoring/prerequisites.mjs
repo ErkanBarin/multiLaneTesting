@@ -1,4 +1,4 @@
-// @multilane/cli — optional-capability prerequisite checks.
+// @erkanbarin/cli — optional-capability prerequisite checks.
 //
 // An authoring agent that declares `requires.mcpServers` is only materialized once the prerequisite
 // is detected — the installer never silently exposes a non-functional agent. Detection reads the

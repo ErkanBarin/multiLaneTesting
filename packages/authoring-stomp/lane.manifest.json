@@ -1,8 +1,8 @@
 {
   "lane": "stomp",
   "version": "0.1.2",
-  "runtimePackage": "@multilane/stomp",
-  "authoringPackage": "@multilane/authoring-stomp",
+  "runtimePackage": "@erkanbarin/stomp",
+  "authoringPackage": "@erkanbarin/authoring-stomp",
   "compatibility": {
     "minRuntimeVersion": "0.1.0",
     "maxRuntimeVersion": "0.x"

@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import { scaffoldProject, SUPPORTED_LANES } from '../index.mjs';
-import { runVerify } from '@multilane/core';
+import { runVerify } from '@erkanbarin/core';
 
 function tmpWorkspace() {
   return mkdtempSync(join(tmpdir(), 'mlt-cli-'));
@@ -31,6 +31,7 @@ test('scaffolded web+http project passes mlt verify', () => {
   assert.ok(files.includes('Jenkinsfile'));
 
   const readme = readFileSync(join(root, 'README.md'), 'utf8');
+  assert.match(readme, /^npm install$/m);
   assert.match(readme, /node <engine-repo>\/scripts\/install-tarballs\.mjs \./);
   assert.doesNotMatch(readme, /npm ci|npm test/);
 
@@ -39,13 +40,14 @@ test('scaffolded web+http project passes mlt verify', () => {
   assert.equal(result.ok, true);
 });
 
-test('new and create-system print a first-install command that works without a lockfile', () => {
+test('new and create-system print the registry install command and the tarball alternative', () => {
   for (const command of ['new', 'create-system']) {
     const output = execFileSync(process.execPath, [fileURLToPath(new URL('../bin/mlt.mjs', import.meta.url)), command, 'demo', '--lanes', 'web'], {
       cwd: tmpWorkspace(),
       encoding: 'utf8',
     });
-    assert.match(output, /Next: cd demo && node <engine-repo>\/scripts\/install-tarballs\.mjs \. && npm run verify/);
+    assert.match(output, /Next: cd demo && npm install && npm run verify/);
+    assert.match(output, /node <engine-repo>\/scripts\/install-tarballs\.mjs \./);
   }
 });
 
@@ -95,7 +97,7 @@ test('scaffolded snmp+trap project passes mlt verify and wires both halves of th
   const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
   assert.equal(pkg.scripts['test:snmp'] !== undefined, true);
   assert.equal(pkg.scripts['test:trap'] !== undefined, true);
-  assert.ok(pkg.devDependencies['@multilane/snmp-runtime'], 'trap and snmp both need the runtime');
+  assert.ok(pkg.devDependencies['@erkanbarin/snmp-runtime'], 'trap and snmp both need the runtime');
   assert.ok(pkg.devDependencies['net-snmp'], 'net-snmp is the transport, not an optional extra');
 
   assert.equal(runVerify({ cwd: root }).ok, true);

@@ -1,4 +1,4 @@
-// @multilane/http — a throwaway local HTTP server for deterministic, offline tests of this
+// @erkanbarin/http — a throwaway local HTTP server for deterministic, offline tests of this
 // package's client helpers. Test-only: never shipped (this package's "files" allowlist excludes
 // test/), never used at runtime by a consumer's own tests.
 import { createServer } from 'node:http';

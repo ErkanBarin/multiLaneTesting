@@ -1,9 +1,9 @@
 {
-  "name": "@multilane/snmp-adapter-selection",
+  "name": "@erkanbarin/snmp-adapter-selection",
   "version": "0.1.0",
-  "description": "Selection-list and SMI/MIB adapter for @multilane/snmp-model.",
+  "description": "Selection-list and SMI/MIB adapter for @erkanbarin/snmp-model.",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "exports": {
     ".": {
       "types": "./index.d.ts",
@@ -17,12 +17,18 @@
     "README.md"
   ],
   "dependencies": {
-    "@multilane/snmp-model": "0.1.0"
+    "@erkanbarin/snmp-model": "0.1.0"
   },
   "engines": {
     "node": ">=20"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
+    "directory": "packages/snmp-adapter-selection"
   }
 }

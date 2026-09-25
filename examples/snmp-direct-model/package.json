@@ -6,7 +6,7 @@
     "start": "node index.mjs"
   },
   "dependencies": {
-    "@multilane/snmp-model": "0.1.0",
-    "@multilane/snmp-runtime": "0.1.0"
+    "@erkanbarin/snmp-model": "0.1.0",
+    "@erkanbarin/snmp-runtime": "0.1.0"
   }
 }

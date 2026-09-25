@@ -1,7 +1,7 @@
-// @multilane/cli — project scaffolder for `mlt new`.
+// @erkanbarin/cli — project scaffolder for `mlt new`.
 //
 // Generates a *consumer* project that depends on versioned engine packages. It never vendors
-// framework source; consumers install local tarballs or use a configured registry.
+// framework source; consumers install from npm, or local tarballs for unreleased engine changes.
 //
 // Every generated artifact is deterministic and free of host/URL/secret literals: target values are
 // referenced by env-var name, and the registry/proxy come from user npm config or CI.
@@ -18,15 +18,15 @@ const { version: ENGINE_VERSION } = JSON.parse(
 // Engine packages are versioned independently. Keep these pins aligned with their manifests;
 // `scaffold-versions.test.mjs` fails when they drift from packages/*.
 const ENGINE_VERSIONS = {
-  '@multilane/cli': ENGINE_VERSION,
-  '@multilane/core': '0.1.1',
-  '@multilane/web': '0.1.0',
-  '@multilane/playwright-config': '0.1.0',
-  '@multilane/http': '0.1.1',
-  '@multilane/stomp': '0.1.0',
-  '@multilane/screen': '0.2.0',
-  '@multilane/snmp-runtime': '0.1.0',
-  '@multilane/snmp-model': '0.1.0',
+  '@erkanbarin/cli': ENGINE_VERSION,
+  '@erkanbarin/core': '0.1.1',
+  '@erkanbarin/web': '0.1.0',
+  '@erkanbarin/playwright-config': '0.1.0',
+  '@erkanbarin/http': '0.1.1',
+  '@erkanbarin/stomp': '0.1.0',
+  '@erkanbarin/screen': '0.2.0',
+  '@erkanbarin/snmp-runtime': '0.1.0',
+  '@erkanbarin/snmp-model': '0.1.0',
 };
 
 // The env var each lane's example spec skips on. `screen`, `snmp` and `trap` are absent on purpose:
@@ -107,36 +107,36 @@ export function scaffoldProject({ name, lanes, cwd = process.cwd(), force = fals
 
 function renderPackageJson(name, lanes) {
   const devDependencies = {
-    '@multilane/cli': engineVersion('@multilane/cli'),
-    '@multilane/core': engineVersion('@multilane/core'),
+    '@erkanbarin/cli': engineVersion('@erkanbarin/cli'),
+    '@erkanbarin/core': engineVersion('@erkanbarin/core'),
   };
   const scripts = { verify: 'mlt verify' };
 
   if (lanes.includes('web')) {
-    devDependencies['@multilane/web'] = engineVersion('@multilane/web');
-    devDependencies['@multilane/playwright-config'] = engineVersion('@multilane/playwright-config');
+    devDependencies['@erkanbarin/web'] = engineVersion('@erkanbarin/web');
+    devDependencies['@erkanbarin/playwright-config'] = engineVersion('@erkanbarin/playwright-config');
     devDependencies['@playwright/test'] = '^1.61.0';
     scripts['test:web'] = 'playwright test';
   }
   if (lanes.includes('http')) {
-    devDependencies['@multilane/http'] = engineVersion('@multilane/http');
+    devDependencies['@erkanbarin/http'] = engineVersion('@erkanbarin/http');
     scripts['test:http'] = nodeTestScript('http');
   }
   if (lanes.includes('stomp')) {
-    devDependencies['@multilane/stomp'] = engineVersion('@multilane/stomp');
+    devDependencies['@erkanbarin/stomp'] = engineVersion('@erkanbarin/stomp');
     devDependencies['@stomp/stompjs'] = '^7.0.0';
     devDependencies['ws'] = '^8.18.0';
     scripts['test:stomp'] = nodeTestScript('stomp');
   }
   if (lanes.includes('screen')) {
-    devDependencies['@multilane/screen'] = engineVersion('@multilane/screen');
+    devDependencies['@erkanbarin/screen'] = engineVersion('@erkanbarin/screen');
     scripts['test:screen'] = nodeTestScript('screen');
   }
   // snmp and trap are the two halves of one runtime — the emulated agent and the trap listener —
   // so both pull the same package. net-snmp is its peer transport and must be installed alongside.
   if (lanes.includes('snmp') || lanes.includes('trap')) {
-    devDependencies['@multilane/snmp-runtime'] = engineVersion('@multilane/snmp-runtime');
-    devDependencies['@multilane/snmp-model'] = engineVersion('@multilane/snmp-model');
+    devDependencies['@erkanbarin/snmp-runtime'] = engineVersion('@erkanbarin/snmp-runtime');
+    devDependencies['@erkanbarin/snmp-model'] = engineVersion('@erkanbarin/snmp-model');
     devDependencies['net-snmp'] = '^3.26.3';
   }
   if (lanes.includes('snmp')) scripts['test:snmp'] = nodeTestScript('snmp');
@@ -161,7 +161,7 @@ function renderPackageJson(name, lanes) {
 function renderProjectConfig(lanes) {
   return `${JSON.stringify(
     {
-      $comment: 'Gate + lane settings read by @multilane/core. Add Robot @tags here as specs gain them.',
+      $comment: 'Gate + lane settings read by @erkanbarin/core. Add Robot @tags here as specs gain them.',
       lanes,
       specDir: 'tests',
       robotTags: [],
@@ -245,14 +245,14 @@ function laneFiles(lane) {
   }
 }
 
-const WEB_PW_CONFIG = `import { definePlaywrightConfig } from '@multilane/playwright-config';
+const WEB_PW_CONFIG = `import { definePlaywrightConfig } from '@erkanbarin/playwright-config';
 
 // Extend the shared preset. baseURL comes from MULTILANE_WEB_BASE_URL — no host literal here.
 export default definePlaywrightConfig({ testDir: './tests/web' });
 `;
 
 const WEB_SPEC = `import { test, expect } from '@playwright/test';
-import { selectorFactory } from '@multilane/web';
+import { selectorFactory } from '@erkanbarin/web';
 
 // Example web/DOM spec. Replace the selector map with locators frozen for your target.
 test('user sees the application shell', async ({ page }) => {
@@ -274,7 +274,7 @@ test('user sees the application shell', async ({ page }) => {
 
 const HTTP_SPEC = `import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { getJson } from '@multilane/http';
+import { getJson } from '@erkanbarin/http';
 
 const host = process.env.MULTILANE_TARGET_HOST;
 const approvedHosts = (process.env.MULTILANE_APPROVED_HOSTS ?? '').split(',').filter(Boolean);
@@ -292,7 +292,7 @@ test('health endpoint returns the expected shape', { skip }, async () => {
 
 const STOMP_SPEC = `import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { subscribeOnce } from '@multilane/stomp';
+import { subscribeOnce } from '@erkanbarin/stomp';
 
 const url = process.env.MULTILANE_WS_URL;
 
@@ -309,7 +309,7 @@ test('receives a frame on the status destination', { skip }, async () => {
 
 const SCREEN_SPEC = `import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadFrozenLocator, assertFrozen } from '@multilane/screen';
+import { loadFrozenLocator, assertFrozen } from '@erkanbarin/screen';
 
 // Screen specs replay FROZEN locators — no AI runs here. Freeze locators under locators/<area>/.
 test('the frozen locator is valid and replayable', () => {
@@ -382,8 +382,8 @@ const SNMP_SPEC = `import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as snmp from 'net-snmp';
-import { startEmulatedAgent } from '@multilane/snmp-runtime';
-import { validateModel } from '@multilane/snmp-model';
+import { startEmulatedAgent } from '@erkanbarin/snmp-runtime';
+import { validateModel } from '@erkanbarin/snmp-model';
 
 ${SNMP_FREE_PORT}
 const model = JSON.parse(readFileSync(new URL('../../models/example.agent.json', import.meta.url), 'utf8'));
@@ -415,7 +415,7 @@ test('a scalar the model declares is readable over SNMP', async () => {
 const TRAP_SPEC = `import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { startEmulatedAgent, startTrapListener } from '@multilane/snmp-runtime';
+import { startEmulatedAgent, startTrapListener } from '@erkanbarin/snmp-runtime';
 
 ${SNMP_FREE_PORT}
 const model = JSON.parse(readFileSync(new URL('../../models/example.agent.json', import.meta.url), 'utf8'));
@@ -448,9 +448,8 @@ test('an emitted notification arrives and decodes', async () => {
 
 // --- shared static artifacts ---
 
-const NPMRC = `# No registry or credentials are configured by this scaffold.
-# Use scripts/install-tarballs.mjs from the engine clone, or set @multilane:registry
-# in user npm configuration if you publish the packages to a registry.
+const NPMRC = `# No registry or credentials are configured by this scaffold: @erkanbarin/* installs from the
+# public npm registry. To use a mirror, set @erkanbarin:registry in user npm configuration.
 `;
 
 const GITIGNORE = `node_modules/
@@ -485,14 +484,14 @@ System tests for **${name}**, built on the [multilanetesting](../) engine. Lanes
     .map((l) => `\`${l}\``)
     .join(', ')}.
 
-The engine ships as versioned \`@multilane/*\` packages. This project **consumes** them and
+The engine ships as versioned \`@erkanbarin/*\` packages. This project **consumes** them and
 never vendors framework source.
 
 ## Setup
 
 \`\`\`bash
-# From the engine clone, pack and install local tarballs (see its README):
-node <engine-repo>/scripts/install-tarballs.mjs .
+npm install
+# Unreleased engine changes instead: node <engine-repo>/scripts/install-tarballs.mjs .
 ${lanes.includes('web') ? 'npx playwright install chromium\n' : ''}npm run verify   # runs the deterministic gates (mlt verify)
 \`\`\`
 

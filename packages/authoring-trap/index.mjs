@@ -1,9 +1,9 @@
-// @multilane/authoring-trap — trap-lane authoring assets.
+// @erkanbarin/authoring-trap — trap-lane authoring assets.
 //
 // This package ships DEVELOPMENT-TIME content only: a lane manifest plus the source-of-truth
 // skill/agent markdown under assets/. It has zero runtime dependencies and zero side effects at
 // import time beyond reading its own manifest — nothing here binds a socket, receives a trap, or is
-// imported by `@multilane/snmp-runtime` or `@multilane/snmp-model`. The `mlt authoring` CLI is the
+// imported by `@erkanbarin/snmp-runtime` or `@erkanbarin/snmp-model`. The `mlt authoring` CLI is the
 // only intended consumer: it resolves this package, reads the manifest, and materializes
 // tool-specific files into a consumer project. Importing this module must never be required to run
 // trap-lane tests.

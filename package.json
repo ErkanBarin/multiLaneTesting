@@ -40,5 +40,6 @@
   "homepage": "https://github.com/ErkanBarin/multiLaneTesting#readme",
   "bugs": {
     "url": "https://github.com/ErkanBarin/multiLaneTesting/issues"
-  }
+  },
+  "license": "MIT"
 }

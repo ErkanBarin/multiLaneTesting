@@ -1,13 +1,13 @@
-# @multilane/authoring-screen
+# @erkanbarin/authoring-screen
 
 Screen-lane **authoring** assets for `multilanetesting` — the AI-facing skills and agents used to
 explore a screen-only target, freeze Tier-1/2 locators, and write deterministic replay specs.
 Companion package to the screen-lane **runtime** package,
-[`@multilane/screen`](../screen/README.md), and never a dependency of it.
+[`@erkanbarin/screen`](../screen/README.md), and never a dependency of it.
 
 ```
-@multilane/screen            = screen runtime capability (loadFrozenLocator, assertFrozen, runDriver, openViewer)
-@multilane/authoring-screen  = screen skills, agents, the screen-driver MCP server and metadata (this package)
+@erkanbarin/screen            = screen runtime capability (loadFrozenLocator, assertFrozen, runDriver, openViewer)
+@erkanbarin/authoring-screen  = screen skills, agents, the screen-driver MCP server and metadata (this package)
 ```
 
 ## What's in here
@@ -24,13 +24,13 @@ Companion package to the screen-lane **runtime** package,
 ## Safety-critical
 
 Screen replay targets a **test partition** — `TEST_A`, `TEST_B`, or `TEST_C` — and **never `PROD`**, the
-operational partition. Every skill and agent here states it. `@multilane/screen` enforces it at the
+operational partition. Every skill and agent here states it. `@erkanbarin/screen` enforces it at the
 runtime entry point (`loadFrozenLocator` refuses when `SCREEN_RPS_PARTITION` resolves to `PROD`);
 this package's job is to make sure nothing authored here tries to work around that refusal.
 
 ## Who consumes this package
 
-Not test authors directly. `mlt authoring install` (from `@multilane/cli`) resolves this package
+Not test authors directly. `mlt authoring install` (from `@erkanbarin/cli`) resolves this package
 from the consumer project's `node_modules`, reads `lane.manifest.json`, and materializes
 tool-specific wrapper files into the consumer repo. The three agents only materialize once the
 `screen-driver` MCP server is configured — run `mlt authoring configure screen-explorer` for the
@@ -39,7 +39,7 @@ exact steps.
 ## The screen-driver MCP server
 
 An authoring agent's hands on the target. It wraps the deterministic driver scripts from
-`@multilane/screen` (0.2.0+), which it uses from the project's own install. It is optional: it is a
+`@erkanbarin/screen` (0.2.0+), which it uses from the project's own install. It is optional: it is a
 peer dependency and is never installed for you. `mlt authoring configure screen-explorer` prints this
 entry:
 
@@ -66,7 +66,7 @@ It refuses to start unless `SCREEN_DRIVER_MODE=authoring`. Every tool that reach
 
 ## Runtime isolation
 
-No runtime dependencies, no executable test logic, and `@multilane/screen`'s `package.json` does not
+No runtime dependencies, no executable test logic, and `@erkanbarin/screen`'s `package.json` does not
 reference it. The MCP server is authoring-time only; it depends on the runtime package, never the
 reverse. See `LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md` at the engine root for the isolation
 proof pattern (same shape as the web, HTTP, and STOMP lanes).

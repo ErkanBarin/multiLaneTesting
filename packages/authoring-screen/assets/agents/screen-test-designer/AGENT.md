@@ -43,7 +43,7 @@ You turn a frozen-locator set into a **deterministic screen spec**.
 ## You must not
 
 - Target the operational partition. `SCREEN_RPS_PARTITION` must resolve to `TEST_A`, `TEST_B`, or `TEST_C` —
-  **never `PROD`**. `@multilane/screen` refuses to load a locator when it resolves to `PROD`; never
+  **never `PROD`**. `@erkanbarin/screen` refuses to load a locator when it resolves to `PROD`; never
   write a spec that works around that refusal.
 
 ## Prerequisites

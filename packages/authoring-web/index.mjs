@@ -1,9 +1,9 @@
-// @multilane/authoring-web — Web-lane authoring assets.
+// @erkanbarin/authoring-web — Web-lane authoring assets.
 //
 // This package ships DEVELOPMENT-TIME content only: a lane manifest plus the source-of-truth
 // skill/agent markdown under assets/. It has zero runtime dependencies and zero side effects at
 // import time beyond reading its own manifest — nothing here executes a test, opens a browser, or
-// is imported by `@multilane/web`. The `mlt authoring` CLI is the only intended consumer: it
+// is imported by `@erkanbarin/web`. The `mlt authoring` CLI is the only intended consumer: it
 // resolves this package, reads the manifest, and materializes tool-specific files into a consumer
 // project. Importing this module must never be required to run web-lane tests.
 import { readFileSync } from 'node:fs';

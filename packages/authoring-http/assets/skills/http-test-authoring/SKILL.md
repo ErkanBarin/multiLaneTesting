@@ -7,7 +7,7 @@ user-invocable: true
 # http-test-authoring
 
 Write and maintain passive HTTP/JSON contract specs under `tests/http/**`. Runtime capability lives
-in `@multilane/http` (`getJson`, `assertShape`, `assertApprovedHost`); this skill is the
+in `@erkanbarin/http` (`getJson`, `assertShape`, `assertApprovedHost`); this skill is the
 authoring-time companion — it never runs as part of a test.
 
 ## Procedure

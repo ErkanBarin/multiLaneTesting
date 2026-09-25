@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// install-tarballs.mjs — install the (unpublished) engine into a consumer project.
+// install-tarballs.mjs — install the local (unreleased) engine into a consumer project.
 //
 // Usage: node <engine-repo>/scripts/install-tarballs.mjs <project-dir>
 //
-// No registry serves @multilane/* yet, so this packs every engine workspace with `npm pack` into
-// <project>/vendor/multilane/, rewrites the project's @multilane/* dependencies to those tarballs
+// No registry serves @erkanbarin/* yet, so this packs every engine workspace with `npm pack` into
+// <project>/vendor/multilane/, rewrites the project's @erkanbarin/* dependencies to those tarballs
 // (with `overrides` so nested engine deps like screen -> core stay local), then runs the first
 // `npm install`, which creates the consumer's package-lock.json. Commit the lockfile (and
 // vendor/multilane/) so the consumer's CI can run `npm ci` without this script.
@@ -45,13 +45,13 @@ const tarballs = {};
 for (const p of readdirSync(join(repo, 'packages'))) {
   // Argument-vector execution: the consumer path is data, never shell syntax — spaces, quotes,
   // and metacharacters in the target directory must not change or inject commands.
-  const out = execFileSync('npm', ['pack', '-w', `@multilane/${p}`, '--pack-destination', vendor, '--json'], {
+  const out = execFileSync('npm', ['pack', '-w', `@erkanbarin/${p}`, '--pack-destination', vendor, '--json'], {
     cwd: repo,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'ignore'],
   });
   // file: paths relative to the consumer's package.json keep the project portable/committable.
-  tarballs[`@multilane/${p}`] = `file:vendor/multilane/${JSON.parse(out)[0].filename}`;
+  tarballs[`@erkanbarin/${p}`] = `file:vendor/multilane/${JSON.parse(out)[0].filename}`;
 }
 console.log('✓ packed into vendor/multilane/:', Object.keys(tarballs).join(', '));
 

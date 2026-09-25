@@ -1,4 +1,4 @@
-// @multilane/core — no-runtime-AI gate.
+// @erkanbarin/core — no-runtime-AI gate.
 //
 // The core invariant of multilanetesting: AI runs at AUTHORING time, never at RUNTIME. This gate
 // fails if any runtime path (drivers/, tests/, web/api/ws lanes) imports a vision / computer-use /

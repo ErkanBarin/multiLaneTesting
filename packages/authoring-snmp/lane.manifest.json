@@ -1,8 +1,8 @@
 {
   "lane": "snmp",
   "version": "0.1.2",
-  "runtimePackage": "@multilane/snmp-runtime",
-  "authoringPackage": "@multilane/authoring-snmp",
+  "runtimePackage": "@erkanbarin/snmp-runtime",
+  "authoringPackage": "@erkanbarin/authoring-snmp",
   "compatibility": {
     "minRuntimeVersion": "0.1.0",
     "maxRuntimeVersion": "0.x"

@@ -1,8 +1,8 @@
 {
-  "name": "@multilane/cli",
+  "name": "@erkanbarin/cli",
   "version": "0.2.6",
   "description": "The `mlt` command line for multilanetesting: verify deterministic gates and scaffold consumer projects.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "mlt": "./bin/mlt.mjs"
@@ -21,20 +21,26 @@
     "README.md"
   ],
   "dependencies": {
-    "@multilane/core": "0.1.1"
+    "@erkanbarin/core": "0.1.1"
   },
   "devDependencies": {
-    "@multilane/authoring-web": "0.1.1",
-    "@multilane/authoring-http": "0.1.2",
-    "@multilane/authoring-stomp": "0.1.2",
-    "@multilane/authoring-screen": "0.2.2",
-    "@multilane/authoring-snmp": "0.1.2",
-    "@multilane/authoring-trap": "0.1.2"
+    "@erkanbarin/authoring-web": "0.1.1",
+    "@erkanbarin/authoring-http": "0.1.2",
+    "@erkanbarin/authoring-stomp": "0.1.2",
+    "@erkanbarin/authoring-screen": "0.2.2",
+    "@erkanbarin/authoring-snmp": "0.1.2",
+    "@erkanbarin/authoring-trap": "0.1.2"
   },
   "engines": {
     "node": ">=20"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
+    "directory": "packages/cli"
   }
 }

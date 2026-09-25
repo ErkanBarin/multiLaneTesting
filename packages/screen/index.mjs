@@ -1,4 +1,4 @@
-// @multilane/screen — screen-driver lane (deterministic runtime surface).
+// @erkanbarin/screen — screen-driver lane (deterministic runtime surface).
 //
 // The runtime surface only ever LOADS and VALIDATES frozen locators — no discovery, no vision, no
 // model. Locator discovery/freezing is an authoring-time concern handled elsewhere. Actuation
@@ -9,14 +9,14 @@
 // Safety-critical guard: every locator load asserts the resolved SCREEN_RPS_PARTITION is not the
 // operational partition (PROD). This is a hard refusal baked into the runtime entry point itself —
 // not a default a consumer could accidentally bypass by skipping `mlt verify`. See
-// @multilane/core's `assertTestPartition` / `runScreenPartitionGate` for the CI-level mirror of
+// @erkanbarin/core's `assertTestPartition` / `runScreenPartitionGate` for the CI-level mirror of
 // this same guard.
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { delimiter, dirname, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { loadConfig, assertTestPartition } from '@multilane/core';
+import { loadConfig, assertTestPartition } from '@erkanbarin/core';
 
 /**
  * Load a frozen locator record from `locators/<area>/<key>.json`.

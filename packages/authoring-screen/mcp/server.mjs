@@ -2,7 +2,7 @@
 // screen-driver MCP server: authoring-time tools for the screen lane.
 //
 // Stdio transport, newline-delimited JSON-RPC. It wraps the deterministic driver scripts shipped in
-// @multilane/screen so an authoring agent can explore a target and freeze locators. It is never
+// @erkanbarin/screen so an authoring agent can explore a target and freeze locators. It is never
 // part of a test run: it refuses to start unless SCREEN_DRIVER_MODE=authoring, and the no-runtime-AI
 // gate forbids that setting anywhere a run can reach.
 //
@@ -25,15 +25,15 @@ if (process.env.SCREEN_DRIVER_MODE !== 'authoring') {
   process.exit(1);
 }
 
-// @multilane/screen and @multilane/core come from the consumer's own install; imported lazily so
+// @erkanbarin/screen and @erkanbarin/core come from the consumer's own install; imported lazily so
 // `health` can still say what is missing when they are not there.
 const load = (name) => import(name);
 let viewer = null;
 
 async function drive(script, args) {
-  const core = await load('@multilane/core');
+  const core = await load('@erkanbarin/core');
   core.assertTestPartition(core.loadConfig(process.env));
-  const { runDriver } = await load('@multilane/screen');
+  const { runDriver } = await load('@erkanbarin/screen');
   return runDriver(script, args, { env: viewer?.env ?? process.env });
 }
 
@@ -69,9 +69,9 @@ const TOOLS = {
     async run() {
       const report = { server: NAME, version: VERSION, mode: 'authoring', viewer: viewer && describeViewer() };
       try {
-        const core = await load('@multilane/core');
+        const core = await load('@erkanbarin/core');
         report.partition = core.loadConfig(process.env).screen.partition;
-        const { runDriver } = await load('@multilane/screen');
+        const { runDriver } = await load('@erkanbarin/screen');
         for (const [key, script] of [['atspi', 'atspiBridge'], ['framebuffer', 'framebuffer']]) {
           try {
             report[key] = summarize(runDriver(script, ['doctor'], { env: viewer?.env ?? process.env }));
@@ -80,7 +80,7 @@ const TOOLS = {
           }
         }
       } catch (error) {
-        report.install = `@multilane/screen@>=0.2.0 is not importable here: ${error.message}`;
+        report.install = `@erkanbarin/screen@>=0.2.0 is not importable here: ${error.message}`;
       }
       return report;
     },
@@ -131,7 +131,7 @@ const TOOLS = {
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     async run() {
       if (viewer) return { alreadyOpen: describeViewer() };
-      const { openViewer } = await load('@multilane/screen');
+      const { openViewer } = await load('@erkanbarin/screen');
       viewer = await openViewer({ env: process.env });
       return describeViewer();
     },
@@ -232,7 +232,7 @@ const TOOLS = {
       checkName('key', key);
       const record = { area, key, tier, resolver, ...(stamp && { stamp }), requirement_ref,
         last_verified: new Date().toISOString().slice(0, 10) };
-      const { assertFrozen } = await load('@multilane/screen');
+      const { assertFrozen } = await load('@erkanbarin/screen');
       const { errors } = assertFrozen(record);
       if (tier === 2) {
         const template = resolver.startsWith('template:') ? resolver.slice('template:'.length) : null;

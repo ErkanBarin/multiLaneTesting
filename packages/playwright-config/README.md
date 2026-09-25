@@ -1,10 +1,10 @@
-# @multilane/playwright-config
+# @erkanbarin/playwright-config
 
 Shared Playwright preset for multilanetesting web/DOM lanes.
 
 ```ts
 // playwright.config.ts
-import { definePlaywrightConfig } from '@multilane/playwright-config';
+import { definePlaywrightConfig } from '@erkanbarin/playwright-config';
 
 export default definePlaywrightConfig({ testDir: './tests/web' });
 ```
