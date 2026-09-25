@@ -1,0 +1,53 @@
+# Release — publishes every @erkanbarin/* workspace whose current version is not yet on npmjs.org.
+# Manual only. Auth: npm trusted publishing (OIDC) once configured per package on npmjs.com;
+# until then the NPM_TOKEN repository secret bootstraps the first publish. See docs/releasing.md.
+# Actions are pinned to full commit SHAs (tag comments are informational).
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Pack and report what would be published, without publishing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write # npm trusted publishing + provenance
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24 # trusted publishing needs npm >= 11.5.1
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - run: npm ci
+      - run: npm run validate
+      - run: npm run dogfood
+      - name: Publish unpublished versions
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          for manifest in packages/*/package.json; do
+            name=$(node -p "require('./$manifest').name")
+            version=$(node -p "require('./$manifest').version")
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "skip $name@$version (already published)"
+              continue
+            fi
+            if [ "$DRY_RUN" = "true" ]; then
+              npm publish -w "$name" --dry-run
+            else
+              npm publish -w "$name"
+            fi
+          done

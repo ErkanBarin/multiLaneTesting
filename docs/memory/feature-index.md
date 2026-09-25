@@ -43,7 +43,7 @@ STOMP + supervised active SEND), **Screen driver** (no-DOM targets, deterministi
 
 ## Lane authoring toolkits
 
-`@multilane/authoring-{web,http,stomp,screen,snmp,trap}` ship a `lane.manifest.json` + skill/agent assets, installed
+`@erkanbarin/authoring-{web,http,stomp,screen,snmp,trap}` ship a `lane.manifest.json` + skill/agent assets, installed
 into consumer repos via `mlt authoring install` (one shared root-level copy per lane, deterministic
 provenance in `.multilane/authoring.lock.json`). Optional live exploration still requires target
 configuration; installing authoring assets does not contact a target. Source:

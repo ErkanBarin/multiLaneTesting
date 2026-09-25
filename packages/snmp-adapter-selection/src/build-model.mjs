@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { validateModel } from '@multilane/snmp-model';
+import { validateModel } from '@erkanbarin/snmp-model';
 
 const ROOT_OIDS = {
   iso: '1',

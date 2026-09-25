@@ -1,14 +1,14 @@
 # .npmrc.sample — copy to .npmrc (gitignored) or provide these values via CI env.
 #
-# Scopes @multilane to an npm registry (used once the packages are published) without
-# committing a host or token literal.
+# Optional: only needed if you mirror @erkanbarin/* in a private registry. The packages install from
+# the public npm registry with no .npmrc at all. Commits no host or token literal.
 # npm expands ${VAR} from the environment before parsing, so every value comes from the environment.
 #
 # Required environment variables (set by your platform / CI credentials, NOT here):
-#   NPM_REGISTRY_URL        Full registry URL for the @multilane scope
+#   NPM_REGISTRY_URL        Full registry URL for the @erkanbarin scope
 #   NPM_REGISTRY_AUTH_HOST  npm auth key prefix, for example //registry.example/repository/npm/
 #   NPM_REGISTRY_AUTH_TOKEN          Registry authentication token
 
-@multilane:registry=${NPM_REGISTRY_URL}
+@erkanbarin:registry=${NPM_REGISTRY_URL}
 ${NPM_REGISTRY_AUTH_HOST}:_authToken=${NPM_REGISTRY_AUTH_TOKEN}
 always-auth=true

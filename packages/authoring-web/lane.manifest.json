@@ -1,8 +1,8 @@
 {
   "lane": "web",
   "version": "0.1.1",
-  "runtimePackage": "@multilane/web",
-  "authoringPackage": "@multilane/authoring-web",
+  "runtimePackage": "@erkanbarin/web",
+  "authoringPackage": "@erkanbarin/authoring-web",
   "compatibility": {
     "minRuntimeVersion": "0.1.0",
     "maxRuntimeVersion": "0.x"

@@ -1,10 +1,10 @@
-// @multilane/cli — resolve an `@multilane/authoring-<lane>` package from a consumer project.
+// @erkanbarin/cli — resolve an `@erkanbarin/authoring-<lane>` package from a consumer project.
 //
 // Real-world path: the consumer project has the authoring package as a (pinned) devDependency and
 // standard Node resolution finds it in `node_modules`. Fallback: this monorepo, where the CLI and
 // the authoring packages are workspace siblings — used when `mlt` scaffolds+installs in one step
-// (`mlt create-system`) before anything is published, and by fixture tests that symlink a
-// consumer's `node_modules/@multilane/authoring-<lane>` to the real package directory (proving the
+// (`mlt create-system` from an engine clone), and by fixture tests that symlink a
+// consumer's `node_modules/@erkanbarin/authoring-<lane>` to the real package directory (proving the
 // standard resolution path without requiring registry access).
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
@@ -27,7 +27,7 @@ export function resolveAuthoringPackage(pkgName, { cwd = process.cwd() } = {}) {
   } catch {
     // Not resolvable from the consumer project — try the monorepo sibling fallback.
   }
-  const short = pkgName.replace('@multilane/', '');
+  const short = pkgName.replace('@erkanbarin/', '');
   const sibling = join(MONOREPO_PACKAGES_DIR, short);
   const siblingPkgJson = join(sibling, 'package.json');
   if (existsSync(siblingPkgJson)) {

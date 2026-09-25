@@ -1,4 +1,4 @@
-// @multilane/cli — content digest helper for authoring provenance.
+// @erkanbarin/cli — content digest helper for authoring provenance.
 //
 // A digest detects DRIFT (a file changed since install) — it is not cryptographic publisher
 // authentication. Supply-chain trust for the package itself comes from npm package integrity

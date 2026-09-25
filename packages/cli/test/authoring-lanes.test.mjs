@@ -1,4 +1,4 @@
-// @multilane/cli — HTTP/STOMP/screen/SNMP/trap authoring lane contracts.
+// @erkanbarin/cli — HTTP/STOMP/screen/SNMP/trap authoring lane contracts.
 //
 // Table-driven: adding a lane is one `LANES` entry, not a new test file.
 //
@@ -15,11 +15,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describeConfigure, installAuthoring, PROVENANCE_PATH } from '../index.mjs';
-import { loadLaneManifest as loadHttpManifest } from '@multilane/authoring-http';
-import { loadLaneManifest as loadStompManifest } from '@multilane/authoring-stomp';
-import { loadLaneManifest as loadScreenManifest } from '@multilane/authoring-screen';
-import { loadLaneManifest as loadSnmpManifest } from '@multilane/authoring-snmp';
-import { loadLaneManifest as loadTrapManifest } from '@multilane/authoring-trap';
+import { loadLaneManifest as loadHttpManifest } from '@erkanbarin/authoring-http';
+import { loadLaneManifest as loadStompManifest } from '@erkanbarin/authoring-stomp';
+import { loadLaneManifest as loadScreenManifest } from '@erkanbarin/authoring-screen';
+import { loadLaneManifest as loadSnmpManifest } from '@erkanbarin/authoring-snmp';
+import { loadLaneManifest as loadTrapManifest } from '@erkanbarin/authoring-trap';
 import {
   tmpFixture,
   writeFixtureProject,
@@ -32,9 +32,9 @@ const LANES = [
   {
     name: 'HTTP',
     lane: 'http',
-    runtimePackage: '@multilane/http',
+    runtimePackage: '@erkanbarin/http',
     runtimeDirs: ['http'],
-    authoringPackage: '@multilane/authoring-http',
+    authoringPackage: '@erkanbarin/authoring-http',
     loadManifest: loadHttpManifest,
     skills: ['http-test-authoring'],
     agents: ['api-explorer'],
@@ -59,9 +59,9 @@ const LANES = [
   {
     name: 'STOMP',
     lane: 'stomp',
-    runtimePackage: '@multilane/stomp',
+    runtimePackage: '@erkanbarin/stomp',
     runtimeDirs: ['stomp'],
-    authoringPackage: '@multilane/authoring-stomp',
+    authoringPackage: '@erkanbarin/authoring-stomp',
     loadManifest: loadStompManifest,
     skills: ['stomp-test-authoring'],
     agents: ['stomp-explorer'],
@@ -76,9 +76,9 @@ const LANES = [
   {
     name: 'screen',
     lane: 'screen',
-    runtimePackage: '@multilane/screen',
+    runtimePackage: '@erkanbarin/screen',
     runtimeDirs: ['screen'],
-    authoringPackage: '@multilane/authoring-screen',
+    authoringPackage: '@erkanbarin/authoring-screen',
     loadManifest: loadScreenManifest,
     skills: [
       'screen-operator',
@@ -114,9 +114,9 @@ const LANES = [
   {
     name: 'SNMP',
     lane: 'snmp',
-    runtimePackage: '@multilane/snmp-runtime',
+    runtimePackage: '@erkanbarin/snmp-runtime',
     runtimeDirs: ['snmp-runtime', 'snmp-model'],
-    authoringPackage: '@multilane/authoring-snmp',
+    authoringPackage: '@erkanbarin/authoring-snmp',
     loadManifest: loadSnmpManifest,
     skills: ['snmp-test-authoring'],
     agents: ['snmp-explorer'],
@@ -142,9 +142,9 @@ const LANES = [
     name: 'trap',
     lane: 'trap',
     // The trap lane is the receive-only half of the same runtime the snmp lane drives.
-    runtimePackage: '@multilane/snmp-runtime',
+    runtimePackage: '@erkanbarin/snmp-runtime',
     runtimeDirs: ['snmp-runtime', 'snmp-model'],
-    authoringPackage: '@multilane/authoring-trap',
+    authoringPackage: '@erkanbarin/authoring-trap',
     loadManifest: loadTrapManifest,
     skills: ['trap-test-authoring'],
     agents: ['trap-inspector'],

@@ -1,4 +1,4 @@
-// @multilane/cli — `mlt authoring install` core.
+// @erkanbarin/cli — `mlt authoring install` core.
 //
 // Resolves each requested lane's authoring package, evaluates prerequisites per asset, and
 // materializes tool-specific files into approved project-scoped locations (`.claude/`, `.github/`).

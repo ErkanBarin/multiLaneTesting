@@ -9,8 +9,8 @@ path.
 Each lane has separate runtime and authoring packages:
 
 ```text
-@multilane/<lane>            Runtime capability
-@multilane/authoring-<lane>  Skills, agents, and deterministic manifest metadata
+@erkanbarin/<lane>            Runtime capability
+@erkanbarin/authoring-<lane>  Skills, agents, and deterministic manifest metadata
 ```
 
 The separation is deliberate:
@@ -136,10 +136,10 @@ Run the current executable checks instead of preserving historical output in thi
 ```bash
 npm run validate
 npm run dogfood
-npm pack --dry-run -w @multilane/authoring-web
-npm pack --dry-run -w @multilane/authoring-http
-npm pack --dry-run -w @multilane/authoring-stomp
-npm pack --dry-run -w @multilane/cli
+npm pack --dry-run -w @erkanbarin/authoring-web
+npm pack --dry-run -w @erkanbarin/authoring-http
+npm pack --dry-run -w @erkanbarin/authoring-stomp
+npm pack --dry-run -w @erkanbarin/cli
 ```
 
 The package dry runs are the tarball-content proof. Fixture tests prove consumer-side Node

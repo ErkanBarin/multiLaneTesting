@@ -1,4 +1,4 @@
-// @multilane/cli — authoring provenance store.
+// @erkanbarin/cli — authoring provenance store.
 //
 // A single deterministic file per consumer project records exactly what `mlt authoring install`
 // wrote, so `mlt authoring check` can detect drift later. No timestamp field: unchanged

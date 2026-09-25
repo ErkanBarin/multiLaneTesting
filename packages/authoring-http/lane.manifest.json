@@ -1,8 +1,8 @@
 {
   "lane": "http",
   "version": "0.1.2",
-  "runtimePackage": "@multilane/http",
-  "authoringPackage": "@multilane/authoring-http",
+  "runtimePackage": "@erkanbarin/http",
+  "authoringPackage": "@erkanbarin/authoring-http",
   "compatibility": {
     "minRuntimeVersion": "0.1.0",
     "maxRuntimeVersion": "0.x"

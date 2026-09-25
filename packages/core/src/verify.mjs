@@ -1,4 +1,4 @@
-// @multilane/core — `mlt verify` engine.
+// @erkanbarin/core — `mlt verify` engine.
 //
 // Runs every deterministic gate against a project and returns a structured result the CLI renders
 // as a green/red table. This is the single implementation behind `mlt verify` and the repo's own

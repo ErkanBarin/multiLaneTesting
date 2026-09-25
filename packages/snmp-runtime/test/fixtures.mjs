@@ -1,4 +1,4 @@
-// Shared fixtures for the @multilane/snmp-runtime tests. The agent and the trap listener are two
+// Shared fixtures for the @erkanbarin/snmp-runtime tests. The agent and the trap listener are two
 // halves of one runtime, so they exercise the same model rather than drifting apart.
 import { createSocket } from 'node:dgram';
 

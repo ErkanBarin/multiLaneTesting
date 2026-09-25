@@ -3,7 +3,7 @@
 //
 //   mlt verify                         run every deterministic gate against the current project
 //   mlt new <name> --lanes web,http    scaffold a consumer project
-import { runVerify, printVerifyTable } from '@multilane/core';
+import { runVerify, printVerifyTable } from '@erkanbarin/core';
 import { scaffoldProject, SUPPORTED_LANES } from '../src/scaffold.mjs';
 import { installAuthoring, formatInstallReport } from '../src/authoring/install.mjs';
 import { checkAuthoring, formatCheckReport } from '../src/authoring/check.mjs';
@@ -73,6 +73,11 @@ function parseFlags(args) {
   return { flags, positionals };
 }
 
+function printNext(name, prefix = '') {
+  console.log(`${prefix}Next: cd ${name} && npm install && npm run verify`);
+  console.log('  (unreleased engine changes: run node <engine-repo>/scripts/install-tarballs.mjs . instead of npm install)');
+}
+
 switch (command) {
   case 'verify': {
     const ok = printVerifyTable(runVerify({ cwd: process.cwd() }));
@@ -88,7 +93,7 @@ switch (command) {
       const { root, files } = scaffoldProject({ name, lanes, cwd: process.cwd(), force: !!flags.force });
       console.log(`✓ Scaffolded ${name} at ${root}`);
       for (const f of files) console.log(`  + ${f}`);
-      console.log('\nNext: cd', name, '&& node <engine-repo>/scripts/install-tarballs.mjs . && npm run verify');
+      printNext(name, '\n');
     } catch (err) {
       fail(`✖ ${err.message}`);
     }
@@ -110,7 +115,7 @@ switch (command) {
         console.log(formatInstallReport(laneReports));
         if (!ok) fail('Authoring setup incomplete: install the missing lane packages and retry.');
       }
-      console.log('Next: cd', name, '&& node <engine-repo>/scripts/install-tarballs.mjs . && npm run verify');
+      printNext(name);
     } catch (err) {
       fail(`✖ ${err.message}`);
     }

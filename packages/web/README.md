@@ -1,10 +1,10 @@
-# @multilane/web
+# @erkanbarin/web
 
 Web/DOM lane helpers for multilanetesting, built on Playwright.
 
 ```ts
 import { test, expect } from '@playwright/test';
-import { selectorFactory } from '@multilane/web';
+import { selectorFactory } from '@erkanbarin/web';
 
 test('user sees the shell', async ({ page }) => {
   const ui = selectorFactory(page, { appRoot: 'body', title: 'h1' });
@@ -14,4 +14,4 @@ test('user sees the shell', async ({ page }) => {
 ```
 
 Peer dependency: `@playwright/test`. This package pulls in **no** browser or vision dependency — an
-`@multilane/http`-only consumer never installs it.
+`@erkanbarin/http`-only consumer never installs it.

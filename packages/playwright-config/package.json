@@ -1,8 +1,8 @@
 {
-  "name": "@multilane/playwright-config",
+  "name": "@erkanbarin/playwright-config",
   "version": "0.1.0",
   "description": "Shared Playwright config preset for multilanetesting web/DOM lanes. Deterministic defaults, env-driven baseURL.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -27,6 +27,12 @@
     "node": ">=20"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
+    "directory": "packages/playwright-config"
   }
 }

@@ -1,4 +1,4 @@
-// @multilane/cli — authoring toolkit tests.
+// @erkanbarin/cli — authoring toolkit tests.
 //
 // Uses temporary FIXTURE projects (never the engine checkout itself) to prove the installer works
 // exactly the way a real consumer would experience it: resolution through `node_modules`, no
@@ -30,7 +30,7 @@ import {
   AUTHORING_LANE_PACKAGES,
   PLANNED_AUTHORING_LANES,
 } from '../index.mjs';
-import { loadLaneManifest } from '@multilane/authoring-web';
+import { loadLaneManifest } from '@erkanbarin/authoring-web';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REAL_AUTHORING_WEB = join(HERE, '../../authoring-web');
@@ -49,7 +49,7 @@ function writeFixtureProject(root, { lanes = [] } = {}) {
 /** Copy (never symlink into the real package for mutation tests) the real authoring-web package
  * into the fixture's node_modules, proving standard Node resolution — no engine checkout needed. */
 function installFixtureAuthoringWeb(root, { via = 'copy' } = {}) {
-  const target = join(root, 'node_modules', '@multilane', 'authoring-web');
+  const target = join(root, 'node_modules', '@erkanbarin', 'authoring-web');
   mkdirSync(dirname(target), { recursive: true });
   if (via === 'symlink') {
     symlinkSync(REAL_AUTHORING_WEB, target, 'dir');
@@ -69,8 +69,8 @@ function writeMcpConfig(root, servers) {
 test('lane manifest has the required deterministic shape', () => {
   const manifest = loadLaneManifest();
   assert.equal(manifest.lane, 'web');
-  assert.equal(manifest.runtimePackage, '@multilane/web');
-  assert.equal(manifest.authoringPackage, '@multilane/authoring-web');
+  assert.equal(manifest.runtimePackage, '@erkanbarin/web');
+  assert.equal(manifest.authoringPackage, '@erkanbarin/authoring-web');
   assert.ok(manifest.compatibility.minRuntimeVersion);
   assert.ok(Array.isArray(manifest.skills) && manifest.skills.length >= 1);
   assert.ok(Array.isArray(manifest.agents) && manifest.agents.length >= 1);
@@ -373,7 +373,7 @@ test('the web runtime package never depends on the web authoring package', () =>
     ...webPkg.peerDependencies,
     ...webPkg.devDependencies,
   };
-  assert.equal('@multilane/authoring-web' in allDeps, false);
+  assert.equal('@erkanbarin/authoring-web' in allDeps, false);
 
   const webIndex = readFileSync(join(HERE, '../../web/index.mjs'), 'utf8');
   assert.equal(webIndex.includes('authoring-web'), false);

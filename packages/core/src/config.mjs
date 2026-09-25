@@ -1,4 +1,4 @@
-// @multilane/core — configuration.
+// @erkanbarin/core — configuration.
 //
 // Two kinds of config:
 //   1. Runtime config  — target-facing values resolved from the environment (hosts, partitions,

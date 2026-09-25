@@ -71,8 +71,6 @@ files.
 
 ## License and DCO/CLA
 
-The packages in this repository are deliberately marked `UNLICENSED`: this is
-a working sample shared for reference, not a product, and no formal license or
-DCO/CLA is in place. By opening a PR you accept that your contribution enters
-the repository under the same terms — no rights formally granted — and that it
-may be relicensed if the owner later adopts a license.
+This repository is licensed under the [MIT License](LICENSE). No DCO/CLA is in
+place: by opening a PR you agree that your contribution is licensed under the
+same MIT terms (inbound = outbound).

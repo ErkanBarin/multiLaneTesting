@@ -141,8 +141,8 @@ system exposes.
 | **Web / DOM** | `tests/web/` | always on | Playwright | Selector factory (`selectors/<area>.ts`), `test.step()` user-intent naming, web-first assertions, no sleeps, no host literals |
 | **API contract** | `tests/http/` | `MULTILANE_API_CONTRACT=1` | `node:https` / `tsx` | Passive GET only — assert shape, status, headers; no state mutation |
 | **WS contract** | `tests/stomp/` | `MULTILANE_WS_CONTRACT=1` | `@stomp/stompjs` | Passive SUBSCRIBE by default; active SEND requires `+MULTILANE_WS_INJECT=1` + approved-host preflight |
-| **SNMP contract** | `tests/snmp/` | `MULTILANE_SNMP_CONTRACT=1` for live targets | `@multilane/snmp-runtime` | Default example uses a loopback emulator; approved live checks are opt-in |
-| **Trap** | `tests/trap/` | local loopback by default | `@multilane/snmp-runtime` | Receive-only listener; example emits through an emulated agent |
+| **SNMP contract** | `tests/snmp/` | `MULTILANE_SNMP_CONTRACT=1` for live targets | `@erkanbarin/snmp-runtime` | Default example uses a loopback emulator; approved live checks are opt-in |
+| **Trap** | `tests/trap/` | local loopback by default | `@erkanbarin/snmp-runtime` | Receive-only listener; example emits through an emulated agent |
 
 - **DOM targets stay on Playwright.** Never reimplement DOM testing on the screen driver.
 - Each lane is an npm workspace gated by its own env flag and orchestrated by the same Robot wrapper.

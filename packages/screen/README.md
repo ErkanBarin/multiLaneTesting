@@ -1,4 +1,4 @@
-# @multilane/screen
+# @erkanbarin/screen
 
 Screen-driver lane for multilanetesting. The **runtime** surface loads and validates *frozen*
 locators and replays them. There is no discovery, vision or model in the run path; that is
@@ -9,7 +9,7 @@ authoring-only. It covers:
 - a VNC/RDP viewer bridge
 
 ```js
-import { loadFrozenLocator, assertFrozen } from '@multilane/screen';
+import { loadFrozenLocator, assertFrozen } from '@erkanbarin/screen';
 
 const locator = loadFrozenLocator('example', 'appTitle'); // locators/example/appTitle.json
 const { ok, errors } = assertFrozen(locator);             // Tier 1/2 + resolver + requirement_ref
@@ -27,9 +27,8 @@ Replay always targets a **test partition** (`TEST_A`/`TEST_B`/`TEST_C`), never `
 Two scripts ship under `driver/`. They speak **argv in, JSON on stdout, exit 0 on success**, so any
 language can drive them — there is no Python client to install.
 
-**Getting them into your project.** Use `@multilane/screen@0.2.0` or later for the framebuffer
-path. In a consumer scaffold, run the engine clone's `scripts/install-tarballs.mjs` to pack and
-install the matching packages locally; no public registry is required.
+**Getting them into your project.** Use `@erkanbarin/screen@0.2.0` or later for the framebuffer
+path: `npm install --save-dev @erkanbarin/screen` (a scaffolded consumer already pins it).
 
 Then run **Check the host first** below before writing anything against it: `doctor` reads the
 scripts out of `node_modules`, so it is also what catches a tarball that shipped without `driver/`.
@@ -39,7 +38,7 @@ dependencies beyond the system `gi` binding, so copying `driver/` and running th
 integration. Keep the two `.py` files together — `doctor` reports on both.
 
 ```js
-import { driverScriptPath, resolvePythonBin } from '@multilane/screen';
+import { driverScriptPath, resolvePythonBin } from '@erkanbarin/screen';
 import { spawnSync } from 'node:child_process';
 
 const run = (...args) =>
@@ -59,7 +58,7 @@ run('read_cell', 'MyApp', 'row-anchor', '4', 'Status'); // anchor + column offse
 ### Check the host first
 
 ```sh
-python3 node_modules/@multilane/screen/driver/atspi_bridge.py doctor
+python3 node_modules/@erkanbarin/screen/driver/atspi_bridge.py doctor
 ```
 
 Run this before writing a single locator on a new machine or in a new CI image. It exits 0 when the
@@ -116,7 +115,7 @@ other scripts. `runDriver` runs any of them and throws the script's own error on
 a failed oracle fails the spec with the evidence paths in the message:
 
 ```js
-import { loadFrozenLocator, runDriver } from '@multilane/screen';
+import { loadFrozenLocator, runDriver } from '@erkanbarin/screen';
 
 const fb = (...args) => runDriver('framebuffer', args);
 
@@ -178,7 +177,7 @@ works on the target as if it ran locally:
 
 ```js
 import { after, before } from 'node:test';
-import { openViewer, runDriver } from '@multilane/screen';
+import { openViewer, runDriver } from '@erkanbarin/screen';
 
 let viewer;
 before(async () => { viewer = await openViewer(); });   // everything from the environment below

@@ -1,4 +1,4 @@
-// Type definitions for @multilane/cli.
+// Type definitions for @erkanbarin/cli.
 
 export const SUPPORTED_LANES: string[];
 

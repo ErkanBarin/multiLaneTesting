@@ -1,12 +1,12 @@
-# @multilane/snmp-adapter-selection
+# @erkanbarin/snmp-adapter-selection
 
-Converts a **selection list** plus SMI/MIB input into a validated `@multilane/snmp-model`
+Converts a **selection list** plus SMI/MIB input into a validated `@erkanbarin/snmp-model`
 `EmulatedAgentModel`. It reads explicit content or files; it does not start an SNMP runtime.
 It does not parse arbitrary vendor configuration formats. Unknown directives are reported as
 gaps; a file with no recognized selections raises `SelectionAdapterError`.
 
 ```js
-import { buildSelectionModel } from '@multilane/snmp-adapter-selection';
+import { buildSelectionModel } from '@erkanbarin/snmp-adapter-selection';
 
 const { model, gaps } = buildSelectionModel({
   selectionText: 'subsystem demo\nhostType manager:v2c\nscalar demoStatus=operational',

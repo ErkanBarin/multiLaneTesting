@@ -9,20 +9,21 @@ help discover screen locators or draft specs, but every artifact that runs in CI
 reviewed, and replayed with no model in the loop — checked by a source-pattern gate and code review
 (a policy heuristic, not a reachability proof).
 
-This is a **reference implementation under active development**, shared as a working sample — see
-[Status and maturity](#status-and-maturity) and [License](#license).
+This is a **reference implementation under active development**, [MIT-licensed](LICENSE) — see
+[Status and maturity](#status-and-maturity).
 
 ## How you use it
 
-This repo is the **engine**. Your tests never live here. You clone the engine once, then scaffold a
-small **consumer project** for your own system and keep that in your own git repository:
+This repo is the **engine**, published to npm as `@erkanbarin/*` packages. Your tests never live
+here: you scaffold a small **consumer project** for your own system and keep that in your own git
+repository. You do not need to clone this repo unless you want to change the engine.
 
 | Repo | Contains |
 |---|---|
-| The engine (this repo) | `@multilane/*` packages, gates, scaffolder (`mlt`), docs |
+| The engine (this repo → npm) | `@erkanbarin/*` packages, gates, scaffolder (`mlt`), docs |
 | Your consumer project | Your specs, frozen locators, `.env`, CI job |
 
-Engine updates reach your project by re-running the installer — adoption is a scaffold, not a fork.
+Engine updates reach your project as ordinary package upgrades.
 
 ## The six lanes
 
@@ -51,24 +52,17 @@ OCR) happens at **authoring time** and produces a frozen locator JSON under
 | npm | 10 or 11 | everything |
 | Python | `>=3.11` | **only** the `screen` lane's driver |
 
-POSIX shell (Linux/macOS); on Windows use WSL. No target system or credentials are needed to try it.
+Linux or macOS; on Windows use WSL. No target system or credentials are needed to try it.
 
 ## Quick start — test your own system
 
 ```bash
-# 1. Get the engine and check it is healthy
-git clone https://github.com/ErkanBarin/multiLaneTesting.git
-cd multiLaneTesting
-npm ci
-npm run validate          # gates + typecheck + lint + unit tests — must be green
-
-# 2. Scaffold your project next to the engine clone (name: lowercase [a-z0-9-])
-cd ..
-node multiLaneTesting/packages/cli/bin/mlt.mjs new my-system --lanes http   # e.g. --lanes web,http
-node multiLaneTesting/scripts/install-tarballs.mjs my-system
-
-# 3. Check the gates, then run a lane against your target
+# 1. Scaffold your project (name: lowercase [a-z0-9-]) and install the engine packages
+npx @erkanbarin/cli new my-system --lanes http    # e.g. --lanes web,http
 cd my-system
+npm install
+
+# 2. Check the gates, then run a lane against your target
 npm run verify            # deterministic gates only — does not run tests
 MULTILANE_TARGET_HOST=https://your-api.example npm run test:http
 ```
@@ -77,13 +71,8 @@ What happens:
 
 - `mlt new` writes a consumer project with a config skeleton, a `locators/` dir, **one example spec
   per lane** under `tests/<lane>/`, a `.env.example`, a registry-agnostic `.npmrc` template, and an
-  optional thin `Jenkinsfile`. `mlt create-system` does the same **and** installs the optional
-  AI-authoring assets (see [below](#ai-assisted-authoring-optional)). Run `mlt --help` for all
-  commands.
-- The `@multilane/*` packages are **not on any public registry**. `install-tarballs.mjs` packs the
-  engine into `my-system/vendor/multilane/`, points the dependencies at those tarballs, and runs
-  the first `npm install`. Commit `package-lock.json` **and** `vendor/multilane/` so your CI can run
-  `npm ci` without the engine clone.
+  optional thin `Jenkinsfile`. Dependencies are pinned to exact `@erkanbarin/*` versions — commit
+  `package-lock.json` so CI can run `npm ci`. Run `npx mlt --help` for all commands.
 - Example specs **skip** (not fail) until their target variable is set — a green `verify` means the
   gates pass, not that a test ran. Nothing reads `.env` automatically: export the variables, or
   `cp .env.example .env`, fill it in, and load it with `set -a; . ./.env; set +a`.
@@ -103,11 +92,14 @@ and adapting the framework, step by step.
 
 ### Troubleshooting
 
-- **`npm install` hangs with no output** — usually a proxy blocking the npm registry. Configure npm
-  for your network (`npm config set proxy …` / `https-proxy …`, or `registry` for an internal
-  mirror); the `http`-only lane needs the fewest downloads.
+- **`npx`/`npm install` hangs with no output** — usually a proxy blocking the npm registry.
+  Configure npm for your network (`npm config set proxy …` / `https-proxy …`, or `registry` for an
+  internal mirror); the `http`-only lane needs the fewest downloads.
 - **Web lane** — install a browser once: `npx playwright install chromium`.
-- **Installer rejects the path** — project paths must not contain `#`, `%`, `\`, or `:`.
+- **Engine changes not yet released** — scaffold from a clone and install with
+  `node <engine-repo>/scripts/install-tarballs.mjs my-system` instead of `npm install`; it packs the
+  engine into `my-system/vendor/multilane/` (commit that folder). Project paths must not contain
+  `#`, `%`, `\`, or `:`.
 
 ## Customize it
 
@@ -123,7 +115,20 @@ MCP wiring for Playwright and an authoring-only screen-introspection server. Ent
 agent: [`AGENTS.md`](AGENTS.md). In your consumer project:
 
 ```bash
-npx --no-install mlt authoring install --lanes web,http   # materialize skills/agents for your lanes
+npm install -D @erkanbarin/authoring-web @erkanbarin/authoring-http   # one per lane you use
+npx --no-install mlt authoring install --lanes web,http              # materialize skills/agents
+```
+
+Or let an agent do the whole setup: install the plugin from this repo's marketplace, open the repo
+you want to test, and ask it to *"use the multilane-setup skill"*. It recommends lanes from the
+repo's evidence, scaffolds the project, installs the runtimes and the authoring assets above, and
+reports which target variables you still need to set.
+
+```bash
+claude plugin marketplace add ErkanBarin/multiLaneTesting      # Claude Code (or /plugin in a session)
+claude plugin install multilane-testing@multilane
+copilot plugin marketplace add ErkanBarin/multiLaneTesting     # GitHub Copilot CLI
+copilot plugin install multilane-testing@multilane
 ```
 
 None of this is required to run tests. The no-runtime-AI gate keeps models out of every run.
@@ -143,48 +148,50 @@ Threat model and reporting: [`SECURITY.md`](SECURITY.md).
 ## Working on the engine itself
 
 ```bash
+git clone https://github.com/ErkanBarin/multiLaneTesting.git
+cd multiLaneTesting
+npm ci
 npm run validate     # no-runtime-AI gate + robot-contract gate + typecheck + lint + unit tests
 npm run dogfood      # packs all 16 workspaces, installs them into example consumers, smoke-tests them
 ```
 
 `dogfood` proves the engine installs and runs from tarballs (it does not test any live target).
 CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs both plus a Python driver smoke on
-every pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+every pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md); maintainers publish with
+[`docs/releasing.md`](docs/releasing.md).
 
 | Path | What it is |
 |---|---|
-| `packages/*` | The 16 `@multilane/*` engine packages (npm workspaces) |
+| `packages/*` | The 16 `@erkanbarin/*` engine packages (npm workspaces) |
 | `examples/consumer-smoke/` | Dogfood consumer installing the packaged engine from tarballs |
 | `scripts/` | Gate runners, tarball installer, dogfood harness |
 | `docs/` | Onboarding, API, strategy, coverage, traceability, curated memory |
 | `orchestration/` | Robot Framework orchestration pattern (template) |
 | `ci/` | Optional Jenkins shared-library template |
 | `.claude/`, `.github/` | Authoring-time agent/skill layer |
+| `.claude-plugin/`, `plugins/` | Plugin marketplace (`multilane-setup` skill) for Claude Code and Copilot CLI |
 | `pyproject.toml`, `src/`, `packages/screen/driver/` | Python screen driver |
 
 ## Status and maturity
 
 | Component | Maturity | Notes |
 |---|---|---|
-| `@multilane/core` (config, gates, verify) | Working | Unit-tested; `mlt verify` runs the deterministic gates |
-| `@multilane/cli` (`mlt new`, `create-system`, `verify`, `authoring`) | Working | Unit-tested; `create-system` exits nonzero if authoring packages are missing |
-| `@multilane/http` | Working | Read-only GETs, shape checks, timeouts, body caps |
-| `@multilane/stomp` | Working | Passive SUBSCRIBE; active SEND double-gated |
-| `@multilane/screen` | Working | Loads/validates frozen locators; PROD-partition refusal |
-| `@multilane/web`, `@multilane/playwright-config` | Working | Selector factories + shared Playwright preset |
-| `@multilane/snmp-model`, `-runtime`, `-adapter-selection` | Working locally | Emulated agent/trap listener; local unit tests |
-| `@multilane/authoring-*` (6 packages) | Working locally | Authoring-time assets only; never imported at runtime |
+| `@erkanbarin/core` (config, gates, verify) | Working | Unit-tested; `mlt verify` runs the deterministic gates |
+| `@erkanbarin/cli` (`mlt new`, `create-system`, `verify`, `authoring`) | Working | Unit-tested; `create-system` (engine clone) scaffolds + installs authoring assets in one step |
+| `@erkanbarin/http` | Working | Read-only GETs, shape checks, timeouts, body caps |
+| `@erkanbarin/stomp` | Working | Passive SUBSCRIBE; active SEND double-gated |
+| `@erkanbarin/screen` | Working | Loads/validates frozen locators; PROD-partition refusal |
+| `@erkanbarin/web`, `@erkanbarin/playwright-config` | Working | Selector factories + shared Playwright preset |
+| `@erkanbarin/snmp-model`, `-runtime`, `-adapter-selection` | Working locally | Emulated agent/trap listener; local unit tests |
+| `@erkanbarin/authoring-*` (6 packages) | Working locally | Authoring-time assets only; never imported at runtime |
 | Python screen driver | Tested locally | AT-SPI and framebuffer helpers; live-target behavior unverified |
 | Robot orchestration (`orchestration/`) | **Template** | Documents a pattern; no runnable suites |
 | Jenkins shared library (`ci/`) | **Optional template** | Not exercised by this repo's CI |
 
 ## License
 
-This repository is shared as a working sample — a reference for how one team approaches
-deterministic multi-lane testing. **It deliberately carries no license**: the packages are marked
-`UNLICENSED`, no rights are formally granted, and no support, warranty, or maintenance commitment is
-made. You are welcome to read it, evaluate it, and use it as a starting point for your own work; if
-your use requires a formal grant, ask the repository owner.
+[MIT](LICENSE). Shared as a reference for how one team approaches deterministic multi-lane testing;
+no support or maintenance commitment is made.
 
 Community: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SUPPORT.md`](SUPPORT.md) ·
 [`CHANGELOG.md`](CHANGELOG.md)

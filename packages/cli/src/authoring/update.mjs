@@ -1,4 +1,4 @@
-// @multilane/cli — `mlt authoring update`.
+// @erkanbarin/cli — `mlt authoring update`.
 //
 // Update is never automatic — it is an explicit, reviewable re-materialization from whatever
 // authoring package version is currently resolvable (a devDependency bump the developer already

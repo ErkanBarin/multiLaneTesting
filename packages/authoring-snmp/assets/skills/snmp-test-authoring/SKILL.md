@@ -7,7 +7,7 @@ user-invocable: true
 # snmp-test-authoring
 
 Write and maintain SNMP contract specs under `tests/snmp/**`. Runtime capability lives in
-`@multilane/snmp-runtime` (`startEmulatedAgent`, `OBJECT_TYPE`) and `@multilane/snmp-model`
+`@erkanbarin/snmp-runtime` (`startEmulatedAgent`, `OBJECT_TYPE`) and `@erkanbarin/snmp-model`
 (`validateModel`); this skill is the authoring-time companion — it never runs as part of a test.
 
 ## Procedure

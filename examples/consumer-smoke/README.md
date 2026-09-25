@@ -1,6 +1,6 @@
 # consumer-smoke — packaged-engine fixture
 
-A consumer fixture that declares all 16 `@multilane/*` workspaces as versioned dependencies and
+A consumer fixture that declares all 16 `@erkanbarin/*` workspaces as versioned dependencies and
 checks packaged exports. Nothing here imports engine source.
 
 The repository's dogfood harness rewrites those dependencies to local `npm pack` tarballs and

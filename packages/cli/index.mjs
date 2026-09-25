@@ -1,4 +1,4 @@
-// @multilane/cli — programmatic entry (the `mlt` CLI is the primary interface; this exposes the
+// @erkanbarin/cli — programmatic entry (the `mlt` CLI is the primary interface; this exposes the
 // scaffolder and authoring installer for tests and tooling).
 export { scaffoldProject, SUPPORTED_LANES } from './src/scaffold.mjs';
 export { installAuthoring, formatInstallReport } from './src/authoring/install.mjs';

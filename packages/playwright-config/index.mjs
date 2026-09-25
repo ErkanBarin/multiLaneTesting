@@ -1,4 +1,4 @@
-// @multilane/playwright-config — a shared Playwright preset consumers extend.
+// @erkanbarin/playwright-config — a shared Playwright preset consumers extend.
 //
 // Deterministic defaults: no sleeps, env-driven baseURL (never a host literal), JUnit + HTML
 // evidence, trace on first retry. Consumers call `definePlaywrightConfig({ testDir, use, ... })`.

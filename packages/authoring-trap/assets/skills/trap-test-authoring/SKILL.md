@@ -7,7 +7,7 @@ user-invocable: true
 # trap-test-authoring
 
 Write and maintain trap contract specs under `tests/trap/**`. Runtime capability lives in
-`@multilane/snmp-runtime` (`startTrapListener`, and `startEmulatedAgent` as the sender); this skill
+`@erkanbarin/snmp-runtime` (`startTrapListener`, and `startEmulatedAgent` as the sender); this skill
 is the authoring-time companion — it never runs as part of a test.
 
 ## The lane is receive-only

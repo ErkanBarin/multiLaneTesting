@@ -1,5 +1,5 @@
-// Type definitions for @multilane/snmp-runtime.
-import type { EmulatedAgentModel, SnmpBaseType } from '@multilane/snmp-model';
+// Type definitions for @erkanbarin/snmp-runtime.
+import type { EmulatedAgentModel, SnmpBaseType } from '@erkanbarin/snmp-model';
 
 /** A value handed to the control plane: a number, a string, or an enumeration label. */
 export type ControlValue = number | string;

@@ -1,4 +1,4 @@
-// @multilane/http — passive HTTP/JSON contract lane.
+// @erkanbarin/http — passive HTTP/JSON contract lane.
 //
 // Passive by design: this lane performs read-only GETs and asserts shape/status/headers. It never
 // mutates target state. Uses only Node's built-in http/https — no third-party client, no AI.
@@ -10,7 +10,7 @@ let warnedUnset = false;
 /**
  * Enforce that a URL's host is on the approved allowlist.
  *
- * **Fail-OPEN on an empty allowlist, unlike `@multilane/stomp`'s `send`, which fails closed.** The
+ * **Fail-OPEN on an empty allowlist, unlike `@erkanbarin/stomp`'s `send`, which fails closed.** The
  * difference is deliberate and follows the engine rule that the allowlist guards *active* calls:
  * `send` mutates broker state, so no allowlist means no send; this lane only issues read-only GETs,
  * and `stomp`'s equally passive `subscribeOnce` carries no host guard at all. Consumers ship
@@ -25,7 +25,7 @@ export function assertApprovedHost(url, approvedHosts = []) {
     if (!warnedUnset) {
       warnedUnset = true;
       console.warn(
-        '⚠ @multilane/http: MULTILANE_APPROVED_HOSTS is empty — every host is allowed. Set it to ' +
+        '⚠ @erkanbarin/http: MULTILANE_APPROVED_HOSTS is empty — every host is allowed. Set it to ' +
           'pin this lane to your test targets.',
       );
     }

@@ -1,4 +1,4 @@
-// @multilane/core — screen-partition hard guard.
+// @erkanbarin/core — screen-partition hard guard.
 //
 // This is a safety-critical refusal, not a configuration default. `loadConfig` resolves
 // `SCREEN_RPS_PARTITION` to `TEST_A` when unset — a sane default for local/dev convenience — but a
@@ -8,7 +8,7 @@
 // This gate makes that refusal mandatory and fail-loud at the `mlt verify` boundary, ahead of any
 // lane running, whenever the screen lane is active (declared in `multilane.config.json` lanes, or
 // `SCREEN_TARGET_HOST` is set). It does not rely on a consumer test remembering to call
-// `assertTestPartition` — `@multilane/screen`'s `loadFrozenLocator` also calls it directly on every
+// `assertTestPartition` — `@erkanbarin/screen`'s `loadFrozenLocator` also calls it directly on every
 // locator load, so the guard holds even if a spec runs outside `mlt verify` (e.g. `npm run
 // test:screen` in isolation).
 import { loadConfig, assertTestPartition } from '../config.mjs';

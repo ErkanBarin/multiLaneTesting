@@ -26,7 +26,7 @@ Pick the right surface for screen/browser work.
   computer-use, or the `screen-driver` MCP's discovery functions.
 - **Prefer Tier 1.** Object/control-tree over image template; template over vision.
 - **Replay into a test partition.** `SCREEN_RPS_PARTITION` must resolve to `TEST_A`, `TEST_B`, or `TEST_C`.
-  **Never `PROD`** — that is the operational partition. `@multilane/screen` refuses to load a locator
+  **Never `PROD`** — that is the operational partition. `@erkanbarin/screen` refuses to load a locator
   when it resolves to `PROD`; do not work around that refusal.
 - **DOM stays on Playwright.** Never reimplement DOM testing on the screen driver.
 - **Isolation.** Authoring runs in an isolated VM; no secrets or operational data to any model.

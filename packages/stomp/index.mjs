@@ -1,4 +1,4 @@
-// @multilane/stomp — STOMP-over-WebSocket contract lane.
+// @erkanbarin/stomp — STOMP-over-WebSocket contract lane.
 //
 // Passive SUBSCRIBE is the default. Active SEND is gated: it requires an explicit inject opt-in AND
 // an approved-hosts allowlist match — mirroring MULTILANE_WS_INJECT=1 + approved-host preflight.

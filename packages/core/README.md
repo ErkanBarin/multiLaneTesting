@@ -1,4 +1,4 @@
-# @multilane/core
+# @erkanbarin/core
 
 Deterministic engine core for **multilanetesting**: the config loader and the CI gates that keep a
 consumer project honest. No runtime AI, no host literals, no build step.
@@ -6,11 +6,11 @@ consumer project honest. No runtime AI, no host literals, no build step.
 ## Install
 
 ```bash
-npm install --save-dev @multilane/core
+npm install --save-dev @erkanbarin/core
 ```
 
-For a consumer without a package registry, use the engine clone's
-`scripts/install-tarballs.mjs` after scaffolding instead of a direct registry install.
+To try unreleased engine changes, use the engine clone's `scripts/install-tarballs.mjs` after
+scaffolding instead of a registry install.
 
 ## Public API
 
@@ -25,7 +25,7 @@ import {
   printVerifyTable,    // render that result as a green/red table
   runNoRuntimeAiGate,  // the no-runtime-AI guard as a function
   runRobotContractGate,// the @tag-contract guard as a function
-} from '@multilane/core';
+} from '@erkanbarin/core';
 ```
 
 ### Config resolution

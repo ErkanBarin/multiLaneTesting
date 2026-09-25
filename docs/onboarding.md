@@ -13,16 +13,15 @@ the loop when tests *run*.
 
 | Repo | Owned by | Contains |
 |---|---|---|
-| The engine (this repo) | shared / maintainers | `@multilane/*` packages, gates, scaffolder, docs |
+| The engine (this repo) | shared / maintainers | `@erkanbarin/*` packages, gates, scaffolder, docs |
 | Your consumer project | your team | your specs, your locators, your `.env`, your CI job |
 
 Your system's tests never live in the engine repo. You scaffold a small consumer project, install
-the engine into it, and write specs there. Engine updates arrive by re-running the installer.
+the engine packages into it from npm, and write specs there. Engine updates arrive as normal
+package upgrades. You do not need to clone this repository unless you want to change the engine.
 
-> **License note:** the engine is deliberately `UNLICENSED` — it is shared as a working sample
-> with no formal grant, support, or warranty. See the
-> [README license section](../README.md#license). Evaluate freely; if your use requires a formal
-> grant, ask the repository owner.
+The engine is [MIT-licensed](../LICENSE) and shared as a reference implementation — no support or
+warranty commitment is made.
 
 ---
 
@@ -36,25 +35,21 @@ the engine into it, and write specs there. Engine updates arrive by re-running t
 | Python | ≥ 3.11 | **only** if you build the screen-driver lane |
 | Claude Code or GitHub Copilot | current | **only** for optional AI-assisted authoring (Step 6) |
 
-The installer supports POSIX platforms; on Windows use WSL.
+Linux and macOS are the tested platforms; on Windows use WSL. The tarball installer (engine-clone
+workflow) is POSIX-only.
 
 ---
 
-## Step 1 — Clone the engine and prove it is healthy
+## Step 1 — Check your toolchain
 
 ```bash
-git clone https://github.com/ErkanBarin/multiLaneTesting.git
-cd multiLaneTesting
-npm ci
-npm run validate     # no-runtime-AI gate + robot-contract gate + typecheck + lint + unit tests
+node --version       # v20 or later
+npm --version        # 10 or 11
+npm view @erkanbarin/cli version   # proves npm can reach the public registry
 ```
 
-No target system or credentials are needed. `npm ci` and dogfood may access public npm for
-third-party dependencies, while dogfood installs engine packages from local tarballs. If `validate` is not
-green, stop and fix that first (see [SUPPORT.md](../SUPPORT.md)).
-
-Optional but recommended: `npm run dogfood` packs all packages and installs them into example
-consumers exactly the way you will in Step 2.
+If the last command hangs or times out, your network blocks the npm registry — configure npm's
+`proxy`/`https-proxy`, or `registry` for an internal mirror, before continuing.
 
 ---
 
@@ -72,21 +67,21 @@ Pick your lanes from what your system actually exposes — build only those:
 | SNMP notifications | `trap` | Receive and decode a locally emitted trap |
 
 ```bash
-cd ..                                # scaffold next to your engine clone; names are lowercase [a-z0-9-]
-node multiLaneTesting/packages/cli/bin/mlt.mjs new my-system --lanes web,http
-node multiLaneTesting/scripts/install-tarballs.mjs my-system
+npx @erkanbarin/cli new my-system --lanes web,http   # names are lowercase [a-z0-9-]
 cd my-system
-npm run verify                       # the same deterministic gates, now in YOUR project
+npm install                          # installs the pinned @erkanbarin/* packages; commit the lockfile
+npm run verify                       # the deterministic gates, now in YOUR project
 ```
 
-`mlt create-system` is the same as `mlt new` plus the optional AI-authoring assets from Step 6.
-If `npm install` hangs with no output, your network probably blocks the npm registry — configure
-npm's `proxy`/`https-proxy` (or `registry` for an internal mirror).
+`mlt new` writes a config skeleton, a `locators/` dir, one example spec per lane under
+`tests/<lane>/`, a `.env.example`, and an optional thin `Jenkinsfile`. Commit `package-lock.json`
+so CI can run `npm ci`.
 
-The `@multilane/*` packages are not available from a public registry, so the installer packs the
-engine into `my-system/vendor/multilane/` and rewrites the dependencies to those tarballs. Commit
-`package-lock.json` **and** `vendor/multilane/` — your CI can then run `npm ci` without the engine
-clone. (The installer rejects project paths containing `#`, `%`, `\`, or `:`.)
+Working from an engine clone with unreleased changes? Run
+`node <engine-repo>/packages/cli/bin/mlt.mjs new …` and then
+`node <engine-repo>/scripts/install-tarballs.mjs my-system` instead of `npm install` — it packs the
+engine into `my-system/vendor/multilane/` (commit that folder too). It rejects project paths
+containing `#`, `%`, `\`, or `:`.
 
 Put `my-system/` in your team's own git repository.
 
@@ -164,15 +159,20 @@ secrets and hosts from your CI credential store — never commit them.
 AI helps you *write* specs faster; the no-runtime-AI gate keeps it out of every run.
 
 ```bash
-npx --no-install mlt authoring install --lanes web,http   # materialize skills/agents for your lanes
+npm install -D @erkanbarin/authoring-web @erkanbarin/authoring-http   # one per lane you use
+npx --no-install mlt authoring install --lanes web,http              # materialize skills/agents
 ```
 
-- **Claude Code:** `cp CLAUDE.md.example CLAUDE.md` in the engine clone (gitignored, holds your
-  local specifics), then run `claude` in your consumer project.
+- **Claude Code:** run `claude` in your consumer project.
 - **GitHub Copilot:** the committed `.github/` mirrors are picked up automatically.
 
 `mlt authoring check` detects drift; `mlt authoring update` re-materializes assets after an engine
 update.
+
+Shortcut: the `multilane-testing` plugin (`claude|copilot plugin marketplace add
+ErkanBarin/multiLaneTesting`, then `plugin install multilane-testing@multilane`) adds a
+`multilane-setup` skill that performs Steps 2–6 for you — it inspects your repo, recommends lanes,
+and asks before touching a live target or MCP configuration.
 
 ---
 
@@ -192,7 +192,9 @@ update.
 
 ## Extending the engine itself
 
-Building a new lane or driver rather than consuming the engine? Start from
+Building a new lane or driver rather than consuming the engine? Clone the repo, run `npm ci` and
+`npm run validate` (must be green), and use `npm run dogfood` to prove the packaged engine still
+installs into example consumers. Then start from
 [`BOOTSTRAP_PROMPT.md`](../BOOTSTRAP_PROMPT.md) — the build-out doc — and keep
 `npm run validate` green.
 

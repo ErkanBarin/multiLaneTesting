@@ -1,4 +1,4 @@
-// @multilane/cli — `mlt authoring configure <configureId>`.
+// @erkanbarin/cli — `mlt authoring configure <configureId>`.
 //
 // Prints exact, repository-supported configuration steps for an optional capability's declared
 // prerequisite instead of inventing unsupported behavior. Two prerequisite kinds are modeled:

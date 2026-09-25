@@ -6,7 +6,7 @@ user-invocable: true
 
 # screen-test-implementation
 
-Turn frozen locators into a **deterministic spec**. Runtime capability lives in `@multilane/screen`
+Turn frozen locators into a **deterministic spec**. Runtime capability lives in `@erkanbarin/screen`
 (`loadFrozenLocator`, `assertFrozen`, `runDriver`, `openViewer`); this skill is the authoring-time
 companion — it never runs as part of a test.
 

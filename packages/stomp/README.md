@@ -1,4 +1,4 @@
-# @multilane/stomp
+# @erkanbarin/stomp
 
 STOMP-over-WebSocket contract lane for multilanetesting.
 
@@ -8,7 +8,7 @@ STOMP-over-WebSocket contract lane for multilanetesting.
   approved-hosts allowlist (the two-flag opt-in: `MULTILANE_WS_INJECT=1` + preflight).
 
 ```js
-import { subscribeOnce } from '@multilane/stomp';
+import { subscribeOnce } from '@erkanbarin/stomp';
 
 const url = process.env.MULTILANE_WS_URL;
 const msg = await subscribeOnce(url, '/topic/status', { timeoutMs: 5000 });

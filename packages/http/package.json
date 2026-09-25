@@ -1,8 +1,8 @@
 {
-  "name": "@multilane/http",
+  "name": "@erkanbarin/http",
   "version": "0.1.1",
   "description": "Passive HTTP/JSON contract lane for multilanetesting. Shape/status checks only — no state mutation, no external deps.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -19,6 +19,12 @@
     "node": ">=20"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
+    "directory": "packages/http"
   }
 }

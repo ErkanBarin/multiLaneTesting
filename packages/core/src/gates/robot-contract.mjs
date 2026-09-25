@@ -1,4 +1,4 @@
-// @multilane/core — Robot @tag contract gate.
+// @erkanbarin/core — Robot @tag contract gate.
 //
 // Keeps the @tag contract consistent across the places this repo controls:
 //   (1) spec titles under the spec dir      — the @tag the runner filters on

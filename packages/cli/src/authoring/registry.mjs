@@ -1,16 +1,16 @@
-// @multilane/cli — authoring lane registry.
+// @erkanbarin/cli — authoring lane registry.
 //
 // Which lanes have an authoring package TODAY. A lane can be a valid runtime lane (see
 // `SUPPORTED_LANES` in ../scaffold.mjs) without yet having an authoring package — `mlt authoring
 // install` treats that as "not yet available" for that lane, not as an unknown-lane error. See
 // LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md for the design this was implemented from.
 export const AUTHORING_LANE_PACKAGES = {
-  web: '@multilane/authoring-web',
-  http: '@multilane/authoring-http',
-  stomp: '@multilane/authoring-stomp',
-  screen: '@multilane/authoring-screen',
-  snmp: '@multilane/authoring-snmp',
-  trap: '@multilane/authoring-trap',
+  web: '@erkanbarin/authoring-web',
+  http: '@erkanbarin/authoring-http',
+  stomp: '@erkanbarin/authoring-stomp',
+  screen: '@erkanbarin/authoring-screen',
+  snmp: '@erkanbarin/authoring-snmp',
+  trap: '@erkanbarin/authoring-trap',
 };
 
 export const IMPLEMENTED_AUTHORING_LANES = Object.keys(AUTHORING_LANE_PACKAGES);

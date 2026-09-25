@@ -1,4 +1,4 @@
-// @multilane/stomp — a minimal in-process STOMP-over-WebSocket broker for deterministic, offline
+// @erkanbarin/stomp — a minimal in-process STOMP-over-WebSocket broker for deterministic, offline
 // tests of this package's client helpers. Test-only: never shipped (this package's "files"
 // allowlist excludes test/), never used at runtime by a consumer's own tests. Implements only the
 // subset of STOMP 1.2 this package's client actually exercises: CONNECT/STOMP -> CONNECTED,

@@ -44,7 +44,7 @@ def call(Map config = [:]) {
       MULTILANE_WEB_BASE_URL = "${targetUrl}"
       // Registry + proxy are inherited from the agent/credentials environment; never hardcoded here.
       // Expected (provide via Jenkins credentials/global env):
-      //   NPM_REGISTRY_URL, NPM_REGISTRY_AUTH_HOST, NPM_REGISTRY_AUTH_TOKEN
+      //   NPM_REGISTRY_URL, NPM_REGISTRY_AUTH_HOST, NPM_REGISTRY_AUTH_TOKEN (only for a private mirror)
       //   HTTP_PROXY, HTTPS_PROXY, NO_PROXY
       CI = 'true'
     }
@@ -134,11 +134,15 @@ void ensureNode(String nodeVersion) {
 // Write .npmrc from the environment. npm expands ${VAR} at read time, so no secret is materialised
 // in SCM or the workspace beyond this ephemeral file.
 void writeNpmrc() {
-  writeFile file: '.npmrc', text: '''@multilane:registry=${NPM_REGISTRY_URL}
+  if (!env.NPM_REGISTRY_URL) {
+    echo 'NPM_REGISTRY_URL unset: installing @erkanbarin/* from the public npm registry.'
+    return
+  }
+  writeFile file: '.npmrc', text: '''@erkanbarin:registry=${NPM_REGISTRY_URL}
 ${NPM_REGISTRY_AUTH_HOST}:_authToken=${NPM_REGISTRY_AUTH_TOKEN}
 always-auth=true
 '''
-  echo 'Wrote .npmrc (scope @multilane -> configured registry). Proxy is read from HTTP(S)_PROXY.'
+  echo 'Wrote .npmrc (scope @erkanbarin -> configured registry). Proxy is read from HTTP(S)_PROXY.'
 }
 
 // Install only the Chromium browser, routed through the proxy. Deliberately NOT --with-deps.

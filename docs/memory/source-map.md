@@ -21,7 +21,7 @@ look.
 | RAG / graph | `graphify-out/graph.json`, `docs/rag/graphify-notes.md` | Prefer for cross-feature questions |
 | CI / orchestration | `docs/ci/*`, `Jenkinsfile`, `orchestration/` | Robot wrapper analog |
 | Host / secret values | `.env` (gitignored) | **Never** in committed files |
-| Downstream consumer pattern | external `systems/<name>/` estate repos — **not part of this repo** | One npm project per system, scaffolded via `mlt new`, consumes `@multilane/*` from a configured npm registry; isolation is cwd-scoped config (`packages/core/src/config.mjs`), not a shared file. See `README.md` "Real-world consumers". |
+| Downstream consumer pattern | external `systems/<name>/` estate repos — **not part of this repo** | One npm project per system, scaffolded via `mlt new`, consumes `@erkanbarin/*` from a configured npm registry; isolation is cwd-scoped config (`packages/core/src/config.mjs`), not a shared file. See `README.md` "Real-world consumers". |
 
 ## Rule
 

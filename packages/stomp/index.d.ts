@@ -1,4 +1,4 @@
-// Type definitions for @multilane/stomp.
+// Type definitions for @erkanbarin/stomp.
 
 export interface StompMessage {
   headers: Record<string, string>;

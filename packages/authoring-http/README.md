@@ -1,12 +1,12 @@
-# @multilane/authoring-http
+# @erkanbarin/authoring-http
 
 HTTP-lane **authoring** assets for `multilanetesting` — the AI-facing skill and agent used to
 create and explore passive HTTP/JSON contract checks. Companion package to the HTTP-lane
-**runtime** package, [`@multilane/http`](../http/README.md), and never a dependency of it.
+**runtime** package, [`@erkanbarin/http`](../http/README.md), and never a dependency of it.
 
 ```
-@multilane/http            = HTTP runtime capability (getJson, assertShape, assertApprovedHost)
-@multilane/authoring-http   = HTTP skill, agent and metadata (this package)
+@erkanbarin/http            = HTTP runtime capability (getJson, assertShape, assertApprovedHost)
+@erkanbarin/authoring-http   = HTTP skill, agent and metadata (this package)
 ```
 
 ## What's in here
@@ -21,12 +21,12 @@ create and explore passive HTTP/JSON contract checks. Companion package to the H
 
 ## Who consumes this package
 
-Not test authors directly. `mlt authoring install` (from `@multilane/cli`) resolves this package
+Not test authors directly. `mlt authoring install` (from `@erkanbarin/cli`) resolves this package
 from the consumer project's `node_modules`, reads `lane.manifest.json`, and materializes
 tool-specific wrapper files into the consumer repo.
 
 ## Runtime isolation
 
-Zero dependencies, no executable test logic, and `@multilane/http`'s `package.json` does not
+Zero dependencies, no executable test logic, and `@erkanbarin/http`'s `package.json` does not
 reference it. See `LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md` at the engine root for the isolation
 proof pattern (same shape as the web lane).

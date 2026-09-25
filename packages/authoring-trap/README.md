@@ -1,18 +1,18 @@
-# @multilane/authoring-trap
+# @erkanbarin/authoring-trap
 
 Trap-lane **authoring** assets for `multilanetesting` — the AI-facing skill and agent used to write
 receive-only SNMP notification contract checks. Companion package to the SNMP-lane **runtime**
-packages, [`@multilane/snmp-runtime`](../snmp-runtime/README.md) and
-[`@multilane/snmp-model`](../snmp-model/README.md), and never a dependency of either.
+packages, [`@erkanbarin/snmp-runtime`](../snmp-runtime/README.md) and
+[`@erkanbarin/snmp-model`](../snmp-model/README.md), and never a dependency of either.
 
 ```
-@multilane/snmp-runtime    = startTrapListener (receive-only) + startEmulatedAgent (the sender)
-@multilane/authoring-trap  = trap skill, agent and metadata (this package)
+@erkanbarin/snmp-runtime    = startTrapListener (receive-only) + startEmulatedAgent (the sender)
+@erkanbarin/authoring-trap  = trap skill, agent and metadata (this package)
 ```
 
 The `snmp` and `trap` lanes are the two halves of one runtime: `snmp` is request/response
 (GET/WALK), `trap` is the receive-only notification half. The request/response half has its own
-authoring package, [`@multilane/authoring-snmp`](../authoring-snmp/README.md).
+authoring package, [`@erkanbarin/authoring-snmp`](../authoring-snmp/README.md).
 
 ## What's in here
 
@@ -33,12 +33,12 @@ port or a redirect instead.
 
 ## Who consumes this package
 
-Not test authors directly. `mlt authoring install` (from `@multilane/cli`) resolves this package
+Not test authors directly. `mlt authoring install` (from `@erkanbarin/cli`) resolves this package
 from the consumer project's `node_modules`, reads `lane.manifest.json`, and materializes
 tool-specific wrapper files into the consumer repo.
 
 ## Runtime isolation
 
-Zero dependencies, no executable test logic, and neither `@multilane/snmp-runtime` nor
-`@multilane/snmp-model` references it. See `LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md` at the engine
+Zero dependencies, no executable test logic, and neither `@erkanbarin/snmp-runtime` nor
+`@erkanbarin/snmp-model` references it. See `LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md` at the engine
 root for the isolation proof pattern (same shape as the web, HTTP, and STOMP lanes).

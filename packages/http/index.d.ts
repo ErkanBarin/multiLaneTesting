@@ -1,4 +1,4 @@
-// Type definitions for @multilane/http.
+// Type definitions for @erkanbarin/http.
 
 export interface JsonResponse {
   status: number | undefined;

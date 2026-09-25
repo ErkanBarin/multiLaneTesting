@@ -16,7 +16,7 @@ There is no mailing list, chat channel, or forum at this time.
 
 To get useful help, please provide:
 
-- The `@multilane/*` package(s) involved
+- The `@erkanbarin/*` package(s) involved
 - Your Node version (`node --version`) and OS
 - A minimal reproduction or the exact command you ran
 - The full error message or unexpected output

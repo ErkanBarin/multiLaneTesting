@@ -1,4 +1,4 @@
-// @multilane/snmp-runtime — controllable agent runtime.
+// @erkanbarin/snmp-runtime — controllable agent runtime.
 //
 // Stands any `EmulatedAgentModel` up as a live SNMP agent on loopback UDP and gives a caller a
 // control plane over it: change a value, add or remove a row, send a notification, stop

@@ -59,7 +59,7 @@ meta-router. Do not duplicate the policy here — point to `AGENTS.md`.
 
 Everything above is engine-repo-local customization (`.claude/`, `.github/` here). A second,
 **distributable** copy of the same wrap pattern ships to consumer projects via
-`@multilane/authoring-<lane>` packages and the `mlt authoring install` CLI — see
+`@erkanbarin/authoring-<lane>` packages and the `mlt authoring install` CLI — see
 [`LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md`](LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md) for the full
 design. Same convention, reused: the Claude-format file is the source of truth
 (`assets/skills/<id>/SKILL.md`, `assets/agents/<id>/AGENT.md` inside the authoring package);

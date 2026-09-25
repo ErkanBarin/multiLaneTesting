@@ -1,4 +1,4 @@
-// @multilane/cli — shared fixture helpers for authoring lane tests.
+// @erkanbarin/cli — shared fixture helpers for authoring lane tests.
 //
 // Generic across lanes: copies a real authoring package's directory into a fixture project's
 // node_modules, proving standard Node resolution — no engine checkout needed by the fixture.
@@ -24,14 +24,14 @@ export function writeMcpConfig(root, servers) {
 }
 
 /**
- * Copy a real `@multilane/authoring-<lane>` package directory into the fixture's node_modules.
+ * Copy a real `@erkanbarin/authoring-<lane>` package directory into the fixture's node_modules.
  * @param {string} root  fixture project root
  * @param {string} shortName  e.g. "http", "stomp", "web"
  * @param {string} realPkgDir  absolute path to the real package directory
  */
 export function installFixtureAuthoringPackage(root, shortName, realPkgDir) {
-  const target = join(root, 'node_modules', '@multilane', `authoring-${shortName}`);
-  mkdirSync(join(root, 'node_modules', '@multilane'), { recursive: true });
+  const target = join(root, 'node_modules', '@erkanbarin', `authoring-${shortName}`);
+  mkdirSync(join(root, 'node_modules', '@erkanbarin'), { recursive: true });
   cpSync(realPkgDir, target, { recursive: true });
   return target;
 }

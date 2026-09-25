@@ -1,4 +1,4 @@
-// @multilane/cli — render tool-specific wrapper content from a source-of-truth asset.
+// @erkanbarin/cli — render tool-specific wrapper content from a source-of-truth asset.
 //
 // Convention (matches this repo's own `.claude/` ↔ `.github/` wrap pattern, see
 // CUSTOMIZATION_MAP.md): the Claude-format file is materialized verbatim as the source of truth;

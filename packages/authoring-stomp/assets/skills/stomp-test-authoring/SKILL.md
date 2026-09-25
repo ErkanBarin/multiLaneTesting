@@ -7,7 +7,7 @@ user-invocable: true
 # stomp-test-authoring
 
 Write and maintain STOMP/WS contract specs under `tests/stomp/**`. Runtime capability lives in
-`@multilane/stomp` (`subscribeOnce`, supervised `send`); this skill is the authoring-time
+`@erkanbarin/stomp` (`subscribeOnce`, supervised `send`); this skill is the authoring-time
 companion — it never runs as part of a test.
 
 ## Procedure

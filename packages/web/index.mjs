@@ -1,4 +1,4 @@
-// @multilane/web — web/DOM lane helpers.
+// @erkanbarin/web — web/DOM lane helpers.
 //
 // The selector-factory pattern: a named map of stable selectors resolved to Playwright Locators.
 // Keep selectors declarative and stable; never discover them at runtime.

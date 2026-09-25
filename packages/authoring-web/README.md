@@ -1,12 +1,12 @@
-# @multilane/authoring-web
+# @erkanbarin/authoring-web
 
 Web-lane **authoring** assets for `multilanetesting` — the AI-facing skills and agents used to
 create, explore, debug, and maintain web/DOM tests. This is a companion package to the web-lane
-**runtime** package, [`@multilane/web`](../web/README.md), and is never a dependency of it.
+**runtime** package, [`@erkanbarin/web`](../web/README.md), and is never a dependency of it.
 
 ```
-@multilane/web            = Web runtime capability (selector factories, browser actions, evidence)
-@multilane/authoring-web   = Web skills, agents and metadata (this package)
+@erkanbarin/web            = Web runtime capability (selector factories, browser actions, evidence)
+@erkanbarin/authoring-web   = Web skills, agents and metadata (this package)
 ```
 
 ## What's in here
@@ -22,14 +22,14 @@ create, explore, debug, and maintain web/DOM tests. This is a companion package 
 
 ## Who consumes this package
 
-Not test authors directly. The `mlt authoring install` command (from `@multilane/cli`) resolves
+Not test authors directly. The `mlt authoring install` command (from `@erkanbarin/cli`) resolves
 this package from the consumer project's `node_modules`, reads `lane.manifest.json`, and
 **materializes** tool-specific wrapper files into the consumer repo (e.g.
 `.claude/skills/web-test-authoring/SKILL.md`, `.github/prompts/web-test-authoring.prompt.md`).
 
 ## Runtime isolation
 
-This package has **zero dependencies**, ships no executable test logic, and `@multilane/web`'s
+This package has **zero dependencies**, ships no executable test logic, and `@erkanbarin/web`'s
 `package.json` does not reference it. Installing web authoring assets does not add anything to the
 web lane's runtime `import` graph. See `LANE_AUTHORING_TOOLKIT_IMPLEMENTATION.md` at the engine
 root for the isolation proof.
