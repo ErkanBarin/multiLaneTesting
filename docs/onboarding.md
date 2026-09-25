@@ -30,8 +30,8 @@ the engine into it, and write specs there. Engine updates arrive by re-running t
 
 | Tool | Version | Notes |
 |---|---|---|
-| Node.js | ≥ 20 | `node --version` |
-| npm | 10.x | bundled with Node 20/22 |
+| Node.js | ≥ 20 | `node --version`; 20.19+, 22.13+ or 24+ avoids dev-tool engine warnings |
+| npm | 10.x or 11.x | bundled with Node |
 | Git | any | access to your team's git host for the consumer project |
 | Python | ≥ 3.11 | **only** if you build the screen-driver lane |
 | Claude Code or GitHub Copilot | current | **only** for optional AI-assisted authoring (Step 6) |
@@ -79,6 +79,10 @@ cd my-system
 npm run verify                       # the same deterministic gates, now in YOUR project
 ```
 
+`mlt create-system` is the same as `mlt new` plus the optional AI-authoring assets from Step 6.
+If `npm install` hangs with no output, your network probably blocks the npm registry — configure
+npm's `proxy`/`https-proxy` (or `registry` for an internal mirror).
+
 The `@multilane/*` packages are not available from a public registry, so the installer packs the
 engine into `my-system/vendor/multilane/` and rewrites the dependencies to those tarballs. Commit
 `package-lock.json` **and** `vendor/multilane/` — your CI can then run `npm ci` without the engine
@@ -94,7 +98,10 @@ All target values come from the environment. Copy the template and fill in only 
 
 ```bash
 cp .env.example .env      # .env is gitignored — it never reaches the remote
+set -a; . ./.env; set +a  # nothing loads .env automatically — export it into your shell
 ```
+
+In CI, inject the same variables from your credential store instead of a file.
 
 | Variable | What it is |
 |---|---|
@@ -117,8 +124,11 @@ The scaffold ships one example spec per lane under `tests/<lane>/` — copy the 
 
 ```bash
 npm run verify            # gates must stay green
-npm run test:<lane>       # run each selected lane (web lane: install Chromium first)
+npm run test:<lane>       # run each selected lane (web lane: npx playwright install chromium)
 ```
+
+An example spec **skips** (exit 0, reason printed) when its target variable is unset — so a green
+run is not proof a test executed. Check the output for `skipped` before trusting it.
 
 Determinism rules that apply to every spec you write:
 

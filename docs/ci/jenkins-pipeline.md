@@ -14,7 +14,7 @@ the web application Jenkins shape with screen-specific additions.
 5. **Run** — replay specs into a **test partition** (never `PROD`). Each spec runs **twice**; identical
    functional readback required.
 6. **Publish** — archive JUnit + HTML + golden-diff artifacts; optionally push to a test-management
-   system (requirements system/Jira/STR adapter).
+   system (requirements system, Jira, or test-report adapter).
 
 ## Pipeline guardrails
 

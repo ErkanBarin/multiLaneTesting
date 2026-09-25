@@ -1,8 +1,8 @@
 # Lane-Aware Authoring Toolkit
 
-Status: authoring packages are implemented for the **web**, **http**, and **stomp** lanes.
-The **screen** authoring package remains planned. Authoring assets are optional and never enter a
-runtime test path.
+Status: authoring packages are implemented for all six lanes — **web**, **http**, **stomp**,
+**screen**, **snmp**, and **trap**. Authoring assets are optional and never enter a runtime test
+path.
 
 ## Architecture decisions
 
