@@ -4,7 +4,7 @@ A consumer fixture that declares all 16 `@multilane/*` workspaces as versioned d
 checks packaged exports. Nothing here imports engine source.
 
 The repository's dogfood harness rewrites those dependencies to local `npm pack` tarballs and
-installs the fixture offline. It separately checks authoring prerequisites and a generated
+uses public npm for third-party dependencies if they are not cached. It separately checks authoring prerequisites and a generated
 consumer project; the smoke suite does not require a live target.
 
 ```bash
