@@ -5,8 +5,8 @@ repository as a shared engine. It assumes nothing about your organization — an
 under test and a CI runner can follow it.
 
 **Who this is for.** Teams that own a system exposing one or more testable surfaces — a browser
-UI, an HTTP API, STOMP/WebSocket streams, or a screen-only UI (VNC/RDP, C++ HMI, COTS application
-with no DOM) — and want deterministic automated tests. AI may help *write* tests; it is never in
+UI, an HTTP API, STOMP/WebSocket streams, a screen-only UI (VNC/RDP, C++ HMI, COTS application
+with no DOM), or SNMP/trap surfaces — and want deterministic automated tests. AI may help *write* tests; it is never in
 the loop when tests *run*.
 
 **The model.** Two repositories, clearly separated:
@@ -67,6 +67,8 @@ Pick your lanes from what your system actually exposes — build only those:
 | REST/HTTP endpoints | `http` | Status/shape/header contracts (passive GETs) |
 | STOMP/WebSocket streams | `stomp` | Message shape (passive SUBSCRIBE; SEND is double-gated) |
 | A screen-only UI (VNC/RDP, COTS) | `screen` | Frozen-locator replay + functional/golden/OCR oracles |
+| An SNMP agent | `snmp` | Emulated GET/WALK; passive live checks require approved access |
+| SNMP notifications | `trap` | Receive and decode a locally emitted trap |
 
 ```bash
 cd ..                                # scaffold next to your engine clone; names are lowercase [a-z0-9-]
@@ -76,7 +78,7 @@ cd my-system
 npm run verify                       # the same deterministic gates, now in YOUR project
 ```
 
-The `@multilane/*` packages are not published to any registry yet, so the installer packs the
+The `@multilane/*` packages are not available from a public registry, so the installer packs the
 engine into `my-system/vendor/multilane/` and rewrites the dependencies to those tarballs. Commit
 `package-lock.json` **and** `vendor/multilane/` — your CI can then run `npm ci` without the engine
 clone. (The installer rejects project paths containing `#`, `%`, `\`, or `:`.)
@@ -100,6 +102,8 @@ cp .env.example .env      # .env is gitignored — it never reaches the remote
 | `MULTILANE_WS_URL` | STOMP/WebSocket endpoint |
 | `SCREEN_TARGET_HOST` | VNC/RDP host for the screen-driver lane |
 | `SCREEN_RPS_PARTITION` | Test partition — e.g. `TEST_A`. **Never `PROD`** — the lane refuses to run. |
+| `MULTILANE_SNMP_HOST` | Optional approved live SNMP target; the initial example uses an emulator |
+| `MULTILANE_TRAP_PORT` | Optional port for a trap listener; the initial example uses loopback |
 
 **No host literals in committed files, ever** — env-var names only. This is what makes the same
 specs portable across your dev/test/CI environments.
@@ -112,7 +116,7 @@ The scaffold ships one example spec per lane under `tests/<lane>/` — copy the 
 
 ```bash
 npm run verify            # gates must stay green
-npm test                  # runs the lane specs (web lane: npx playwright install chromium first)
+npm run test:<lane>       # run each selected lane (web lane: install Chromium first)
 ```
 
 Determinism rules that apply to every spec you write:
@@ -135,7 +139,7 @@ Any CI system that can run npm works:
 ```
 npm ci
 npx --no-install mlt verify      # deterministic gates — fail fast
-npm test                         # lane specs; archive JUnit/HTML evidence
+npm run test:<lane>              # each selected lane; archive JUnit/HTML evidence
 ```
 
 The scaffold includes an optional thin `Jenkinsfile`; a Jenkins shared-library template lives in

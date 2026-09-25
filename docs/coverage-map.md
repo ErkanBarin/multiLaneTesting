@@ -4,12 +4,14 @@ Matrix of functional areas × lanes × oracle depth. Seed scaffold — replace e
 
 ## Matrix
 
-| Area | Screen driver | Web/DOM | API | WS | Oracle depth | Status |
-|---|---|---|---|---|---|---|
-| <!-- example --> sample-panel | ✅ | — | — | — | functional + golden | covered |
-| <!-- example --> data-view | ◑ | — | — | — | golden only (BLK_001) | partial |
-| <!-- example --> status-endpoint | — | — | ✅ shape | — | n/a | covered |
-| <!-- example --> event-stream | — | — | — | ◑ passive | n/a | partial |
+| Area | Screen driver | Web/DOM | API | WS | SNMP | Trap | Oracle depth | Status |
+|---|---|---|---|---|---|---|---|---|
+| <!-- example --> sample-panel | ✅ | — | — | — | — | — | functional + golden | covered |
+| <!-- example --> data-view | ◑ | — | — | — | — | — | golden only (BLK_001) | partial |
+| <!-- example --> status-endpoint | — | — | ✅ shape | — | — | — | n/a | covered |
+| <!-- example --> event-stream | — | — | — | ◑ passive | — | — | n/a | partial |
+| <!-- example --> agent-status | — | — | — | — | ✅ emulator | — | model + GET | example only |
+| <!-- example --> status-change | — | — | — | — | — | ✅ loopback | received varbinds | example only |
 
 Legend: ✅ covered · ◑ partial (link a blocker) · — not applicable / not started.
 

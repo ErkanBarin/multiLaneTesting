@@ -8,6 +8,8 @@ End-to-end verification framework for **any multi-surface system under test**, c
 | **API contract** | REST/HTTP endpoints | System exposes a JSON/HTTP API |
 | **WS contract** | STOMP/WebSocket messages | System emits or accepts WS/STOMP frames |
 | **Screen driver** | Framebuffer over VNC/RDP, C++ HMI, COTS | No DOM — screen-only target |
+| **SNMP** | Agent GET/WALK | Explicit model, local emulator, or approved passive checks |
+| **Trap** | SNMP notifications | Receive and decode locally emitted notifications |
 
 Build only the lanes the target system actually exposes. The screen driver is the novel lane;
 Playwright, API contract, and WS contract follow the same conventions proven in mature Playwright DOM suites.
@@ -125,13 +127,13 @@ flowchart LR
 
 ---
 
-## 6. The other lanes (web, API, WS)
+## 6. The other lanes (web, API, WS, SNMP, trap)
 
 These lanes are **first-class**, not optional plugins. What they share with the screen-driver lane
 is the *discipline*: env-gated activation, no host literals, user-intent test naming, evidence
 output, and traceability. The screen-only rules (frozen locators, tier ladder, partition refusal,
 golden-image/OCR oracles) do **not** apply here — the web lane keeps standard Playwright
-conventions, and the API/WS lanes are passive contract checks. Build whichever lanes the target
+conventions, and the API/WS/SNMP lanes are passive contract checks. Build whichever lanes the target
 system exposes.
 
 | Lane | Workspace | Env gate | Key tool | Conventions |
@@ -139,6 +141,8 @@ system exposes.
 | **Web / DOM** | `tests/web/` | always on | Playwright | Selector factory (`selectors/<area>.ts`), `test.step()` user-intent naming, web-first assertions, no sleeps, no host literals |
 | **API contract** | `tests/http/` | `MULTILANE_API_CONTRACT=1` | `node:https` / `tsx` | Passive GET only — assert shape, status, headers; no state mutation |
 | **WS contract** | `tests/stomp/` | `MULTILANE_WS_CONTRACT=1` | `@stomp/stompjs` | Passive SUBSCRIBE by default; active SEND requires `+MULTILANE_WS_INJECT=1` + approved-host preflight |
+| **SNMP contract** | `tests/snmp/` | `MULTILANE_SNMP_CONTRACT=1` for live targets | `@multilane/snmp-runtime` | Default example uses a loopback emulator; approved live checks are opt-in |
+| **Trap** | `tests/trap/` | local loopback by default | `@multilane/snmp-runtime` | Receive-only listener; example emits through an emulated agent |
 
 - **DOM targets stay on Playwright.** Never reimplement DOM testing on the screen driver.
 - Each lane is an npm workspace gated by its own env flag and orchestrated by the same Robot wrapper.

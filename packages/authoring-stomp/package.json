@@ -1,6 +1,6 @@
 {
   "name": "@multilane/authoring-stomp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "STOMP/WS-lane authoring assets (skills, agents, prompts) for the multilanetesting engine. Development-time content only — never a runtime dependency of @multilane/stomp.",
   "license": "UNLICENSED",
   "type": "module",
@@ -24,14 +24,5 @@
   },
   "publishConfig": {
     "access": "restricted"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
-    "directory": "packages/authoring-stomp"
-  },
-  "homepage": "https://github.com/ErkanBarin/multiLaneTesting#readme",
-  "bugs": {
-    "url": "https://github.com/ErkanBarin/multiLaneTesting/issues"
   }
 }

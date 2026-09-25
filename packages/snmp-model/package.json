@@ -1,0 +1,25 @@
+{
+  "name": "@multilane/snmp-model",
+  "version": "0.1.0",
+  "description": "Pure SNMP agent model types and validation — no net-snmp, no filesystem, no selection coupling.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "src/**/*.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

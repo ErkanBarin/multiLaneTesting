@@ -1,8 +1,8 @@
 # multilanetesting
 
 A deterministic **multi-lane testing framework** for systems that expose more than one testable
-surface — browser DOM, HTTP APIs, STOMP/WebSocket streams, and screen-only UIs (VNC/RDP,
-framebuffer, COTS applications with no DOM).
+surface — browser DOM, HTTP APIs, STOMP/WebSocket streams, screen-only UIs (VNC/RDP,
+framebuffer, COTS applications with no DOM), SNMP agents, and trap receivers.
 
 **Core principle: AI may assist at authoring time; test execution is always deterministic.**
 AI can help discover screen locators or draft specs, but every artifact that runs in CI is frozen,
@@ -22,13 +22,14 @@ state of each part:
 | `@multilane/stomp` (WS contract) | Working | Passive SUBSCRIBE; active SEND double-gated (opt-in + allowlist) |
 | `@multilane/screen` (frozen-locator runtime) | Working | Loads/validates frozen locators; PROD-partition refusal |
 | `@multilane/web`, `@multilane/playwright-config` | Working | Selector factories + shared Playwright preset |
-| `@multilane/authoring-*` (3 packages) | Working | Authoring-time manifests/assets only; never imported at runtime |
-| Python screen driver (`pyproject.toml`) | **Stub** | Skeleton package; no actuation implemented, no tests yet |
+| `@multilane/snmp-model`, `-runtime`, `-adapter-selection` | Working locally | Explicit model, emulated agent/trap listener, selection-list adapter; local unit tests |
+| `@multilane/authoring-*` (6 packages) | Working locally | Authoring-time manifests/assets only; never imported at runtime |
+| Python screen driver (`packages/screen/driver/`) | Tested locally | AT-SPI and framebuffer helpers; live-target behavior unverified |
 | Robot orchestration (`orchestration/`) | **Template** | Documents an intended pattern; no runnable suites here |
 | Jenkins shared library (`ci/`) | **Optional template** | Example integration; not required and not exercised by this repo's CI |
 
-Packages are **not published to any registry**. Consume them via `npm pack` tarballs (see
-[Dogfooding](#dogfooding-the-packaged-engine)) until a publishing decision is made.
+No public registry is configured for `@multilane/*`. Consume packages from local `npm pack`
+tarballs (see [Dogfooding](#dogfooding-the-packaged-engine)).
 
 ## Who this is for — and how to adopt it
 
@@ -71,7 +72,7 @@ Everything above runs offline after `npm ci` — no target system, no credential
 
 ## Architecture in one minute
 
-Four independent lanes; build only the ones your target exposes:
+Six independent lanes; build only the ones your target exposes:
 
 | Lane | Surface | How it verifies |
 |---|---|---|
@@ -79,6 +80,8 @@ Four independent lanes; build only the ones your target exposes:
 | **API contract** | REST/HTTP | Passive GET + status/shape/header assertions (opt-in) |
 | **WS contract** | STOMP/WebSocket | Passive SUBSCRIBE; active SEND requires opt-in **and** host allowlist |
 | **Screen driver** | No-DOM UIs (VNC/RDP, C++ HMI, COTS) | Frozen Tier-1/2 locators replayed deterministically |
+| **SNMP** | SNMP agents | Emulated GET/WALK and optional passive contracts |
+| **Trap** | SNMP notifications | Receive and assert decoded traps |
 
 The screen lane is the novel part. AI-assisted discovery (object introspection, local CV, offline
 OCR) happens at **authoring time** and produces a frozen locator JSON under `locators/<area>/<key>.json`,
@@ -101,14 +104,15 @@ All engine code lives in npm workspaces under [`packages/`](packages/):
 | `@multilane/stomp` | STOMP-over-WS subscribe + gated send (`@stomp/stompjs`/`ws` as optional peers) |
 | `@multilane/screen` | Frozen-locator loading + validation (runtime surface of the screen lane) |
 | `@multilane/playwright-config` | Shared Playwright preset (env-driven baseURL, JUnit/HTML evidence) |
-| `@multilane/authoring-web` / `-http` / `-stomp` | Authoring-time lane manifests + skill/agent assets |
+| `@multilane/snmp-model` / `-runtime` / `-adapter-selection` | Explicit models, emulated agent/trap listener, selection-list adapter |
+| `@multilane/authoring-web` / `-http` / `-stomp` / `-screen` / `-snmp` / `-trap` | Authoring-time lane manifests + skill/agent assets |
 
 Public API surface: [`docs/API.md`](docs/API.md).
 
 ## Using the engine in a test project
 
 Your system-under-test never lives in this repo — you scaffold a small consumer project. The
-packages are **not published**, so run the CLI from a clone of this repo:
+packages are not available from a public registry, so run the CLI from a clone of this repo:
 
 ```bash
 cd ..                                # scaffold next to your clone; names are lowercase [a-z0-9-]
@@ -149,7 +153,7 @@ In the consumer project, `mlt verify` runs the same deterministic gates this rep
 npm run dogfood
 ```
 
-packs all 10 workspaces with `npm pack`, rewrites an example consumer
+packs all 16 workspaces with `npm pack`, rewrites an example consumer
 ([`examples/consumer-smoke/`](examples/consumer-smoke/)) to install from those tarballs (with
 `overrides` so nested workspace deps stay local), installs with npm's `--offline` flag, then runs
 `mlt verify` plus an installation/export smoke across every package. It also runs a minimal
@@ -200,14 +204,14 @@ guard the authoring/runtime boundary — the gate is a policy heuristic, not a r
 
 | Path | What it is |
 |---|---|
-| `packages/*` | The 10 `@multilane/*` engine packages (npm workspaces) |
+| `packages/*` | The 16 `@multilane/*` engine packages (npm workspaces) |
 | `examples/consumer-smoke/` | Dogfood consumer installing the packaged engine from tarballs |
 | `scripts/` | Gate runners + the dogfood harness |
 | `docs/` | Architecture, API, strategy, coverage, traceability, curated memory |
 | `orchestration/` | Robot Framework orchestration pattern (template) |
 | `ci/` | Optional Jenkins shared-library template |
 | `.claude/`, `.github/` | Authoring-time agent/skill layer (Claude source of truth, Copilot mirror) |
-| `pyproject.toml`, `src/` | Python screen-driver package (stub) |
+| `pyproject.toml`, `src/`, `packages/screen/driver/` | Python screen-driver packaging and implementation |
 | `ARCHITECTURE.md`, `BOOTSTRAP_PROMPT.md` | Design + build-out docs |
 
 ## Contributing

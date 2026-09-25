@@ -10,14 +10,7 @@ export function assertApprovedHost(url: string, approvedHosts?: string[]): void;
 
 export function getJson(
   url: string,
-  options?: {
-    headers?: Record<string, string>;
-    approvedHosts?: string[];
-    /** Absolute deadline for the whole request+response, in ms. Default 30000. */
-    timeoutMs?: number;
-    /** Reject once the response body exceeds this many bytes. Default 10000000. */
-    maxBodyBytes?: number;
-  },
+  options?: { headers?: Record<string, string>; approvedHosts?: string[] },
 ): Promise<JsonResponse>;
 
 export function assertShape(

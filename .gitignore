@@ -32,8 +32,9 @@ playwright-report/
 **/__diff__/
 **/__received__/
 
-# --- RAG cache (commit graph.json/report, skip heavy cache) ---
-graphify-out/cache/
+# --- Generated data (not reviewed for public release) ---
+graphify-out/
+*.tgz
 
 # --- Playwright CLI session junk ---
 .playwright-cli/

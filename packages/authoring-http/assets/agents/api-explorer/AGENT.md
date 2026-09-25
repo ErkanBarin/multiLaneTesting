@@ -3,8 +3,8 @@ name: api-explorer
 description: Explore a passive HTTP/JSON target (or a local emulator) to propose shape/status assertions and troubleshoot auth/retry failures. Authoring-only; requires MULTILANE_TARGET_HOST and MULTILANE_APPROVED_HOSTS to be set.
 color: green
 model: sonnet
-tools: Read, Glob, Grep, Write, Edit
-skills: http-test-authoring
+tools: Read, Glob, Grep, Bash, Write, Edit
+skills: [http-test-authoring]
 maxTurns: 20
 ---
 

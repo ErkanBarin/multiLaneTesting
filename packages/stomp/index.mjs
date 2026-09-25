@@ -23,24 +23,28 @@ export async function subscribeOnce(url, destination, { timeoutMs = 5000, header
       webSocketFactory: () => new WS(url),
       reconnectDelay: 0,
     });
-    const settle = makeSettler(client, resolve, reject);
-    settle.timer = setTimeout(
-      () => settle.reject(new Error(`subscribeOnce timed out after ${timeoutMs}ms on ${destination}`)),
-      timeoutMs,
-    );
+
+    const timer = setTimeout(() => {
+      deactivate(client);
+      reject(new Error(`subscribeOnce timed out after ${timeoutMs}ms on ${destination}`));
+    }, timeoutMs);
 
     client.onConnect = () => {
       client.subscribe(
         destination,
-        (message) => settle.resolve({ headers: message.headers, body: message.body }),
+        (message) => {
+          clearTimeout(timer);
+          deactivate(client);
+          resolve({ headers: message.headers, body: message.body });
+        },
         headers,
       );
     };
-    client.onStompError = (frame) => settle.reject(new Error(frame?.headers?.message ?? 'STOMP error'));
-    client.onWebSocketError = (event) =>
-      settle.reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
-    client.onWebSocketClose = (event) =>
-      settle.reject(new Error(`WebSocket closed before the STOMP session completed (code ${event?.code ?? 'unknown'}).`));
+    client.onStompError = (frame) => {
+      clearTimeout(timer);
+      deactivate(client);
+      reject(new Error(frame?.headers?.message ?? 'STOMP error'));
+    };
 
     client.activate();
   });
@@ -51,10 +55,10 @@ export async function subscribeOnce(url, destination, { timeoutMs = 5000, header
  * @param {string} url
  * @param {string} destination
  * @param {string} body
- * @param {{ inject?: boolean, approvedHosts?: string[], headers?: Record<string, string>, timeoutMs?: number }} [options]
+ * @param {{ inject?: boolean, approvedHosts?: string[], headers?: Record<string, string> }} [options]
  * @returns {Promise<void>}
  */
-export async function send(url, destination, body, { inject = false, approvedHosts = [], headers = {}, timeoutMs = 5000 } = {}) {
+export async function send(url, destination, body, { inject = false, approvedHosts = [], headers = {} } = {}) {
   if (!inject) {
     throw new Error('Active SEND refused: pass inject:true (MULTILANE_WS_INJECT=1) to enable it.');
   }
@@ -72,41 +76,17 @@ export async function send(url, destination, body, { inject = false, approvedHos
       webSocketFactory: () => new WS(url),
       reconnectDelay: 0,
     });
-    const settle = makeSettler(client, resolve, reject);
-    settle.timer = setTimeout(
-      () => settle.reject(new Error(`send timed out after ${timeoutMs}ms connecting to ${destination}`)),
-      timeoutMs,
-    );
     client.onConnect = () => {
       client.publish({ destination, body, headers });
-      settle.resolve();
+      deactivate(client);
+      resolve();
     };
-    client.onStompError = (frame) => settle.reject(new Error(frame?.headers?.message ?? 'STOMP error'));
-    client.onWebSocketError = (event) =>
-      settle.reject(new Error(`WebSocket error connecting to broker: ${event?.message ?? 'connection failed'}`));
-    client.onWebSocketClose = (event) =>
-      settle.reject(new Error(`WebSocket closed before the STOMP session completed (code ${event?.code ?? 'unknown'}).`));
+    client.onStompError = (frame) => {
+      deactivate(client);
+      reject(new Error(frame?.headers?.message ?? 'STOMP error'));
+    };
     client.activate();
   });
-}
-
-// One-shot settlement: whichever lifecycle callback fires first wins; every later callback
-// (including the close event emitted by our own teardown) is a guarded no-op.
-function makeSettler(client, resolve, reject) {
-  const settle = {
-    done: false,
-    timer: undefined,
-    resolve: (value) => complete(resolve, value),
-    reject: (err) => complete(reject, err),
-  };
-  function complete(fn, value) {
-    if (settle.done) return;
-    settle.done = true;
-    clearTimeout(settle.timer);
-    deactivate(client);
-    fn(value);
-  }
-  return settle;
 }
 
 function deactivate(client) {

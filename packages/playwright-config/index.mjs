@@ -18,6 +18,10 @@ export function definePlaywrightConfig(overrides = {}) {
     fullyParallel: true,
     forbidOnly: ci,
     retries: ci ? 1 : 0,
+    // ponytail: no `retryStrategy: 'isolated'` yet — it needs Playwright 1.62, which has no stable
+    // release (latest stable is 1.61.1; 1.62.0 exists only as `next` alphas). 1.61.1 silently
+    // ignores the unknown key, so setting it bought nothing but a docs claim that wasn't true.
+    // Add it back when 1.62 ships stable and the peer range below moves with it.
     reporter: [
       ['junit', { outputFile: 'results/web/junit.xml' }],
       ['html', { outputFolder: 'results/web/html', open: 'never' }],

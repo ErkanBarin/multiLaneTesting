@@ -1,8 +1,8 @@
 # docs/API.md — the multilanetesting public API
 
-The engine ships as versioned `@multilane/*` packages. They are **not published to any registry
-yet** — consume them via `npm pack` tarballs with `overrides` (repo README → Dogfooding) until a
-publishing decision is made. This page is
+The engine ships as versioned `@multilane/*` packages. No public registry is configured for
+these packages; consume them via `npm pack` tarballs with `overrides` (repo README → Dogfooding).
+This page is
 the contract: **what a consumer may import** and **what is private**. Anything not listed here is an
 internal implementation detail and may change without a semver-major bump.
 
@@ -10,7 +10,7 @@ Enforcement: each package's `exports` map exposes **only** the entrypoints below
 `src/**` are blocked by Node's subpath-exports resolution — if it is not re-exported from the package
 root, it is private.
 
-## Packages (all `0.1.0`, scope `@multilane`)
+## Packages (independently versioned, scope `@multilane`)
 
 | Package | Import when you… | Heavy deps |
 |---|---|---|
@@ -21,6 +21,10 @@ root, it is private.
 | `@multilane/http` | write passive HTTP contract checks | none |
 | `@multilane/stomp` | write STOMP/WS contract checks | `@stomp/stompjs`, `ws` (peer, optional) |
 | `@multilane/screen` | replay frozen screen locators | none |
+| `@multilane/snmp-model` | define and validate an emulated SNMP model | none |
+| `@multilane/snmp-runtime` | run a loopback SNMP agent or receive traps | `net-snmp` |
+| `@multilane/snmp-adapter-selection` | build a model from a selection list and SMI/MIB | `@multilane/snmp-model` |
+| `@multilane/authoring-{web,http,stomp,screen,snmp,trap}` | install lane skills and agents | authoring only |
 
 Lanes are **independently installable**: an HTTP-only consumer installs `@multilane/http`
 (+`core`/`cli`) and never pulls Playwright or the STOMP stack.
@@ -53,7 +57,7 @@ Primary interface is the `mlt` binary:
 
 ```
 mlt verify                                  # run the deterministic gates in the current project
-mlt new <name> --lanes web,http             # scaffold a consumer project (lanes: web, http, stomp, screen)
+mlt new <name> --lanes web,http             # lanes: web, http, stomp, screen, snmp, trap
 mlt create-system <name> --lanes web,http   # scaffold AND install authoring assets; exits nonzero if
                                             # an authoring package is unresolvable
 ```
@@ -102,8 +106,20 @@ import { loadFrozenLocator, assertFrozen } from '@multilane/screen';
 ```
 
 Runtime surface loads/validates **frozen** locators only — no discovery, vision, or model.
+`driverScriptPath`, `runDriver`, and `openViewer` expose the shipped screen driver; opening a viewer
+refuses the operational partition before connecting.
+
+## SNMP model, runtime, and adapter
+
+- `@multilane/snmp-model`: `validateModel(model)` checks an explicit `EmulatedAgentModel`.
+- `@multilane/snmp-runtime`: `startEmulatedAgent({ model, port, community })` starts a loopback
+  agent; `startTrapListener({ port })` receives notifications on loopback. Both return a `close()`
+  method. Supply a per-run community value, never a committed credential.
+- `@multilane/snmp-adapter-selection`: `buildSelectionModel({ selectionText, mib })` returns
+  `{ model, gaps, debug }`. Pass content or explicit `selectionPath`/`mibPath`; unknown directives
+  are reported, never silently treated as complete coverage.
 
 ## Versioning
 
-Semantic versioning from `0.1.0`. A breaking change to any signature above is a major bump. Adding a
-new export is a minor bump. Internal-only changes are patches.
+Each workspace versions independently. Check its `package.json` for the current version; a breaking
+public signature change requires a version bump. Deep imports are not a supported API.

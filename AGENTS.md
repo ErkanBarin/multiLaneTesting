@@ -19,6 +19,8 @@ configuration, dependencies, or new files, prove they are required.
 | **API contract** | REST/HTTP endpoints | `node:https` / `tsx` (passive, opt-in) |
 | **WS contract** | STOMP / WebSocket | `@stomp/stompjs` (passive + supervised active SEND, opt-in) |
 | **Screen driver** | Framebuffer / VNC/RDP / C++ HMI / COTS | Deterministic driver; AI at authoring only |
+| **SNMP** | Agent GET/WALK | Explicit model + local emulator; live checks opt-in |
+| **Trap** | SNMP notifications | Receive-only listener; local sender for examples |
 
 Build only the lanes the target system exposes. Common to all lanes:
 - No host literals in committed files — env-var names only. No secrets to any model.

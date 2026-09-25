@@ -5,15 +5,12 @@ consumer project honest. No runtime AI, no host literals, no build step.
 
 ## Install
 
-The `@multilane/*` packages are **not published to any registry yet** — install them from
-`npm pack` tarballs with `overrides` (see the repo README → Dogfooding) until a publishing
-decision is made. Once published, this becomes:
-
 ```bash
 npm install --save-dev @multilane/core
 ```
 
-(Registry and proxy configuration come from the environment — see the root `.npmrc.sample`.)
+For a consumer without a package registry, use the engine clone's
+`scripts/install-tarballs.mjs` after scaffolding instead of a direct registry install.
 
 ## Public API
 
@@ -39,7 +36,7 @@ deterministic-world rule (never `PROD`).
 
 ### Gates
 
-`runVerify({ cwd })` runs the `no-runtime-ai` and `robot-contract` gates and returns
+`runVerify({ cwd })` runs the `no-runtime-ai`, `robot-contract`, and `screen-partition` gates and returns
 `{ ok, gates: [{ name, ok, detail }] }`. The `mlt verify` CLI is a thin wrapper over this.
 
 Tune scan roots and the Robot `@tag` allowlist with a `multilane.config.json` at the project root:
@@ -48,6 +45,6 @@ Tune scan roots and the Robot `@tag` allowlist with a `multilane.config.json` at
 {
   "specDir": "tests",
   "runtimeDirs": ["drivers", "tests", "apps"],
-  "robotTags": ["@samplePanelCrud"]
+  "robotTags": ["@milAreasCrud"]
 }
 ```

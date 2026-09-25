@@ -1,6 +1,6 @@
 {
   "name": "@multilane/http",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Passive HTTP/JSON contract lane for multilanetesting. Shape/status checks only — no state mutation, no external deps.",
   "license": "UNLICENSED",
   "type": "module",
@@ -20,14 +20,5 @@
   },
   "publishConfig": {
     "access": "restricted"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
-    "directory": "packages/http"
-  },
-  "homepage": "https://github.com/ErkanBarin/multiLaneTesting#readme",
-  "bugs": {
-    "url": "https://github.com/ErkanBarin/multiLaneTesting/issues"
   }
 }

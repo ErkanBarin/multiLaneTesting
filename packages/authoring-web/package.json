@@ -1,6 +1,6 @@
 {
   "name": "@multilane/authoring-web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Web-lane authoring assets (skills, agents, prompts) for the multilanetesting engine. Development-time content only — never a runtime dependency of @multilane/web.",
   "license": "UNLICENSED",
   "type": "module",
@@ -24,14 +24,5 @@
   },
   "publishConfig": {
     "access": "restricted"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ErkanBarin/multiLaneTesting.git",
-    "directory": "packages/authoring-web"
-  },
-  "homepage": "https://github.com/ErkanBarin/multiLaneTesting#readme",
-  "bugs": {
-    "url": "https://github.com/ErkanBarin/multiLaneTesting/issues"
   }
 }

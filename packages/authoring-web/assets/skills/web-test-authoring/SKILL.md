@@ -39,7 +39,17 @@ it never runs as part of a test.
   **ui-explorer** (requires the Playwright MCP server configured; see
   `mlt authoring configure web-explorer` if it reports as not enabled).
 - A spec is flaky, not missing a selector → that is drift/timing triage, not authoring; treat it as
-  a bug in the spec's wait condition first.
+  a bug in the spec's wait condition first. Diagnose it with Playwright's own CLI tools before
+  touching the assertion: `npx playwright test --debug=cli` steps through the failing spec; a saved
+  trace can be read from the terminal with `npx playwright trace open <trace.zip>` or
+  `npx playwright trace actions --grep=<name>`, no need to open the GUI trace viewer. Fix the real
+  cause (selector drift, a missing wait, a shared/live fixture) — never widen or drop an assertion
+  to silence a flake.
+- If your team already uses Playwright's own Test Agents (`npx playwright init-agents`, ships a
+  planner/generator/healer trio) to draft specs against a live app, treat their output as a draft
+  only: normalize it to the selector-factory pattern, `test.step()` intent naming, and the env-var
+  base URL before it lands in this lane. Those agents are authoring-time only, same as this skill —
+  never wire their MCP server into a runtime test run.
 
 ## Coding style — ponytail (lazy-first)
 

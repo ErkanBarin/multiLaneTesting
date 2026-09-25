@@ -1,0 +1,68 @@
+{
+  "lane": "trap",
+  "version": "0.1.2",
+  "runtimePackage": "@multilane/snmp-runtime",
+  "authoringPackage": "@multilane/authoring-trap",
+  "compatibility": {
+    "minRuntimeVersion": "0.1.0",
+    "maxRuntimeVersion": "0.x"
+  },
+  "requiredTools": ["read", "search", "edit"],
+  "optionalMcpServers": [],
+  "envPrerequisites": [
+    "MULTILANE_TRAP_PORT",
+    "MULTILANE_TRAP_BIND",
+    "MULTILANE_APPROVED_HOSTS"
+  ],
+  "skills": [
+    {
+      "id": "trap-test-authoring",
+      "kind": "skill",
+      "title": "SNMP trap contract test authoring",
+      "description": "Author receive-only SNMP trap/notification contract checks: bind a listener, wait on a varbind predicate, and assert the decoded notification against the model's declared objects.",
+      "portable": "portable-now",
+      "always": true,
+      "source": "assets/skills/trap-test-authoring/SKILL.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/skills/trap-test-authoring/SKILL.md",
+          "format": "claude-skill"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/trap-test-authoring.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "trap-inspector",
+      "kind": "agent",
+      "title": "Trap inspector",
+      "description": "Bind a receive-only trap listener and decode captured notifications into varbind assertions, reconciling what arrives against the model's declared notifications. Authoring-only; never sends a trap.",
+      "portable": "portable-after-env-config",
+      "always": false,
+      "configureId": "trap-inspector",
+      "tools": ["execute"],
+      "requires": {
+        "env": ["MULTILANE_TRAP_PORT"]
+      },
+      "source": "assets/agents/trap-inspector/AGENT.md",
+      "targets": {
+        "claude": {
+          "path": ".claude/agents/trap-inspector.md",
+          "format": "claude-agent"
+        },
+        "copilot-agent": {
+          "path": ".github/agents/trap-inspector-worker.agent.md",
+          "format": "copilot-agent-worker"
+        },
+        "copilot-prompt": {
+          "path": ".github/prompts/trap-inspector.prompt.md",
+          "format": "copilot-prompt"
+        }
+      }
+    }
+  ]
+}

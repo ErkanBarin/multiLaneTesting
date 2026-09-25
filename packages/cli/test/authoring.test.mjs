@@ -25,6 +25,10 @@ import {
   updateAuthoring,
   describeConfigure,
   PROVENANCE_PATH,
+  SUPPORTED_LANES,
+  ALL_KNOWN_LANES,
+  AUTHORING_LANE_PACKAGES,
+  PLANNED_AUTHORING_LANES,
 } from '../index.mjs';
 import { loadLaneManifest } from '@multilane/authoring-web';
 
@@ -101,32 +105,28 @@ test('installs the web lane only (always-on skill enabled, optional agent report
   assert.ok(existsSync(join(root, PROVENANCE_PATH)));
 });
 
-// --- 3. screen-only installation (recognized lane, no authoring package yet) ---
+// --- 3 & 4. every scaffoldable lane is an installable authoring lane ---
+//
+// These two slots used to assert that `screen` installed as "not-yet-available". Since screen,
+// snmp, and trap shipped their authoring packages on 2026-09-21, `PLANNED_AUTHORING_LANES` is empty
+// and no lane reaches that branch — there is nothing left to point the old assertions at. The
+// branch itself stays in install.mjs for the next runtime lane, and this is the check that catches
+// the moment one arrives: `mlt new` scaffolds a project for any `SUPPORTED_LANES` entry, and
+// `mlt create-system` immediately installs authoring into it, so a lane the scaffolder knows and
+// the registry does not makes that composed command throw "Unknown lane" instead of reporting the
+// lane as unavailable.
 
-test('screen-only installation reports the lane as not-yet-available without erroring', () => {
-  const root = tmpFixture();
-  writeFixtureProject(root);
-
-  const { ok, laneReports } = installAuthoring({ lanes: ['screen'], cwd: root });
-  assert.equal(ok, true);
-  assert.equal(laneReports.length, 1);
-  assert.equal(laneReports[0].status, 'unavailable');
-  assert.match(laneReports[0].detail, /No authoring package yet for lane "screen"/);
-  assert.equal(existsSync(join(root, PROVENANCE_PATH)), false);
+test('every lane mlt new can scaffold is a lane mlt authoring install recognizes', () => {
+  for (const lane of SUPPORTED_LANES) {
+    assert.ok(ALL_KNOWN_LANES.includes(lane), `${lane} is scaffoldable but not in ALL_KNOWN_LANES`);
+  }
 });
 
-// --- 4. Web plus screen installation ---
-
-test('web plus screen installs web and reports screen unavailable in the same call', () => {
-  const root = tmpFixture();
-  writeFixtureProject(root);
-  installFixtureAuthoringWeb(root);
-
-  const { ok, laneReports } = installAuthoring({ lanes: ['web', 'screen'], cwd: root });
-  assert.equal(ok, true);
-  const byLane = Object.fromEntries(laneReports.map((r) => [r.lane, r]));
-  assert.equal(byLane.web.status, 'installed');
-  assert.equal(byLane.screen.status, 'unavailable');
+test('no known lane is left without an authoring package', () => {
+  assert.deepEqual(PLANNED_AUTHORING_LANES, []);
+  for (const lane of ALL_KNOWN_LANES) {
+    assert.ok(AUTHORING_LANE_PACKAGES[lane], `${lane} is a known lane with no authoring package`);
+  }
 });
 
 // --- 5. no-lane selection ---
@@ -168,6 +168,7 @@ test('prerequisite-present: configured Playwright MCP enables the optional agent
   assert.equal(laneReports[0].notEnabled.length, 0);
   assert.ok(existsSync(join(root, '.claude/agents/ui-explorer.md')));
   assert.ok(existsSync(join(root, '.github/agents/ui-explorer-worker.agent.md')));
+  assert.match(readFileSync(join(root, '.github/agents/ui-explorer-worker.agent.md'), 'utf8'), /tools: \["read","search","edit","playwright\/\*"\]/);
 });
 
 test('prerequisite-missing: optional agent is skipped with a clear reason and configure command', () => {

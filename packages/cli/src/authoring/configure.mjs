@@ -20,10 +20,15 @@ export function describeConfigure(configureId, { cwd = process.cwd() } = {}) {
     const servers = asset.requires?.mcpServers ?? [];
     const envVars = asset.requires?.env ?? [];
     const steps = [
-      ...servers.map(
-        (s) =>
-          `- Add an MCP server entry named "${s}" to .vscode/mcp.json (VS Code Copilot Chat) or .mcp.json\n  (Claude Code / Copilot CLI). See this engine's own .mcp.json for a reference entry.`,
-      ),
+      ...servers.map((s) => {
+        const where = `- Add an MCP server entry named "${s}" to .vscode/mcp.json ("servers", VS Code Copilot Chat) or\n  .mcp.json ("mcpServers", Claude Code / Copilot CLI)`;
+        // A lane that ships its own server declares the exact entry; print it rather than send a
+        // consumer to an engine checkout they do not have.
+        const entry = manifest.mcpServerConfigs?.[s];
+        if (!entry) return `${where}. See the engine's .mcp.json for a reference entry.`;
+        const json = JSON.stringify({ [s]: entry }, null, 2).replace(/\n/g, '\n  ');
+        return `${where}:\n  ${json}`;
+      }),
       ...envVars.map((name) => `- Set ${name} in the project's environment (e.g. .env) — never commit a literal value.`),
     ];
     return [

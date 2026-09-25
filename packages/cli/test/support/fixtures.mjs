@@ -17,6 +17,12 @@ export function writeFixtureProject(root, { lanes = [] } = {}) {
   }
 }
 
+/** Write a project-scoped MCP config, for lanes whose agents gate on an MCP server. */
+export function writeMcpConfig(root, servers) {
+  mkdirSync(join(root, '.vscode'), { recursive: true });
+  writeFileSync(join(root, '.vscode', 'mcp.json'), JSON.stringify({ servers }, null, 2));
+}
+
 /**
  * Copy a real `@multilane/authoring-<lane>` package directory into the fixture's node_modules.
  * @param {string} root  fixture project root

@@ -17,6 +17,8 @@ in the loop, near-zero CI cost, and fully reproducible results.
 | **API contract** | Target exposes REST/HTTP endpoints — opt-in `MULTILANE_API_CONTRACT=1` | HTTP/JSON shape & invariants (passive) | Node `node:https` / `tsx` |
 | **WS contract** | Target emits/accepts STOMP frames — opt-in `MULTILANE_WS_CONTRACT=1` | STOMP message shape (passive); supervised active SEND (`+MULTILANE_WS_INJECT=1`) | Node test runner + STOMP client |
 | **Screen driver** | Target renders to screen with no DOM (VNC/RDP, C++ HMI, COTS) | Functional + rendering + legibility | Deterministic driver (frozen Tier-1/2 locators) + oracles |
+| **SNMP contract** | Target answers SNMP GET/WALK; live calls require explicit opt-in | Model-backed responses and passive value contracts | Local emulated agent + `net-snmp` |
+| **Trap** | Target emits SNMP notifications | Notification delivery and decoded varbinds | Loopback trap sender and receive-only listener |
 
 ## Oracles (core lane)
 

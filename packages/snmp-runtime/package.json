@@ -1,0 +1,29 @@
+{
+  "name": "@multilane/snmp-runtime",
+  "version": "0.1.0",
+  "description": "Controllable in-process SNMP agent runtime driven by an @multilane/snmp-model EmulatedAgentModel.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "src/**/*.mjs",
+    "README.md"
+  ],
+  "dependencies": {
+    "@multilane/snmp-model": "0.1.0",
+    "net-snmp": "^3.26.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
