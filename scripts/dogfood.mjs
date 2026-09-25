@@ -4,8 +4,7 @@
 // Packs every @multilane/* workspace with `npm pack`, installs those tarballs into a temp copy of
 // examples/consumer-smoke (no source imports, no registry), then runs `mlt verify` + the smoke
 // suite. `overrides` repoints nested @multilane/* dependencies (e.g. screen -> core) at the same
-// tarballs, so the install is hermetic and runs with npm's --offline flag — nothing here pulls
-// from any registry.
+// tarballs. Third-party dependencies may resolve through the configured npm registry.
 import { execSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync, readdirSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -53,8 +52,8 @@ try {
   );
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 
-  // 3) Install the packaged engine (offline) and run gates + smoke.
-  run('npm install --no-audit --no-fund --offline', consumer);
+  // 3) Install local engine tarballs and resolve third-party dependencies, then run the smoke.
+  run('npm install --no-audit --no-fund', consumer);
   run('npx --no-install mlt verify', consumer);
   // Unquoted so the shell expands it: Node 20 (the supported minimum) does not glob --test args.
   run('node --test tests/*/*.test.mjs', consumer);
@@ -96,14 +95,7 @@ try {
   }
   console.log('✓ minimal-entry consumer: create-system exits nonzero when the authoring package is missing.');
 
-  // 5) Scaffolded consumer: the documented `mlt create-system` flow end to end, offline. The
-  //    generated .npmrc expands ${NPM_REGISTRY_*} env vars; loopback placeholders satisfy npm's
-  //    config parser while --offline + file: tarballs prove nothing reaches any registry.
-  const scaffoldEnv = {
-    NPM_REGISTRY_URL: 'http://127.0.0.1:9/',
-    NPM_REGISTRY_AUTH_HOST: '//127.0.0.1:9/',
-    NPM_REGISTRY_AUTH_TOKEN: 'offline-unused',
-  };
+  // 5) Scaffolded consumer: the documented `mlt create-system` flow end to end, offline.
   // The directory name is deliberately hostile (space, quotes, command substitution): the
   // installer must treat the consumer path as data, not shell syntax.
   const scaffoldHome = join(staging, `scaffold home "'$(echo injected)`);
@@ -145,16 +137,14 @@ try {
     throw new Error('create-system output must not lead users to a plain `npm install`.');
   }
   const project = join(scaffoldHome, 'my-system');
-  // Install via the same script the README tells users to run; npm_config_offline keeps the
-  // inner `npm install` hermetic (the http-lane scaffold's deps are all engine tarballs).
+  // The HTTP-only scaffold has no third-party dependencies and stays offline.
   run(`node "${join(repo, 'scripts', 'install-tarballs.mjs')}" my-system`, scaffoldHome, {
-    ...scaffoldEnv,
     npm_config_offline: 'true',
   });
   if (!existsSync(join(project, 'package-lock.json'))) {
     throw new Error('scaffolded consumer: npm install must create package-lock.json.');
   }
-  run('npx --no-install mlt verify', project, scaffoldEnv);
+  run('npx --no-install mlt verify', project);
   console.log('✓ scaffolded consumer: create-system → tarball install → lockfile created → verify passed.');
 
   // 6) Unsupported-path fail-fast: npm mishandles # % \ : in consumer paths (file:-spec/URI

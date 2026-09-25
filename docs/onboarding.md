@@ -49,7 +49,8 @@ npm ci
 npm run validate     # no-runtime-AI gate + robot-contract gate + typecheck + lint + unit tests
 ```
 
-Everything runs offline after `npm ci` — no target system, no credentials. If `validate` is not
+No target system or credentials are needed. `npm ci` and dogfood may access public npm for
+third-party dependencies, while dogfood installs engine packages from local tarballs. If `validate` is not
 green, stop and fix that first (see [SUPPORT.md](../SUPPORT.md)).
 
 Optional but recommended: `npm run dogfood` packs all packages and installs them into example

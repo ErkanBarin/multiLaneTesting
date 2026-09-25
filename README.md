@@ -63,10 +63,11 @@ git clone https://github.com/ErkanBarin/multiLaneTesting.git
 cd multiLaneTesting
 npm ci
 npm run validate     # no-runtime-AI gate + robot-contract gate + typecheck + lint + unit tests
-npm run dogfood      # packs all 10 packages, installs them offline into example consumers, runs smoke tests
+npm run dogfood      # packs all 16 workspaces and runs packaged-consumer smoke tests
 ```
 
-Everything above runs offline after `npm ci` — no target system, no credentials, no registry access.
+No target system or credentials are needed. `npm ci` and dogfood may use public npm for third-party
+dependencies; engine packages in dogfood always come from local tarballs.
 `package-lock.json` is fully resolved against the public npm registry (every entry carries
 `resolved` + `integrity`); `npm ci` is verified under both npm 10 and npm 11.
 
@@ -118,17 +119,17 @@ packages are not available from a public registry, so run the CLI from a clone o
 cd ..                                # scaffold next to your clone; names are lowercase [a-z0-9-]
 node multiLaneTesting/packages/cli/bin/mlt.mjs new my-system --lanes web,http
 node multiLaneTesting/scripts/install-tarballs.mjs my-system
-cd my-system                         # lanes: web, http, stomp, screen
+cd my-system                         # lanes: web, http, stomp, screen, snmp, trap
 npm run verify
 ```
 
-The generated `package.json` depends on `@multilane/*` packages that no registry serves yet.
+The generated `package.json` depends on `@multilane/*` packages without a configured public registry.
 [`scripts/install-tarballs.mjs`](scripts/install-tarballs.mjs) packs the engine workspaces into
 `my-system/vendor/multilane/`, rewrites the scaffold's `@multilane/*` dependencies to those
 tarballs (with `overrides` so nested engine deps stay local), and runs the first `npm install` —
 which creates the consumer's `package-lock.json`. Commit the lockfile and `vendor/multilane/` so
 the consumer's CI can run `npm ci` without the engine clone. The dogfood harness runs this exact
-script against a fresh scaffold, offline. The installer supports POSIX platforms (on Windows use
+script against a fresh HTTP-only scaffold offline. The installer supports POSIX platforms (on Windows use
 WSL) and rejects project paths containing `#`, `%`, `\`, or `:` — characters npm cannot handle in
 `file:` specs.
 
@@ -155,13 +156,14 @@ npm run dogfood
 
 packs all 16 workspaces with `npm pack`, rewrites an example consumer
 ([`examples/consumer-smoke/`](examples/consumer-smoke/)) to install from those tarballs (with
-`overrides` so nested workspace deps stay local), installs with npm's `--offline` flag, then runs
-`mlt verify` plus an installation/export smoke across every package. It also runs a minimal
+`overrides` so nested workspace deps stay local), then runs
+`mlt verify` plus packaged-entrypoint smoke tests. Third-party dependencies may resolve via public
+npm on a fresh machine. It also runs a minimal
 consumer (CLI + core only) and asserts `mlt create-system` exits nonzero when authoring packages
 are unresolvable, and a scaffolded consumer (`mlt create-system` with the `http` lane) installed
 offline by the same [`scripts/install-tarballs.mjs`](scripts/install-tarballs.mjs) users run,
-gaining a `package-lock.json` and passing `mlt verify`. This proves the *packaged* engine installs and exports correctly with zero registry
-access — it is a package-surface check, not functional lane coverage.
+gaining a `package-lock.json` and passing `mlt verify`. This proves the engine installs from
+tarballs without fetching `@multilane/*` from a registry; it does not prove live-target coverage.
 
 ## Security model
 
@@ -184,7 +186,7 @@ Threat model and reporting process: [`SECURITY.md`](SECURITY.md).
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on pushes to `main` and on every pull
 request: `npm ci`, the full
-`validate` suite (gates, typecheck, lint, unit tests), a pack dry-run, the offline dogfood, and a
+`validate` suite (gates, typecheck, lint, unit tests), a pack dry-run, the packaged-consumer smoke, and a
 Python driver install/import smoke. No publishing, no releases.
 
 Jenkins users: [`ci/jenkins-shared-library/`](ci/jenkins-shared-library/) is an **optional**
