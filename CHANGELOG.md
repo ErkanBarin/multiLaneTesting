@@ -27,6 +27,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `package-lock.json`). The README consumer flow and the dogfood scaffolded-consumer probe run
   this same script.
 
+- Claude Code / Copilot CLI plugin marketplace (`.claude-plugin/marketplace.json`) with one
+  plugin, `plugins/multilane-testing`: a `multilane-setup` skill that picks lanes from repo
+  evidence, scaffolds from npm, and installs the lane authoring assets via `mlt authoring install`
+  (the lane skills themselves stay in the `@erkanbarin/authoring-*` packages).
+
 ### Changed
 
 - **Published to npm under MIT.** Packages are renamed from the `@multilane/*` scope to

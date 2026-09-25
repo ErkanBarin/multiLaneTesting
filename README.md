@@ -119,6 +119,18 @@ npm install -D @erkanbarin/authoring-web @erkanbarin/authoring-http   # one per 
 npx --no-install mlt authoring install --lanes web,http              # materialize skills/agents
 ```
 
+Or let an agent do the whole setup: install the plugin from this repo's marketplace, open the repo
+you want to test, and ask it to *"use the multilane-setup skill"*. It recommends lanes from the
+repo's evidence, scaffolds the project, installs the runtimes and the authoring assets above, and
+reports which target variables you still need to set.
+
+```bash
+claude plugin marketplace add ErkanBarin/multiLaneTesting      # Claude Code (or /plugin in a session)
+claude plugin install multilane-testing@multilane
+copilot plugin marketplace add ErkanBarin/multiLaneTesting     # GitHub Copilot CLI
+copilot plugin install multilane-testing@multilane
+```
+
 None of this is required to run tests. The no-runtime-AI gate keeps models out of every run.
 
 ## Guardrails
@@ -157,6 +169,7 @@ every pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md); maintainers publis
 | `orchestration/` | Robot Framework orchestration pattern (template) |
 | `ci/` | Optional Jenkins shared-library template |
 | `.claude/`, `.github/` | Authoring-time agent/skill layer |
+| `.claude-plugin/`, `plugins/` | Plugin marketplace (`multilane-setup` skill) for Claude Code and Copilot CLI |
 | `pyproject.toml`, `src/`, `packages/screen/driver/` | Python screen driver |
 
 ## Status and maturity

@@ -1,0 +1,17 @@
+{
+  "name": "multilane",
+  "owner": { "name": "ErkanBarin" },
+  "metadata": {
+    "description": "Deterministic multi-lane testing — web, http, stomp, screen, snmp, trap."
+  },
+  "plugins": [
+    {
+      "name": "multilane-testing",
+      "source": "./plugins/multilane-testing",
+      "description": "Set up multilane testing in your repo: pick lanes from evidence, scaffold a test project from npm, and install the lane authoring skills and agents.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": ["testing", "qa", "e2e", "playwright", "snmp", "screen", "multilane"]
+    }
+  ]
+}
