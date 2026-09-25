@@ -66,6 +66,4 @@ design. Same convention, reused: the Claude-format file is the source of truth
 `mlt authoring install` generates the Copilot wrapper (`.github/prompts/*.prompt.md`,
 `.github/agents/*-worker.agent.md`) in the **consumer's** repo, not this one. This repo's own
 `.claude`/`.github` content is not currently re-packaged for distribution — only the purpose-built
-`packages/authoring-{web,http,stomp}` assets are (see the report's portability matrix for why the
-existing screen-lane agents/skills are engine-maintainer-only today; `screen` is the only lane
-without an authoring package).
+`packages/authoring-{web,http,stomp,screen,snmp,trap}` assets are.

@@ -28,7 +28,7 @@ flowchart LR
     discover[Discover control<br/>vision / control tree / socket] --> freeze[Freeze locator<br/>object id · template · coords] --> review[Human review<br/>+ requirement_ref]
   end
   subgraph Runtime[Runtime · AI forbidden]
-    replay[Replay frozen locator] --> assert[Assert via oracles] --> evidence[JUnit / HTML / STR]
+    replay[Replay frozen locator] --> assert[Assert via oracles] --> evidence[JUnit / HTML / test report]
   end
   review --> replay
 ```
