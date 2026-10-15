@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "@multilane/snmp-model": "0.1.0",
-    "net-snmp": "^3.26.3"
+    "net-snmp": "^3.29.2"
   },
   "engines": {
     "node": ">=20"
